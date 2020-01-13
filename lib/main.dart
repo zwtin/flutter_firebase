@@ -12,9 +12,9 @@ void main() {
   final authenticationRepository = FirebaseAuthenticationRepository();
   runApp(
     BlocProvider<AuthenticationBloc>(
-      builder: (context) =>
+      create: (context) =>
       AuthenticationBloc(authRepository: authenticationRepository)
-        ..dispatch(AppStarted()),
+        ..add(AppStarted()),
       child: MyApp(),
     ),
   );

@@ -11,7 +11,7 @@ class EventListScreen extends StatelessWidget {
     Widget build(BuildContext context) {
         final eventListBloc =
         EventListBloc(eventListRepository: FirestoreEventListRepository());
-        eventListBloc.dispatch(EventListLoad());
+        eventListBloc.add(EventListLoad());
 
         return Scaffold(
             appBar: AppBar(

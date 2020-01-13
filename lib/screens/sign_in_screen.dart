@@ -35,7 +35,7 @@ class SignInScreen extends StatelessWidget {
                                     Text("Success"),
                                     RaisedButton(
                                         onPressed: () {
-                                            authenticationBloc.dispatch(LoggedIn());
+                                            authenticationBloc.add(LoggedIn());
                                         },
                                         child: Text('StartApp'),
                                     )
@@ -55,13 +55,13 @@ class SignInScreen extends StatelessWidget {
                             children: <Widget>[
                                 RaisedButton.icon(
                                     onPressed: () {
-                                        signInBloc.dispatch(SignInAnonymouslyOnPressed());
+                                        signInBloc.add(SignInAnonymouslyOnPressed());
                                     },
                                     icon: Icon(Icons.account_circle),
                                     label: Text("Guest Login")),
                                 RaisedButton.icon(
                                     onPressed: () {
-                                        signInBloc.dispatch(SignInWithGoogleOnPressed());
+                                        signInBloc.add(SignInWithGoogleOnPressed());
                                     },
                                     icon: Icon(
                                         FontAwesomeIcons.google,
