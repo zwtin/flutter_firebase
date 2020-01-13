@@ -20,10 +20,8 @@ class FirebaseAuthenticationRepository extends AuthenticationRepository {
             name: currentUser.displayName ?? "",
             photoUrl: currentUser.photoUrl ?? "",
             isAnonymous: currentUser.isAnonymous,
-            createdAt: DateTime.fromMillisecondsSinceEpoch(
-                currentUser.metadata.creationTimestamp),
-            updatedAt: DateTime.fromMillisecondsSinceEpoch(
-                currentUser.metadata.lastSignInTimestamp));
+            createdAt: currentUser.metadata.creationTime,
+            updatedAt: currentUser.metadata.lastSignInTime);
     }
 
     @override
