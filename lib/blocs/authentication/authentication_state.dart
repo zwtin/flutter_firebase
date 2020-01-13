@@ -4,24 +4,23 @@ import 'package:flutter_firebase/models/current_user.dart';
 
 @immutable
 abstract class AuthenticationState extends Equatable {
-    AuthenticationState([List props = const []]) : super(props);
 }
 
 class AuthenticationInProgress extends AuthenticationState {
     @override
-    String toString() => 'Uninitialized';
+    List<Object> get props => [];
 }
 
 class AuthenticationSuccess extends AuthenticationState {
     final CurrentUser currentUser;
 
-    AuthenticationSuccess(this.currentUser) : super([currentUser]);
+    AuthenticationSuccess(this.currentUser);
 
     @override
-    String toString() => 'AuthenticationSuccess';
+    List<Object> get props => [currentUser];
 }
 
 class AuthenticationFailure extends AuthenticationState {
     @override
-    String toString() => 'AuthenticationFailure';
+    List<Object> get props => [];
 }

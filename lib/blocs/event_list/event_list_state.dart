@@ -4,37 +4,34 @@ import 'package:flutter_firebase/models/event.dart';
 
 @immutable
 abstract class EventListState extends Equatable {
-    EventListState([List props = const []]) : super(props);
 }
 
 class EventListEmpty extends EventListState {
     @override
-    String toString() => 'EventListEmpty';
+    List<Object> get props => [];
 }
 
 class EventListInProgress extends EventListState {
     @override
-    String toString() => 'EventListInProgress';
+    List<Object> get props => [];
 }
 
 class EventListSuccess extends EventListState {
     final Stream<List<Event>> eventList;
 
     EventListSuccess({@required this.eventList})
-        : assert(eventList != null),
-            super([eventList]);
+        : assert(eventList != null);
 
     @override
-    String toString() => 'EventListSuccess';
+    List<Object> get props => [eventList];
 }
 
 class EventListFailure extends EventListState {
     final Error error;
 
     EventListFailure({@required this.error})
-        : assert(error != null),
-            super([error]);
+        : assert(error != null);
 
     @override
-    String toString() => 'EventListFailure';
+    List<Object> get props => [error];
 }

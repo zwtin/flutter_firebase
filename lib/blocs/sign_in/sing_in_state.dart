@@ -2,12 +2,25 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 @immutable
-abstract class SignInState extends Equatable {}
+abstract class SignInState extends Equatable {
+}
 
-class SignInEmpty extends SignInState {}
+class SignInEmpty extends SignInState {
+    @override
+    List<Object> get props => [];
+}
 
-class SignInLoading extends SignInState {}
+class SignInLoading extends SignInState {
+    @override
+    List<Object> get props => [];
+}
 
-class SignInSuccess extends SignInState {}
+class SignInSuccess extends SignInState {
+    @override
+    List<Object> get props => [];
+}
 
-class SignInFailure extends SignInState {}
+class SignInFailure extends SignInState {
+    @override
+    List<Object> get props => [];
+}
