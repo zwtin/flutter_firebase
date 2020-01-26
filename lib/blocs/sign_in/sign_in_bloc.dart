@@ -16,11 +16,24 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
 
     @override
     Stream<SignInState> mapEventToState(SignInEvent event) async* {
+        if (event is SignInWithEmailAndPasswordOnPressed) {
+            yield* _mapSignInWithEmailAndPasswordOnPressed(event.email, event.password);
+        }
         if (event is SignInWithGoogleOnPressed) {
             yield* _mapSignInWithGoogleOnPressed();
         }
         if (event is SignInAnonymouslyOnPressed) {
             yield* _mapSignInAnonymouslyOnPressed();
+        }
+    }
+
+    Stream<SignInState> _mapSignInWithEmailAndPasswordOnPressed(String email, String password) async* {
+        yield SignInLoading();
+        try {
+            await _signInRepository.signInWithEmailAndPassword(email, password);
+            yield SignInSuccess();
+        } catch (_) {
+            yield SignInFailure();
         }
     }
 

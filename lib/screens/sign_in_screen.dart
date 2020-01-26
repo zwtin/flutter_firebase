@@ -9,6 +9,11 @@ import 'package:flutter_firebase/blocs/sign_in/sing_in_state.dart';
 import 'package:flutter_firebase/repositories/firebase_sign_in_repository.dart';
 
 class SignInScreen extends StatelessWidget {
+
+    var _mailController = TextEditingController();
+    var _passwordController = TextEditingController();
+
+
     @override
     Widget build(BuildContext context) {
         final signInBloc = SignInBloc(signInRepository: FirebaseSignInRepository());
@@ -53,6 +58,36 @@ class SignInScreen extends StatelessWidget {
                         child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
+                                Container(
+                                    margin: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
+                                    child: Column(
+                                        children: <Widget>[
+                                            TextField(
+                                                obscureText: true,
+                                                decoration: InputDecoration(
+                                                    border: OutlineInputBorder(),
+                                                    labelText: 'Mail',
+                                                ),
+                                                controller: _mailController,
+                                            ),
+                                            TextField(
+                                                obscureText: true,
+                                                decoration: InputDecoration(
+                                                    border: OutlineInputBorder(),
+                                                    labelText: 'Password',
+                                                ),
+                                                controller: _passwordController,
+                                            )
+                                        ],
+                                    ),
+                                ),
+                                RaisedButton.icon(
+                                    onPressed: () {
+                                        signInBloc.add(SignInWithEmailAndPasswordOnPressed(email: _mailController.text,
+                                            password: _passwordController.text));
+                                    },
+                                    icon: Icon(Icons.mail_outline),
+                                    label: Text("Mail Login")),
                                 RaisedButton.icon(
                                     onPressed: () {
                                         signInBloc.add(SignInAnonymouslyOnPressed());

@@ -12,6 +12,11 @@ class FirebaseSignInRepository extends SignInRepository {
             _googleSignIn = googleSignIn ?? GoogleSignIn();
 
     @override
+    Future<void> signInWithEmailAndPassword(String email, String password) async {
+        await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+    }
+
+    @override
     Future<void> signInWithGoogle() async {
         final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
         final GoogleSignInAuthentication googleAuth =

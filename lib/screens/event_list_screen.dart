@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_firebase/blocs/authentication/authentication_bloc.dart';
+import 'package:flutter_firebase/blocs/authentication/authentication_repository.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_bloc.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_event.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_state.dart';
 import 'package:flutter_firebase/models/event.dart';
 import 'package:flutter_firebase/repositories/firestore_event_list_repository.dart';
+import 'package:flutter_firebase/repositories/firebase_authentication_repository.dart';
+import 'package:flutter_firebase/blocs/authentication/authentication_event.dart';
 
 class EventListScreen extends StatelessWidget {
     @override
     Widget build(BuildContext context) {
         final eventListBloc =
         EventListBloc(eventListRepository: FirestoreEventListRepository());
+
+        final authenticationBloc =
+        AuthenticationBloc(authRepository: FirebaseAuthenticationRepository());
+
         eventListBloc.add(EventListLoad());
 
         return Scaffold(
@@ -45,32 +53,45 @@ class EventListScreen extends StatelessWidget {
                                         ));
                                 }
 
-                                return ListView.builder(
-                                    itemBuilder: (BuildContext context, int index) {
-                                        final event = snapshot.data[index];
-                                        return Card(
-                                            child: Column(
-                                                mainAxisSize: MainAxisSize.max,
-                                                children: <Widget>[
-                                                    ListTile(
-                                                        title: Text(event.title,
-                                                            style: TextStyle(fontWeight: FontWeight.bold)),
-                                                        subtitle: Text(event.date.toIso8601String()),
-                                                    ),
-                                                    Row(
+                                return Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                        Expanded(
+                                        child: ListView.builder(
+                                            itemBuilder: (BuildContext context, int index) {
+                                                final event = snapshot.data[index];
+                                                return Card(
+                                                    child: Column(
+                                                        mainAxisSize: MainAxisSize.max,
                                                         children: <Widget>[
-                                                            Expanded(
-                                                                child: Image.network(
-                                                                    event.imageUrl,
-                                                                    fit: BoxFit.none,
-                                                                    height: 128,
-                                                                ))
-                                                        ],
-                                                    ),
-                                                    Text(event.description)
-                                                ]));
-                                    },
-                                    itemCount: snapshot.data.length,
+                                                            ListTile(
+                                                                title: Text(event.title,
+                                                                    style: TextStyle(fontWeight: FontWeight.bold)),
+                                                                subtitle: Text(event.date.toIso8601String()),
+                                                            ),
+                                                            Row(
+                                                                children: <Widget>[
+                                                                    Expanded(
+                                                                        child: Image.network(
+                                                                            event.imageUrl,
+                                                                            fit: BoxFit.none,
+                                                                            height: 128,
+                                                                        ))
+                                                                ],
+                                                            ),
+                                                            Text(event.description)
+                                                        ]));
+                                                },
+                                            itemCount: snapshot.data.length,
+
+                                            )
+                                        ),
+                                        RaisedButton(
+                                            onPressed: (){
+                                                authenticationBloc.add(LoggedOut());
+                                            },
+                                        )
+                                    ],
                                 );
                             },
                         );
