@@ -17,14 +17,14 @@ void main() {
   Crashlytics.instance.enableInDevMode = true;
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
   runZoned(() {
-  runApp(
-    BlocProvider<AuthenticationBloc>(
-      create: (context) =>
-      AuthenticationBloc(authRepository: authenticationRepository)
+    runApp(
+        BlocProvider<AuthenticationBloc>(create: (context) =>
+            AuthenticationBloc(authRepository: authenticationRepository)
         ..add(AppStarted()),
-      child: MyApp(),
-    ),
-  );}, onError: Crashlytics.instance.recordError);
+        child: MyApp(),
+        ),
+    );
+  }, onError: Crashlytics.instance.recordError);
 }
 
 class MyApp extends StatelessWidget {
