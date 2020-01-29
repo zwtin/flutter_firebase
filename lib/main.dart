@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_firebase/blocs/authentication/authentication_bloc.dart';
@@ -8,8 +10,13 @@ import 'package:flutter_firebase/screens/event_list_screen.dart';
 import 'package:flutter_firebase/screens/sign_in_screen.dart';
 import 'package:flutter_firebase/screens/splash_screen.dart';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+
 void main() {
   final authenticationRepository = FirebaseAuthenticationRepository();
+  Crashlytics.instance.enableInDevMode = true;
+  FlutterError.onError = Crashlytics.instance.recordFlutterError;
+  runZoned(() {
   runApp(
     BlocProvider<AuthenticationBloc>(
       create: (context) =>
@@ -17,7 +24,7 @@ void main() {
         ..add(AppStarted()),
       child: MyApp(),
     ),
-  );
+  );}, onError: Crashlytics.instance.recordError);
 }
 
 class MyApp extends StatelessWidget {

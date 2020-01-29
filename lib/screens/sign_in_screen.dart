@@ -13,7 +13,6 @@ class SignInScreen extends StatelessWidget {
     var _mailController = TextEditingController();
     var _passwordController = TextEditingController();
 
-
     @override
     Widget build(BuildContext context) {
         final signInBloc = SignInBloc(signInRepository: FirebaseSignInRepository());
@@ -62,6 +61,7 @@ class SignInScreen extends StatelessWidget {
                                     margin: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
                                     child: Column(
                                         children: <Widget>[
+                                            Text('メールアドレス'),
                                             TextField(
                                                 obscureText: true,
                                                 decoration: InputDecoration(
@@ -70,6 +70,7 @@ class SignInScreen extends StatelessWidget {
                                                 ),
                                                 controller: _mailController,
                                             ),
+                                            Text('パスワード'),
                                             TextField(
                                                 obscureText: true,
                                                 decoration: InputDecoration(
