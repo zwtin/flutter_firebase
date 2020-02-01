@@ -30,6 +30,7 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+      //ignore: close_sinks
     final authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
     return MaterialApp(
       title: 'Awase',

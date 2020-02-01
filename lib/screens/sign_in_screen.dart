@@ -10,12 +10,14 @@ import 'package:flutter_firebase/repositories/firebase_sign_in_repository.dart';
 
 class SignInScreen extends StatelessWidget {
 
-    var _mailController = TextEditingController();
-    var _passwordController = TextEditingController();
+    final _mailController = TextEditingController();
+    final _passwordController = TextEditingController();
 
     @override
     Widget build(BuildContext context) {
+        //ignore: close_sinks
         final signInBloc = SignInBloc(signInRepository: FirebaseSignInRepository());
+        //ignore: close_sinks
         final authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
 
         return Scaffold(
