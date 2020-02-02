@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
               return SplashScreen();
             }
             if (state is AuthenticationSuccess) {
-              return EventListScreen();
+              return EventListScreen(authenticationBloc: authenticationBloc);
             }
             if (state is AuthenticationFailure) {
               return SignInScreen();

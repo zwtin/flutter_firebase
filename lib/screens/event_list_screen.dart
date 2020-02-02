@@ -6,19 +6,20 @@ import 'package:flutter_firebase/blocs/event_list/event_list_event.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_state.dart';
 import 'package:flutter_firebase/models/event.dart';
 import 'package:flutter_firebase/repositories/firestore_event_list_repository.dart';
-import 'package:flutter_firebase/repositories/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/blocs/authentication/authentication_event.dart';
 
 class EventListScreen extends StatelessWidget {
+  //ignore: close_sinks
+  final AuthenticationBloc authenticationBloc;
+
+  EventListScreen(
+      {AuthenticationBloc authenticationBloc})
+      :  authenticationBloc = authenticationBloc ?? AuthenticationBloc();
+
   @override
   Widget build(BuildContext context) {
     //ignore: close_sinks
-    final eventListBloc =
-        EventListBloc(eventListRepository: FirestoreEventListRepository());
-
-    //ignore: close_sinks
-    final authenticationBloc =
-        AuthenticationBloc(authRepository: FirebaseAuthenticationRepository());
+    final eventListBloc = EventListBloc(eventListRepository: FirestoreEventListRepository());
 
     eventListBloc.add(EventListLoad());
 
