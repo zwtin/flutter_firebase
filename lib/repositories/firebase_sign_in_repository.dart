@@ -3,33 +3,34 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_firebase/blocs/sign_in/sign_in_repository.dart';
 
 class FirebaseSignInRepository extends SignInRepository {
-    final FirebaseAuth _firebaseAuth;
-    final GoogleSignIn _googleSignIn;
+  final FirebaseAuth _firebaseAuth;
+  final GoogleSignIn _googleSignIn;
 
-    FirebaseSignInRepository(
-        {FirebaseAuth firebaseAuth, GoogleSignIn googleSignIn})
-        : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-            _googleSignIn = googleSignIn ?? GoogleSignIn();
+  FirebaseSignInRepository(
+      {FirebaseAuth firebaseAuth, GoogleSignIn googleSignIn})
+      : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
+        _googleSignIn = googleSignIn ?? GoogleSignIn();
 
-    @override
-    Future<void> signInWithEmailAndPassword(String email, String password) async {
-        await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
-    }
+  @override
+  Future<void> signInWithEmailAndPassword(String email, String password) async {
+    await _firebaseAuth.signInWithEmailAndPassword(
+        email: email, password: password);
+  }
 
-    @override
-    Future<void> signInWithGoogle() async {
-        final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-        final GoogleSignInAuthentication googleAuth =
+  @override
+  Future<void> signInWithGoogle() async {
+    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
-        final AuthCredential credential = GoogleAuthProvider.getCredential(
-            accessToken: googleAuth.accessToken,
-            idToken: googleAuth.idToken,
-        );
-        await _firebaseAuth.signInWithCredential(credential);
-    }
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    await _firebaseAuth.signInWithCredential(credential);
+  }
 
-    @override
-    Future<void> signInAnonymously() async {
-        await _firebaseAuth.signInAnonymously();
-    }
+  @override
+  Future<void> signInAnonymously() async {
+    await _firebaseAuth.signInAnonymously();
+  }
 }
