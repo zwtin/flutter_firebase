@@ -13,8 +13,7 @@ class EventListScreen extends StatelessWidget {
   final AuthenticationBloc authenticationBloc;
 
   EventListScreen(
-      {AuthenticationBloc authenticationBloc})
-      :  authenticationBloc = authenticationBloc ?? AuthenticationBloc();
+      {@required this.authenticationBloc}) :assert(authenticationBloc != null);
 
   @override
   Widget build(BuildContext context) {
