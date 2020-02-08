@@ -75,3 +75,5 @@
 # To use Firebase
 **/ios/Runner/GoogleService-Info.plist
 **/android/app/google-services.json
+
+**/ios/fastlane/generated/*

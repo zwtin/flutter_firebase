@@ -1,0 +1,36 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+    desc "Description of what the lane does"
+        lane :distribution do
+            build_app(scheme: "Runner",
+                      configuration: "Release",
+                      workspace: "Runner.xcworkspace",
+                      clean: true,
+                      export_method: "ad-hoc",
+                      output_directory: "./fastlane/generated",
+                      output_name: "Runner.ipa")
+
+            firebase_app_distribution(
+                app: "1:195622435291:ios:ffce02c3f373d0b8fd0ffe",
+                ipa_path: "./fastlane/generated/Runner.ipa",
+                groups: "zwtin",
+                release_notes: "fastlane distribution",
+            )
+        end
+end

@@ -10,12 +10,15 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    container:
-      image:  google/dart:latest
-
     steps:
     - uses: actions/checkout@v2
-    - name: Install dependencies
-      run: pub get
+    - uses: subosito/flutter-action@v1.1.1
+      with:
+          channel: 'dev'
+          
+    - name: Build APK
+      run: |
+          flutter pub get
+          flutter build apk
     - name: Run tests
       run: pub run test
