@@ -15,6 +15,7 @@ jobs:
 
     - name: Run a multi-line script
       run: |
+          brew install wget
           touch ./ios/Runner/GoogleService-Info.plist
           touch ./android/app/google-services.json
 
