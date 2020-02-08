@@ -18,6 +18,16 @@ jobs:
           touch ./ios/Runner/GoogleService-Info.plist
           touch ./android/app/google-services.json
 
+    - name: wget
+      uses: wei/wget@v1
+      with:
+        args: ${{ secrets.FIREBASE_IOS }} -O ./ios/Runner/GoogleService-Info.plist
+
+    - name: wget
+      uses: wei/wget@v1
+      with:
+        args: ${{ secrets.FIREBASE_ANDROID }} -O ./android/app/google-services.json
+
     - uses: subosito/flutter-action@v1.1.1
       with:
           channel: 'dev'
