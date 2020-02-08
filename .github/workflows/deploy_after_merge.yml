@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-      name: Run a multi-line script
+    - name: Run a multi-line script
       run: |
           touch ./ios/Runner/GoogleService-Info.plist
           touch ./android/app/google-services.json
