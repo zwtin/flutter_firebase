@@ -83,6 +83,7 @@ jobs:
 
   job_3:
     name: distribution
+    needs: job_2
     runs-on: ubuntu-latest
     steps:
 
