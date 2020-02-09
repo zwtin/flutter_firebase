@@ -70,6 +70,8 @@ jobs:
       run: flutter build ios --release --no-codesign
 
     - name: archive ios
+      env:
+        PERSONAL_ACCESS_TOKEN_GITHUB: ${{ secrets.PERSONAL_ACCESS_TOKEN_GITHUB }}
       run: |
         cd ios
         fastlane archive
