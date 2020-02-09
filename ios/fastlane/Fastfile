@@ -17,7 +17,7 @@ default_platform(:ios)
 
 platform :ios do
     desc "Description of what the lane does"
-        lane :distribution do
+        lane :archive do
             build_app(scheme: "Runner",
                       configuration: "Release",
                       workspace: "Runner.xcworkspace",
@@ -25,12 +25,5 @@ platform :ios do
                       export_method: "ad-hoc",
                       output_directory: "./fastlane/generated",
                       output_name: "Runner.ipa")
-
-            firebase_app_distribution(
-                app: "1:195622435291:ios:ffce02c3f373d0b8fd0ffe",
-                ipa_path: "./fastlane/generated/Runner.ipa",
-                groups: "zwtin",
-                release_notes: "fastlane distribution",
-            )
         end
 end
