@@ -17,6 +17,8 @@ jobs:
       run: |
         touch ./ios/Runner/GoogleService-Info.plist
         touch ./android/app/google-services.json
+        mkdir google-ios
+        mkdir google-android
 
     - name: wget
       uses: wei/wget@v1
@@ -31,13 +33,13 @@ jobs:
     - name: Upload ios-file
         uses: actions/upload-artifact@v1
         with:
-          name: google
+          name: google-ios
           path: ./ios/Runner/GoogleService-Info.plist
 
     - name: Upload android-file
         uses: actions/upload-artifact@v1
         with:
-          name: google
+          name: google-android
           path: ./android/app/google-services.json
 
   job_2:
@@ -48,16 +50,22 @@ jobs:
 
     - uses: actions/checkout@v2
 
+    - name: Run a multi-line script
+      run: |
+        touch ./ios/Runner/GoogleService-Info.plist
+        touch ./android/app/google-services.json
+
     - name: Download artifact
         uses: actions/download-artifact@v1
         with:
-          name: google
+          name: google-ios
+          path: ./ios/Runner/GoogleService-Info.plist
 
-    - name: Run a multi-line script
-        shell: bash
-        run: |
-            mv ./google/GoogleService-Info.plist ./ios/Runner/GoogleService-Info.plist
-            mv ./google/google-services.json ./android/app/google-services.json
+    - name: Download artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: google-android
+          path: ./android/app/google-services.json
 
     - uses: subosito/flutter-action@v1.1.1
       with:
