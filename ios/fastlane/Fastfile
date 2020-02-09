@@ -16,14 +16,38 @@
 default_platform(:ios)
 
 platform :ios do
-    desc "Description of what the lane does"
-        lane :archive do
-            build_app(scheme: "Runner",
-                      configuration: "Release",
-                      workspace: "Runner.xcworkspace",
-                      clean: true,
-                      export_method: "ad-hoc",
-                      output_directory: "./fastlane/generated",
-                      output_name: "Runner.ipa")
-        end
+  desc "Import Certificates for GitHub Actions"
+  private_lane :import_certificates_for_actions do
+    setup_ci(
+      force: true,
+      provider: "travis",
+    )
+
+    sync_code_signing(
+      git_url: "https://github.com/zwtin/certificates.git",
+      git_basic_authorization: ENV["PERSONAL_ACCESS_TOKEN_GITHUB"],
+      type: "adhoc",
+      readonly: true
+    )
+  end
+
+  desc "Description of what the lane does"
+  lane :archive do
+    import_certificates_for_actions if is_ci
+    sync_code_signing(
+      git_url: "git@github.com:zwtin/certificates.git",
+      type: "adhoc",
+      readonly: true
+    ) unless is_ci
+
+    build_app(
+      scheme: "Runner",
+      configuration: "Release",
+      workspace: "Runner.xcworkspace",
+      clean: true,
+      export_method: "ad-hoc",
+      output_directory: "./fastlane/generated",
+      output_name: "Runner.ipa"
+    )
+  end
 end
