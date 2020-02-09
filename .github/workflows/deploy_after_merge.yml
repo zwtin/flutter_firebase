@@ -31,13 +31,13 @@ jobs:
         args: ${{ secrets.FIREBASE_ANDROID }} -O ./android/app/google-services.json
 
     - name: Upload ios-file
-        uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v1
         with:
           name: google-ios
           path: ./ios/Runner/GoogleService-Info.plist
 
     - name: Upload android-file
-        uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v1
         with:
           name: google-android
           path: ./android/app/google-services.json
