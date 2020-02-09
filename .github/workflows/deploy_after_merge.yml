@@ -71,11 +71,36 @@ jobs:
     - name: flutter build android
       run: flutter build apk --release
 
+    - name: Run a multi-line script
+      run: |
+        mkdir distribution
+        mv build/app/outputs/apk/release/app-release.apk ./distribution/app-release.apk
+
+    - uses: actions/upload-artifact@v1
+      with:
+        name: distribution
+        path: distribution
+
+  job_3:
+    name: distribution
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Run a single-line script
+      run: mkdir distribution
+
+    - uses: actions/download-artifact@v1
+      with:
+        name: distribution
+        path: distribution
+
     - name: upload artifact to Firebase App Distribution
       uses: wzieba/Firebase-Distribution-Github-Action@v1.1.1
       with:
         appId: ${{secrets.FIREBASE_ANDROID_APPID}}
         token: ${{secrets.FIREBASE_TOKEN}}
         groups: zwtin
-        file: ./build/app/outputs/apk/release/app-release.apk
+        file: ./distribution/app-release.apk
 
