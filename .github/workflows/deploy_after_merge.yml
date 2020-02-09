@@ -17,30 +17,22 @@ jobs:
       run: |
         touch ./ios/Runner/GoogleService-Info.plist
         touch ./android/app/google-services.json
-        mkdir google-ios
-        mkdir google-android
+        mkdir google
 
     - name: wget
       uses: wei/wget@v1
       with:
-        args: ${{ secrets.FIREBASE_IOS }} -O ./ios/Runner/GoogleService-Info.plist
+        args: ${{ secrets.FIREBASE_IOS }} -O ./google/GoogleService-Info.plist
 
     - name: wget
       uses: wei/wget@v1
       with:
-        args: ${{ secrets.FIREBASE_ANDROID }} -O ./android/app/google-services.json
+        args: ${{ secrets.FIREBASE_ANDROID }} -O ./google/google-services.json
 
-    - name: Upload ios-file
-      - uses: actions/upload-artifact@v1
-        with:
-          name: google-ios
-          path: ./ios/Runner/GoogleService-Info.plist
-
-    - name: Upload android-file
-      - uses: actions/upload-artifact@v1
-        with:
-          name: google-android
-          path: ./android/app/google-services.json
+    - uses: actions/upload-artifact@v1
+      with:
+        name: google
+        path: google
 
   job_2:
     name: flutter
@@ -54,18 +46,17 @@ jobs:
       run: |
         touch ./ios/Runner/GoogleService-Info.plist
         touch ./android/app/google-services.json
+        mkdir google
 
-    - name: Download artifact
-        uses: actions/download-artifact@v1
-        with:
-          name: google-ios
-          path: ./ios/Runner/GoogleService-Info.plist
+    - uses: actions/download-artifact@v1
+      with:
+        name: google
+        path: google
 
-    - name: Download artifact
-        uses: actions/download-artifact@v1
-        with:
-          name: google-android
-          path: ./android/app/google-services.json
+    - name: Run a multi-line script
+      run: |
+        mv google/GoogleService-Info.plist ./ios/Runner/GoogleService-Info.plist
+        mv google/google-services.json ./android/app/google-services.json
 
     - uses: subosito/flutter-action@v1.1.1
       with:
