@@ -3,34 +3,40 @@ name: deploy_after_merge
 on:
   push:
     branches: 
-      - release
+     - release
 
 jobs:
-  build:
-
-    runs-on: macos-latest
+  job_1:
+    name: prefer
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Run a multi-line script
       run: |
-          touch ./ios/Runner/GoogleService-Info.plist
-          touch ./android/app/google-services.json
+        touch ./ios/Runner/GoogleService-Info.plist
+        touch ./android/app/google-services.json
 
-    - name: curl
-      uses: wei/curl@master
+    - name: wget
+      uses: wei/wget@v1
       with:
-        args: ${{ secrets.FIREBASE_IOS }} > ./ios/Runner/GoogleService-Info.plist
+        args: ${{ secrets.FIREBASE_IOS }} -O ./ios/Runner/GoogleService-Info.plist
 
-    - name: curl
-      uses: wei/curl@master
+    - name: wget
+      uses: wei/wget@v1
       with:
-        args: ${{ secrets.FIREBASE_ANDROID }} > ./android/app/google-services.json
+        args: ${{ secrets.FIREBASE_ANDROID }} -O ./android/app/google-services.json
+
+  job_2:
+    name: flutter
+    needs: job_1
+    runs-on: macos-latest
+    steps:
 
     - uses: subosito/flutter-action@v1.1.1
       with:
-          channel: 'stable'
+        channel: 'stable'
           
     - name: flutter pub get
       run: flutter pub get
