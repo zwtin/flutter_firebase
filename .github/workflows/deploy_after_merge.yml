@@ -69,17 +69,13 @@ jobs:
     - name: flutter build ios
       run: flutter build ios --release --no-codesign
 
-    - name: Run a single-line script
-      run: cd ios
-
     - name: archive ios
       env:
         PERSONAL_ACCESS_TOKEN_GITHUB: ${{ secrets.PERSONAL_ACCESS_TOKEN_GITHUB }}
         MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-      run: fastlane archive
-
-    - name: Run a multi-lines script
       run: |
+        cd ios
+        fastlane archive
         cd ..
         mv ios/fastlane/generated/Runner.ipa ./distribution/app-release.ipa
 
