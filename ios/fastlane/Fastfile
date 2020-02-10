@@ -28,7 +28,6 @@ platform :ios do
       git_basic_authorization: ENV["PERSONAL_ACCESS_TOKEN_GITHUB"],
       type: "adhoc",
       readonly: true,
-      username: "zwtin"
     )
   end
 
