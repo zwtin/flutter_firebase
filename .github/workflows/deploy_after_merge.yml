@@ -75,6 +75,7 @@ jobs:
         MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       run: |
         cd ios
+        fastlane match adhoc --git_full_name zwtin
         fastlane archive --verbose
         cd ..
         mv ios/fastlane/generated/Runner.ipa ./distribution/app-release.ipa
