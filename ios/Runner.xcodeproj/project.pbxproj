@@ -413,7 +413,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.zwtin.flutterFirebase;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.zwtin.flutterFirebase";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.zwtin.flutterFirebase";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
