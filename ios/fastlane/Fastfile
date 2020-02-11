@@ -27,6 +27,7 @@ platform :ios do
       git_url: "https://github.com/zwtin/certificates.git",
       git_basic_authorization: ENV["PERSONAL_ACCESS_TOKEN_GITHUB"],
       type: "adhoc",
+      app_identifier: "com.zwtin.flutterFirebase",
       readonly: true,
     )
   end
