@@ -14,9 +14,7 @@ class SignInScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //ignore: close_sinks
     final signInBloc = SignInBloc(signInRepository: FirebaseSignInRepository());
-    //ignore: close_sinks
     final authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
 
     return Scaffold(

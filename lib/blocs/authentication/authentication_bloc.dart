@@ -36,7 +36,7 @@ class AuthenticationBloc
       } else {
         yield AuthenticationFailure();
       }
-    } catch (_) {
+    } on Exception catch (_) {
       yield AuthenticationFailure();
     }
   }
