@@ -16,19 +16,19 @@ class EventListInProgress extends EventListState {
 }
 
 class EventListSuccess extends EventListState {
-  final Stream<List<Event>> eventList;
-
   EventListSuccess({@required this.eventList}) : assert(eventList != null);
+
+  final Stream<List<Event>> eventList;
 
   @override
   List<Object> get props => [eventList];
 }
 
 class EventListFailure extends EventListState {
-  final Error error;
+  EventListFailure({@required this.exception}) : assert(exception != null);
 
-  EventListFailure({@required this.error}) : assert(error != null);
+  final Exception exception;
 
   @override
-  List<Object> get props => [error];
+  List<Object> get props => [exception];
 }

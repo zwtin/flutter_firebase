@@ -3,21 +3,21 @@ import 'package:flutter_firebase/blocs/event_list/event_list_repository.dart';
 import 'package:flutter_firebase/models/event.dart';
 
 class FirestoreEventListRepository extends EventListRepository {
-  final Firestore _firestore;
-
   FirestoreEventListRepository({Firestore firestore})
       : _firestore = firestore ?? Firestore.instance;
 
+  final Firestore _firestore;
+
   @override
   Stream<List<Event>> fetch() {
-    return _firestore.collection("events").snapshots().map((snapshot) {
+    return _firestore.collection('events').snapshots().map((snapshot) {
       return snapshot.documents.map((docs) {
         return Event(
           id: docs.documentID,
-          title: docs.data["title"] ?? "",
-          description: docs.data["description"] ?? "",
-          date: docs.data["date"]?.toDate() ?? DateTime.utc(2019),
-          imageUrl: docs.data["image_url"] ?? "",
+          title: docs.data['title'] as String,
+          description: docs.data['description'] as String,
+          date: docs.data['date']?.toDate() as DateTime,
+          imageUrl: docs.data['image_url'] as String,
         );
       }).toList();
     });

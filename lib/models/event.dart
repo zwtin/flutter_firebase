@@ -2,13 +2,7 @@ import 'package:meta/meta.dart';
 
 @immutable
 class Event {
-  final String id; // ID
-  final String title; // タイトル
-  final String description; // 紹介文
-  final DateTime date; // 開催日
-  final String imageUrl; // イベント画像(URL)
-
-  Event({
+  const Event({
     @required this.id,
     @required this.title,
     @required this.description,
@@ -20,13 +14,16 @@ class Event {
         assert(date != null),
         assert(imageUrl != null);
 
-  static Event fromJson(Map<String, dynamic> json) {
-    return Event(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      date: json['date'],
-      imageUrl: json['image_url'],
-    );
-  }
+  Event.fromJson(Map<String, dynamic> json)
+      : id = json['id'] as String,
+        title = json['title'] as String,
+        description = json['description'] as String,
+        date = json['date'] as DateTime,
+        imageUrl = json['image_url'] as String;
+
+  final String id; // ID
+  final String title; // タイトル
+  final String description; // 紹介文
+  final DateTime date; // 開催日
+  final String imageUrl; // イベント画像(URL)
 }

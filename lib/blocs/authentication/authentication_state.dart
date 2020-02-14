@@ -11,9 +11,9 @@ class AuthenticationInProgress extends AuthenticationState {
 }
 
 class AuthenticationSuccess extends AuthenticationState {
-  final CurrentUser currentUser;
-
   AuthenticationSuccess(this.currentUser);
+
+  final CurrentUser currentUser;
 
   @override
   List<Object> get props => [currentUser];

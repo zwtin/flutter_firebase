@@ -6,11 +6,11 @@ import 'package:flutter_firebase/blocs/authentication/authentication_state.dart'
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
-  final AuthenticationRepository _authRepository;
-
   AuthenticationBloc({@required AuthenticationRepository authRepository})
       : assert(authRepository != null),
         _authRepository = authRepository;
+
+  final AuthenticationRepository _authRepository;
 
   @override
   AuthenticationState get initialState => AuthenticationInProgress();

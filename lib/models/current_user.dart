@@ -2,14 +2,7 @@ import 'package:meta/meta.dart';
 
 @immutable
 class CurrentUser {
-  final String id; // ID
-  final String name; // タイトル
-  final String photoUrl; // 紹介文
-  final bool isAnonymous; // 匿名かどうか
-  final DateTime createdAt;
-  final DateTime updatedAt;
-
-  CurrentUser(
+  const CurrentUser(
       {@required this.id,
       @required this.name,
       @required this.photoUrl,
@@ -22,4 +15,11 @@ class CurrentUser {
         assert(isAnonymous != null),
         assert(createdAt != null),
         assert(updatedAt != null);
+
+  final String id; // ID
+  final String name; // タイトル
+  final String photoUrl; // 紹介文
+  final bool isAnonymous; // 匿名かどうか
+  final DateTime createdAt;
+  final DateTime updatedAt;
 }

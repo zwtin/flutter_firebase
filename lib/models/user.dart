@@ -2,13 +2,7 @@ import 'package:meta/meta.dart';
 
 @immutable
 class User {
-  final String id;
-  final String name;
-  final String photoUrl;
-  final String createAt;
-  final String updateAt;
-
-  User(
+  const User(
       {@required this.id,
       @required this.name,
       @required this.photoUrl,
@@ -16,4 +10,10 @@ class User {
       @required this.updateAt})
       : assert(id != null),
         assert(name != null);
+
+  final String id;
+  final String name;
+  final String photoUrl;
+  final String createAt;
+  final String updateAt;
 }

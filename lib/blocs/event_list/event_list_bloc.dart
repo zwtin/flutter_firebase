@@ -5,11 +5,11 @@ import 'package:flutter_firebase/blocs/event_list/event_list_repository.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_state.dart';
 
 class EventListBloc extends Bloc<EventListEvent, EventListState> {
-  final EventListRepository _eventListRepository;
-
   EventListBloc({@required EventListRepository eventListRepository})
       : assert(eventListRepository != null),
         _eventListRepository = eventListRepository;
+
+  final EventListRepository _eventListRepository;
 
   @override
   EventListState get initialState => EventListEmpty();
@@ -25,8 +25,8 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
     yield EventListInProgress();
     try {
       yield EventListSuccess(eventList: _eventListRepository.fetch());
-    } catch (_) {
-      yield EventListFailure(error: _);
+    } on Exception catch (e) {
+      yield EventListFailure(exception: e);
     }
   }
 }
