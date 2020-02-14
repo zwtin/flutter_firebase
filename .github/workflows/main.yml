@@ -1,4 +1,4 @@
-name: deploy_after_merge
+name: distribution
 
 on:
   push:
@@ -7,85 +7,86 @@ on:
 
 jobs:
   job_1:
-    name: prefer
+    name: preparation
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
 
-    - name: Run a multi-line script
-      run: |
-        touch ./ios/Runner/GoogleService-Info.plist
-        touch ./android/app/google-services.json
-        mkdir google
+    - name: checkout
+      uses: actions/checkout@v2
 
-    - name: wget
+    - name: make directory
+      run: mkdir google
+
+    - name: wget GoogleService-Info.plist
       uses: wei/wget@v1
       with:
         args: ${{ secrets.FIREBASE_IOS }} -O ./google/GoogleService-Info.plist
 
-    - name: wget
+    - name: wget google-services.json
       uses: wei/wget@v1
       with:
         args: ${{ secrets.FIREBASE_ANDROID }} -O ./google/google-services.json
 
-    - uses: actions/upload-artifact@v1
+    - name: upload-artifact
+      uses: actions/upload-artifact@v1
       with:
         name: google
         path: google
 
   job_2:
-    name: flutter
+    name: flutter build
     needs: job_1
     runs-on: macos-latest
+
     steps:
 
-    - uses: actions/checkout@v2
+    - name: checkout
+      uses: actions/checkout@v2
 
-    - name: Run a multi-line script
-      run: |
-        touch ./ios/Runner/GoogleService-Info.plist
-        touch ./android/app/google-services.json
-        mkdir google
-
-    - uses: actions/download-artifact@v1
+    - name: download-artifact
+      uses: actions/download-artifact@v1
       with:
         name: google
-        path: google
 
-    - name: Run a multi-line script
+    - name: move script
       run: |
         mv google/GoogleService-Info.plist ./ios/Runner/GoogleService-Info.plist
         mv google/google-services.json ./android/app/google-services.json
-        mkdir distribution
 
-    - uses: subosito/flutter-action@v1.1.1
+    - name: make directory
+      run: mkdir distribution
+
+    - name: install flutter
+      uses: subosito/flutter-action@v1.1.1
       with:
         channel: 'stable'
           
-    - name: flutter pub get
+    - name: install flutter library
       run: flutter pub get
 
     - name: flutter build ios
       run: flutter build ios --release --no-codesign
 
-    - name: archive ios
+    - name: ios archive
       env:
         PERSONAL_ACCESS_TOKEN_GITHUB: ${{ secrets.PERSONAL_ACCESS_TOKEN_GITHUB }}
         MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       run: |
         cd ios
-        fastlane archive --verbose
+        fastlane archive
         cd ..
-        mv ios/fastlane/generated/Runner.ipa ./distribution/app-release.ipa
 
     - name: flutter build android
       run: flutter build apk --release
 
-    - name: Run a single-line script
-      run: mv build/app/outputs/apk/release/app-release.apk ./distribution/app-release.apk
+    - name: move application files
+      run: |
+        mv ios/fastlane/generated/Runner.ipa ./distribution/app-release.ipa
+        mv build/app/outputs/apk/release/app-release.apk ./distribution/app-release.apk
 
-    - uses: actions/upload-artifact@v1
+    - name: upload-artifact
+      uses: actions/upload-artifact@v1
       with:
         name: distribution
         path: distribution
@@ -94,19 +95,18 @@ jobs:
     name: distribution
     needs: job_2
     runs-on: ubuntu-latest
+
     steps:
 
-    - uses: actions/checkout@v2
+    - name: checkout
+      uses: actions/checkout@v2
 
-    - name: Run a single-line script
-      run: mkdir distribution
-
-    - uses: actions/download-artifact@v1
+    - name: download-artifact
+      uses: actions/download-artifact@v1
       with:
         name: distribution
-        path: distribution
 
-    - name: upload artifact to Firebase App Distribution
+    - name: ios distribution
       uses: wzieba/Firebase-Distribution-Github-Action@v1.1.1
       with:
         appId: ${{secrets.FIREBASE_IOS_APPID}}
@@ -114,7 +114,7 @@ jobs:
         groups: zwtin
         file: ./distribution/app-release.ipa
 
-    - name: upload artifact to Firebase App Distribution
+    - name: android distribution
       uses: wzieba/Firebase-Distribution-Github-Action@v1.1.1
       with:
         appId: ${{secrets.FIREBASE_ANDROID_APPID}}
