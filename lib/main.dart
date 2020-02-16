@@ -40,36 +40,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  int currentIndex = 0;
-  int tap = 0;
-
-  Widget tab1 = Scaffold(
-    body: Center(
-      child: Text('aaa'),
-    ),
-    floatingActionButton: FloatingActionButton(),
-  );
-
-  Widget tab2 = MaterialApp(
-    home: CalcBlocProvider(
-      child: CalcScreen(),
-    ),
-  );
-
-  final List<Tab> tabs = <Tab>[
-    Tab(
-      icon: Icon(Icons.home),
-    ),
-    Tab(
-      icon: Icon(Icons.person),
-    ),
-  ];
+  final CupertinoTabController _cupertinoTabController =
+      CupertinoTabController();
 
   @override
   void initState() {
     super.initState();
-    currentIndex = 0;
-    tap = 0;
   }
 
   @override
@@ -84,29 +60,31 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             icon: Icon(CupertinoIcons.person),
           ),
         ],
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              currentIndex = 0;
-              break;
-            case 1:
-              currentIndex = 1;
-              break;
-          }
-        },
         activeColor: Colors.blue,
         inactiveColor: Colors.black,
         backgroundColor: Colors.red,
       ),
-      tabBuilder: (context, index) {
+      controller: _cupertinoTabController,
+      tabBuilder: (BuildContext context, int index) {
         return CupertinoTabView(
           builder: (context) {
-            switch (currentIndex) {
+            switch (index) {
               case 0:
-                return tab1;
+                return Center(
+                  child: CupertinoButton(
+                    child: const Text('Go to first tab'),
+                    onPressed: () {
+                      _cupertinoTabController.index = 1;
+                    },
+                  ),
+                );
                 break;
               case 1:
-                return tab2;
+                return MaterialApp(
+                  home: CalcBlocProvider(
+                    child: CalcScreen(),
+                  ),
+                );
                 break;
             }
             return Scaffold();
