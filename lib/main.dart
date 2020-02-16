@@ -2,6 +2,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter_firebase/blocs/authentication/authentication_bloc.dart';
+import 'package:flutter_firebase/blocs/authentication/authentication_repository.dart';
+import 'package:flutter_firebase/repositories/firebase_authentication_repository.dart';
+
+import 'package:flutter_firebase/screens/sign_in_screen.dart';
+import 'package:flutter_firebase/screens/event_list_screen.dart';
+
+import 'package:flutter_firebase/CalcSample/calc_provider.dart';
+import 'package:flutter_firebase/CalcSample/screen.dart';
 
 void main() {
   Crashlytics.instance.enableInDevMode = true;
@@ -32,6 +41,20 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   int currentIndex = 0;
+  int tap = 0;
+
+  Widget tab1 = Scaffold(
+    body: Center(
+      child: Text('aaa'),
+    ),
+    floatingActionButton: FloatingActionButton(),
+  );
+
+  Widget tab2 = MaterialApp(
+    home: CalcBlocProvider(
+      child: CalcScreen(),
+    ),
+  );
 
   final List<Tab> tabs = <Tab>[
     Tab(
@@ -46,6 +69,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     currentIndex = 0;
+    tap = 0;
   }
 
   @override
@@ -79,15 +103,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           builder: (context) {
             switch (currentIndex) {
               case 0:
-                return Center(
-                  child: Text(
-                    'text',
-                    style: TextStyle(fontSize: 24),
-                  ),
-                );
+                return tab1;
                 break;
               case 1:
-                return Scaffold();
+                return tab2;
                 break;
             }
             return Scaffold();
