@@ -46,7 +46,7 @@ class TabScreen extends StatelessWidget {
                 );
                 break;
             }
-            return Scaffold();
+            return const Scaffold();
           },
         );
       },
