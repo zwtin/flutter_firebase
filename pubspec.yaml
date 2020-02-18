@@ -25,6 +25,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   meta: ^1.1.8
   flutter_bloc: ^3.1.0
+  bloc_provider: ^0.7.0
   equatable: ^1.0.2
   firebase_core: ^0.4.3+2
   firebase_auth: ^0.15.3+1

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_firebase/CalcSample/calc_provider.dart';
+import 'package:bloc_provider/bloc_provider.dart';
+import 'package:flutter_firebase/CalcSample/calc_bloc.dart';
 import 'package:flutter_firebase/CalcSample/screen.dart';
 
 class TabScreen extends StatelessWidget {
@@ -39,12 +40,10 @@ class TabScreen extends StatelessWidget {
                 );
                 break;
               case 1:
-                return MaterialApp(
-                  home: CalcBlocProvider(
-                    child: CalcScreen(),
-                  ),
+                return BlocProvider<CalcBloc>(
+                  creator: (_context, _bag) => CalcBloc(),
+                  child: CalcScreen(),
                 );
-                break;
             }
             return const Scaffold();
           },

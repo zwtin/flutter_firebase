@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:math' show Random;
+import 'package:bloc_provider/bloc_provider.dart';
 
-class CalcBloc {
+class CalcBloc implements Bloc {
   final _startController = StreamController<void>();
   final _calcController = StreamController<int>();
   final _outputController = StreamController<String>();
@@ -52,10 +53,10 @@ class CalcBloc {
     }
   }
 
-  void dispose() {
-    _startController.close();
-    _calcController.close();
-    _outputController.close();
-    _btnController.close();
+  void dispose() async {
+    await _startController.close();
+    await _calcController.close();
+    await _outputController.close();
+    await _btnController.close();
   }
 }
