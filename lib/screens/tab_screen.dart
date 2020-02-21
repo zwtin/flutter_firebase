@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/CalcSample/calc_bloc.dart';
 import 'package:flutter_firebase/CalcSample/screen.dart';
+import 'package:flutter_firebase/blocs/authentication/authentication_bloc.dart';
+import 'package:flutter_firebase/screens/sign_in_screen.dart';
 
 class TabScreen extends StatelessWidget {
   final CupertinoTabController _cupertinoTabController =
@@ -40,9 +42,9 @@ class TabScreen extends StatelessWidget {
                 );
                 break;
               case 1:
-                return BlocProvider<CalcBloc>(
-                  creator: (_context, _bag) => CalcBloc(),
-                  child: CalcScreen(),
+                return BlocProvider<AuthenticationBloc>(
+                  creator: (_context, _bag) => AuthenticationBloc(),
+                  child: SignInScreen(),
                 );
             }
             return const Scaffold();

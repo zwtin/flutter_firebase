@@ -11,12 +11,13 @@ import 'package:flutter_firebase/blocs/authentication/authentication_event.dart'
 class EventListScreen extends StatelessWidget {
   final AuthenticationBloc authenticationBloc;
 
-  EventListScreen(
-      {@required this.authenticationBloc}) :assert(authenticationBloc != null);
+  EventListScreen({@required this.authenticationBloc})
+      : assert(authenticationBloc != null);
 
   @override
   Widget build(BuildContext context) {
-    final eventListBloc = EventListBloc(eventListRepository: FirestoreEventListRepository());
+    final eventListBloc =
+        EventListBloc(eventListRepository: FirestoreEventListRepository());
 
     eventListBloc.add(EventListLoad());
 
@@ -88,7 +89,7 @@ class EventListScreen extends StatelessWidget {
                       Flexible(
                         child: RaisedButton(
                           onPressed: () {
-                            authenticationBloc.add(LoggedOut());
+//                            authenticationBloc.add(LoggedOut());
                           },
                           child: Text('Sign out'),
                         ),

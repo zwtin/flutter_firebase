@@ -3,6 +3,17 @@ import 'dart:math' show Random;
 import 'package:bloc_provider/bloc_provider.dart';
 
 class CalcBloc implements Bloc {
+  CalcBloc() {
+    // スタートボタンが押されるのを待つ
+    _startController.stream.listen((_) => _start());
+
+    // 秒数が通知されるのを待つ
+    _calcController.stream.listen((count) => _calc(count));
+
+    // ボタンの表示を指示する
+    _btnController.sink.add(true);
+  }
+
   final _startController = StreamController<void>();
   final _calcController = StreamController<int>();
   final _outputController = StreamController<String>();
@@ -18,17 +29,6 @@ class CalcBloc implements Bloc {
   static const _repeat = 6;
   int _sum;
   Timer _timer;
-
-  CalcBloc() {
-    // スタートボタンが押されるのを待つ
-    _startController.stream.listen((_) => _start());
-
-    // 秒数が通知されるのを待つ
-    _calcController.stream.listen((count) => _calc(count));
-
-    // ボタンの表示を指示する
-    _btnController.sink.add(true);
-  }
 
   void _start() {
     _sum = 0;
@@ -53,7 +53,8 @@ class CalcBloc implements Bloc {
     }
   }
 
-  void dispose() async {
+  @override
+  Future<void> dispose() async {
     await _startController.close();
     await _calcController.close();
     await _outputController.close();
