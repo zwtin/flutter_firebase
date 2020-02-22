@@ -23,7 +23,7 @@ class TabScreen extends StatelessWidget {
         ],
         activeColor: Colors.blue,
         inactiveColor: Colors.black,
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.orange,
       ),
       controller: _cupertinoTabController,
       tabBuilder: (BuildContext context, int index) {

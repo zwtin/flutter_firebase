@@ -6,7 +6,6 @@ import 'package:flutter_firebase/blocs/authentication/authentication_repository.
 class AuthenticationBloc implements Bloc {
   AuthenticationBloc(this._authRepository) : assert(_authRepository != null) {
     _readController.stream.listen((_) => _start());
-    _readController.sink.add(null);
   }
 
   final AuthenticationRepository _authRepository;
