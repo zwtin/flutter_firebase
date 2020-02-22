@@ -4,21 +4,21 @@ import 'package:flutter_firebase/blocs/authentication/authentication_repository.
 import 'package:flutter_firebase/models/current_user.dart';
 
 class FirebaseAuthenticationRepository extends AuthenticationRepository {
-  final FirebaseAuth _firebaseAuth;
-  final GoogleSignIn _googleSignIn;
-
   FirebaseAuthenticationRepository(
       {FirebaseAuth firebaseAuth, GoogleSignIn googleSignIn})
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         _googleSignIn = googleSignIn ?? GoogleSignIn();
+
+  final FirebaseAuth _firebaseAuth;
+  final GoogleSignIn _googleSignIn;
 
   @override
   Future<CurrentUser> getCurrentUser() async {
     final currentUser = await _firebaseAuth.currentUser();
     return CurrentUser(
         id: currentUser.uid,
-        name: currentUser.displayName ?? "",
-        photoUrl: currentUser.photoUrl ?? "",
+        name: currentUser.displayName ?? '',
+        photoUrl: currentUser.photoUrl ?? '',
         isAnonymous: currentUser.isAnonymous,
         createdAt: currentUser.metadata.creationTime,
         updatedAt: currentUser.metadata.lastSignInTime);

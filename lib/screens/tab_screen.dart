@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:bloc_provider/bloc_provider.dart';
-import 'package:flutter_firebase/CalcSample/calc_bloc.dart';
-import 'package:flutter_firebase/CalcSample/screen.dart';
 import 'package:flutter_firebase/blocs/authentication/authentication_bloc.dart';
+import 'package:flutter_firebase/repositories/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/screens/sign_in_screen.dart';
 
 class TabScreen extends StatelessWidget {
@@ -43,7 +42,10 @@ class TabScreen extends StatelessWidget {
                 break;
               case 1:
                 return BlocProvider<AuthenticationBloc>(
-                  creator: (_context, _bag) => AuthenticationBloc(),
+                  creator: (_context, _bag) {
+                    return AuthenticationBloc(
+                        FirebaseAuthenticationRepository());
+                  },
                   child: SignInScreen(),
                 );
             }

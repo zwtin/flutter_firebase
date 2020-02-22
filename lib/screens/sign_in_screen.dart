@@ -13,7 +13,22 @@ class SignInScreen extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data == AuthenticationInProgress()) {
           return const Center(
-            child: Text('a'),
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasData &&
+            snapshot.data == AuthenticationFailure()) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text('no user login'),
+              RaisedButton(
+                child: const Text('Button'),
+                color: Colors.orange,
+                textColor: Colors.white,
+                onPressed: () => authenticationBloc.read.add(null),
+              ),
+            ],
           );
         } else {
           return const Center(
