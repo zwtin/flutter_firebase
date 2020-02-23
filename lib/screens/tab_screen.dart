@@ -30,10 +30,10 @@ class TabScreen extends StatelessWidget {
       ),
       controller: _cupertinoTabController,
       tabBuilder: (BuildContext context, int index) {
-        return CupertinoTabView(
-          builder: (context) {
-            switch (index) {
-              case 0:
+        switch (index) {
+          case 0:
+            return CupertinoTabView(
+              builder: (context) {
                 return BlocProvider<EventListBloc>(
                   creator: (_context, _bag) {
                     return EventListBloc(
@@ -42,8 +42,12 @@ class TabScreen extends StatelessWidget {
                   },
                   child: EventListScreen(),
                 );
-                break;
-              case 1:
+              },
+            );
+            break;
+          case 1:
+            return CupertinoTabView(
+              builder: (context) {
                 return BlocProvider<AuthenticationBloc>(
                   creator: (_context, _bag) {
                     return AuthenticationBloc(
@@ -52,11 +56,11 @@ class TabScreen extends StatelessWidget {
                   },
                   child: SignInScreen(),
                 );
-                break;
-            }
-            return const Scaffold();
-          },
-        );
+              },
+            );
+            break;
+        }
+        return const CupertinoTabView();
       },
     );
   }
