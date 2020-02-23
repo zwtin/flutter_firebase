@@ -1,61 +1,35 @@
-import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
-import 'package:flutter_firebase/blocs/sign_in/sign_in_event.dart';
-import 'package:flutter_firebase/blocs/sign_in/sign_in_repository.dart';
-import 'package:flutter_firebase/blocs/sign_in/sing_in_state.dart';
+import 'dart:async';
+import 'package:bloc_provider/bloc_provider.dart';
+import 'package:flutter_firebase/blocs/authentication/authentication_state.dart';
+import 'package:flutter_firebase/blocs/event_list/event_list_repository.dart';
 
-class SignInBloc extends Bloc<SignInEvent, SignInState> {
-  final SignInRepository _signInRepository;
+class SignInBloc implements Bloc {
+  SignInBloc(this._eventListRepository) : assert(_eventListRepository != null) {
+    _readController.stream.listen((_) => _start());
+  }
 
-  SignInBloc({@required SignInRepository signInRepository})
-      : assert(signInRepository != null),
-        _signInRepository = signInRepository;
+  final EventListRepository _eventListRepository;
+
+  final _stateController = StreamController<AuthenticationState>();
+  final _readController = StreamController<void>();
+
+  // input
+  StreamSink<void> get read => _readController.sink;
+  // output
+  Stream<AuthenticationState> get onAdd => _stateController.stream;
+
+  void _start() {
+    _stateController.sink.add(AuthenticationInProgress());
+    Timer(const Duration(seconds: 3), _onTimer);
+  }
+
+  void _onTimer() {
+    _stateController.sink.add(AuthenticationFailure());
+  }
 
   @override
-  SignInState get initialState => SignInEmpty();
-
-  @override
-  Stream<SignInState> mapEventToState(SignInEvent event) async* {
-    if (event is SignInWithEmailAndPasswordOnPressed) {
-      yield* _mapSignInWithEmailAndPasswordOnPressed(
-          event.email, event.password);
-    }
-    if (event is SignInWithGoogleOnPressed) {
-      yield* _mapSignInWithGoogleOnPressed();
-    }
-    if (event is SignInAnonymouslyOnPressed) {
-      yield* _mapSignInAnonymouslyOnPressed();
-    }
-  }
-
-  Stream<SignInState> _mapSignInWithEmailAndPasswordOnPressed(
-      String email, String password) async* {
-    yield SignInLoading();
-    try {
-      await _signInRepository.signInWithEmailAndPassword(email, password);
-      yield SignInSuccess();
-    } catch (_) {
-      yield SignInFailure();
-    }
-  }
-
-  Stream<SignInState> _mapSignInWithGoogleOnPressed() async* {
-    yield SignInLoading();
-    try {
-      await _signInRepository.signInWithGoogle();
-      yield SignInSuccess();
-    } catch (_) {
-      yield SignInFailure();
-    }
-  }
-
-  Stream<SignInState> _mapSignInAnonymouslyOnPressed() async* {
-    yield SignInLoading();
-    try {
-      await _signInRepository.signInAnonymously();
-      yield SignInSuccess();
-    } catch (_) {
-      yield SignInFailure();
-    }
+  Future<void> dispose() async {
+    await _stateController.close();
+    await _readController.close();
   }
 }

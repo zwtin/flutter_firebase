@@ -28,26 +28,6 @@ class EventListBloc implements Bloc {
     _stateController.sink.add(EventListEmpty());
   }
 
-  /*
-  @override
-  EventListState get initialState => EventListEmpty();
-
-  @override
-  Stream<EventListState> mapEventToState(EventListEvent event) async* {
-    if (event is EventListLoad) {
-      yield* _mapEventListLoadToState();
-    }
-  }
-
-  Stream<EventListState> _mapEventListLoadToState() async* {
-    yield EventListInProgress();
-    try {
-      yield EventListSuccess(eventList: _eventListRepository.fetch());
-    } on Exception catch (e) {
-      yield EventListFailure(exception: e);
-    }
-  }
-  */
   @override
   Future<void> dispose() async {
     await _stateController.close();
