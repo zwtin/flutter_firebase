@@ -3,13 +3,13 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_firebase/blocs/sign_in/sign_in_repository.dart';
 
 class FirebaseSignInRepository extends SignInRepository {
-  final FirebaseAuth _firebaseAuth;
-  final GoogleSignIn _googleSignIn;
-
   FirebaseSignInRepository(
       {FirebaseAuth firebaseAuth, GoogleSignIn googleSignIn})
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         _googleSignIn = googleSignIn ?? GoogleSignIn();
+
+  final FirebaseAuth _firebaseAuth;
+  final GoogleSignIn _googleSignIn;
 
   @override
   Future<void> signInWithEmailAndPassword(String email, String password) async {

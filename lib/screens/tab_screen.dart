@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/authentication/authentication_bloc.dart';
+import 'package:flutter_firebase/blocs/event_list/event_list_bloc.dart';
 import 'package:flutter_firebase/repositories/firebase_authentication_repository.dart';
+import 'package:flutter_firebase/repositories/firestore_event_list_repository.dart';
+import 'package:flutter_firebase/screens/event_list_screen.dart';
 import 'package:flutter_firebase/screens/sign_in_screen.dart';
 
 class TabScreen extends StatelessWidget {
@@ -31,23 +34,25 @@ class TabScreen extends StatelessWidget {
           builder: (context) {
             switch (index) {
               case 0:
-                return Center(
-                  child: CupertinoButton(
-                    child: const Text('Go to first tab'),
-                    onPressed: () {
-                      _cupertinoTabController.index = 1;
-                    },
-                  ),
+                return BlocProvider<EventListBloc>(
+                  creator: (_context, _bag) {
+                    return EventListBloc(
+                      FirestoreEventListRepository(),
+                    );
+                  },
+                  child: EventListScreen(),
                 );
                 break;
               case 1:
                 return BlocProvider<AuthenticationBloc>(
                   creator: (_context, _bag) {
                     return AuthenticationBloc(
-                        FirebaseAuthenticationRepository());
+                      FirebaseAuthenticationRepository(),
+                    );
                   },
                   child: SignInScreen(),
                 );
+                break;
             }
             return const Scaffold();
           },

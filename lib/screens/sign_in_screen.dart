@@ -11,7 +11,7 @@ class SignInScreen extends StatelessWidget {
     return StreamBuilder<AuthenticationState>(
       stream: authenticationBloc.onAdd,
       builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data == AuthenticationInProgress()) {
+        if (snapshot.hasData && snapshot.data is AuthenticationInProgress) {
           return Scaffold(
             appBar: AppBar(
               leading: Icon(
@@ -51,8 +51,7 @@ class SignInScreen extends StatelessWidget {
               child: CircularProgressIndicator(),
             ),
           );
-        } else if (snapshot.hasData &&
-            snapshot.data == AuthenticationFailure()) {
+        } else if (snapshot.hasData && snapshot.data is AuthenticationFailure) {
           return Scaffold(
             appBar: AppBar(
               leading: Icon(

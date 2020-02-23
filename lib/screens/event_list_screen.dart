@@ -1,26 +1,253 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_firebase/blocs/authentication/authentication_bloc.dart';
-import 'package:flutter_firebase/blocs/event_list/event_list_bloc.dart';
-import 'package:flutter_firebase/blocs/event_list/event_list_event.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_state.dart';
-import 'package:flutter_firebase/models/event.dart';
-import 'package:flutter_firebase/repositories/firestore_event_list_repository.dart';
-import 'package:flutter_firebase/blocs/authentication/authentication_event.dart';
+import 'package:flutter_firebase/blocs/event_list//event_list_bloc.dart';
+import 'package:bloc_provider/bloc_provider.dart';
 
 class EventListScreen extends StatelessWidget {
-  final AuthenticationBloc authenticationBloc;
-
-  EventListScreen({@required this.authenticationBloc})
-      : assert(authenticationBloc != null);
-
   @override
   Widget build(BuildContext context) {
-    final eventListBloc =
-        EventListBloc(eventListRepository: FirestoreEventListRepository());
+    final eventListBloc = BlocProvider.of<EventListBloc>(context);
 
-    eventListBloc.add(EventListLoad());
+    return Scaffold(
+      appBar: AppBar(
+        leading: Icon(
+          Icons.menu,
+          color: Colors.white,
+        ),
+        title: Text(
+          'AppBar',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.orange,
+        centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.face,
+              color: Colors.white,
+            ),
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.email,
+              color: Colors.white,
+            ),
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.favorite,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+      body: ListView.builder(
+        itemBuilder: (BuildContext context, int index) {
+          return Text(index.toString());
+        },
+      ),
+    );
 
+    /*
+
+    final eventListBloc = BlocProvider.of<EventListBloc>(context);
+
+    return StreamBuilder<EventListState>(
+      stream: eventListBloc.onAdd,
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data is EventListInProgress) {
+          return Scaffold(
+            appBar: AppBar(
+              leading: Icon(
+                Icons.menu,
+                color: Colors.white,
+              ),
+              title: Text(
+                'AppBar',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              backgroundColor: Colors.orange,
+              centerTitle: true,
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    Icons.face,
+                    color: Colors.white,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.email,
+                    color: Colors.white,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.favorite,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            body: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else if (snapshot.hasData && snapshot.data is EventListSuccess) {
+          return Scaffold(
+            appBar: AppBar(
+              leading: Icon(
+                Icons.menu,
+                color: Colors.white,
+              ),
+              title: Text(
+                'AppBar',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              backgroundColor: Colors.orange,
+              centerTitle: true,
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    Icons.face,
+                    color: Colors.white,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.email,
+                    color: Colors.white,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.favorite,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            body: ListView.builder(
+              itemBuilder: (BuildContext context, int index) {
+                return Text(index.toString());
+              },
+            ),
+          );
+        } else if (snapshot.hasData && snapshot.data is EventListFailure) {
+          return Scaffold(
+            appBar: AppBar(
+              leading: Icon(
+                Icons.menu,
+                color: Colors.white,
+              ),
+              title: Text(
+                'AppBar',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              backgroundColor: Colors.orange,
+              centerTitle: true,
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    Icons.face,
+                    color: Colors.white,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.email,
+                    color: Colors.white,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.favorite,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            body: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const Text('no user login'),
+                  RaisedButton(
+                    child: const Text('Button'),
+                    color: Colors.orange,
+                    textColor: Colors.white,
+                    onPressed: () => eventListBloc.read.add(null),
+                  ),
+                ],
+              ),
+            ),
+          );
+        } else {
+          return Scaffold(
+            appBar: AppBar(
+              leading: Icon(
+                Icons.menu,
+                color: Colors.white,
+              ),
+              title: Text(
+                'AppBar',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              backgroundColor: Colors.orange,
+              centerTitle: true,
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    Icons.face,
+                    color: Colors.white,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.email,
+                    color: Colors.white,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.favorite,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            body: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const Text('no user login'),
+                  RaisedButton(
+                    child: const Text('Button'),
+                    color: Colors.orange,
+                    textColor: Colors.white,
+                    onPressed: () => eventListBloc.read.add(null),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+      },
+    );
+     */
+    /*
     return Scaffold(
       appBar: AppBar(
         title: Text("Events"),
@@ -111,5 +338,6 @@ class EventListScreen extends StatelessWidget {
         ),
       ),
     );
+    */
   }
 }
