@@ -8,29 +8,20 @@ import 'package:firebase_admob/firebase_admob.dart';
 class SignInScreen extends StatelessWidget {
   SignInScreen() {
     if (Platform.isAndroid) {
-      myBanner = BannerAd(
-        adUnitId: 'ca-app-pub-6316701082348182~6132425552',
-        size: AdSize.smartBanner,
-        targetingInfo: const MobileAdTargetingInfo(
-          keywords: <String>['flutterio', 'beautiful apps'],
-          contentUrl: 'https://flutter.io',
-          childDirected: false,
-        ),
-      );
+      FirebaseAdMob.instance
+          .initialize(appId: 'ca-app-pub-3940256099942544~3347511713');
     } else if (Platform.isIOS) {
-      myBanner = BannerAd(
-        adUnitId: 'ca-app-pub-6316701082348182~4791423725',
-        size: AdSize.smartBanner,
-        targetingInfo: const MobileAdTargetingInfo(
-          keywords: <String>['flutterio', 'beautiful apps'],
-          contentUrl: 'https://flutter.io',
-          childDirected: false,
-        ),
-      );
+      FirebaseAdMob.instance
+          .initialize(appId: 'ca-app-pub-3940256099942544~1458002511');
     }
+    myBanner
+      ..load()
+      ..show(
+        anchorOffset: 60.0,
+        horizontalCenterOffset: 10.0,
+        anchorType: AnchorType.bottom,
+      );
   }
-
-  BannerAd myBanner;
 
   @override
   Widget build(BuildContext context) {
@@ -194,3 +185,23 @@ class SignInScreen extends StatelessWidget {
     );
   }
 }
+
+// 広告ターゲット
+MobileAdTargetingInfo targetingInfo = const MobileAdTargetingInfo(
+  keywords: <String>['flutterio', 'beautiful apps'],
+  contentUrl: 'https://flutter.io',
+  childDirected: false,
+  testDevices: <String>[], // Android emulators are considered test devices
+);
+
+BannerAd myBanner = BannerAd(
+  // テスト用のIDを使用
+  // リリース時にはIDを置き換える必要あり
+  adUnitId: BannerAd.testAdUnitId,
+  size: AdSize.smartBanner,
+  targetingInfo: targetingInfo,
+  listener: (MobileAdEvent event) {
+    // 広告の読み込みが完了
+    print('BannerAd event is $event');
+  },
+);
