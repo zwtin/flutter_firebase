@@ -6,7 +6,7 @@ import 'package:flutter_firebase/blocs/event_list/event_list_state.dart';
 class EventListBloc implements Bloc {
   EventListBloc(this._eventListRepository)
       : assert(_eventListRepository != null) {
-    _readController.stream.listen((_) => _start());
+    _start();
   }
 
   final EventListRepository _eventListRepository;
@@ -20,12 +20,8 @@ class EventListBloc implements Bloc {
   Stream<EventListState> get onAdd => _stateController.stream;
 
   void _start() {
-    _stateController.sink.add(EventListInProgress());
-    Timer(const Duration(seconds: 3), _onTimer);
-  }
-
-  void _onTimer() {
-    _stateController.sink.add(EventListEmpty());
+    _stateController.sink
+        .add(EventListSuccess(eventList: _eventListRepository.fetch()));
   }
 
   @override

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_state.dart';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_bloc.dart';
+import 'package:flutter_firebase/models/event.dart';
 
 class EventListScreen extends StatelessWidget {
   @override
@@ -102,6 +104,7 @@ class EventListScreen extends StatelessWidget {
                   ),
                 );
               },
+              itemCount: 30,
             ),
           );
         } else if (snapshot.hasData && snapshot.data is EventListFailure) {
@@ -192,20 +195,46 @@ class EventListScreen extends StatelessWidget {
                 ),
               ],
             ),
-            body: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const Text('no user login'),
-                  RaisedButton(
-                    child: const Text('Button'),
-                    color: Colors.orange,
-                    textColor: Colors.white,
-                    onPressed: () => eventListBloc.read.add(null),
-                  ),
-                ],
-              ),
+            body: StreamBuilder(
+              stream: (snapshot.data as EventListSuccess).eventList,
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<Event>> snapshot) {
+                return ListView.builder(
+                  itemBuilder: (BuildContext context, int index) {
+                    final event = snapshot.data[index];
+                    return Card(
+                      child: InkWell(
+                        onTap: () => eventListBloc.read.add(null),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: <Widget>[
+                            ListTile(
+                              title: Text(
+                                event.title,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Text(event.date.toIso8601String()),
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Image.network(
+                                    event.imageUrl,
+                                    fit: BoxFit.none,
+                                    height: 128,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Text(event.description),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  itemCount: snapshot.data.length,
+                );
+              },
             ),
           );
         } else {
@@ -244,20 +273,8 @@ class EventListScreen extends StatelessWidget {
                 ),
               ],
             ),
-            body: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const Text('no user login'),
-                  RaisedButton(
-                    child: const Text('Button'),
-                    color: Colors.orange,
-                    textColor: Colors.white,
-                    onPressed: () => eventListBloc.read.add(null),
-                  ),
-                ],
-              ),
+            body: const Center(
+              child: CircularProgressIndicator(),
             ),
           );
         }

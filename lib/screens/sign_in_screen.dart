@@ -1,9 +1,37 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/authentication/authentication_state.dart';
 import 'package:flutter_firebase/blocs/authentication/authentication_bloc.dart';
 import 'package:bloc_provider/bloc_provider.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 
 class SignInScreen extends StatelessWidget {
+  SignInScreen() {
+    if (Platform.isAndroid) {
+      myBanner = BannerAd(
+        adUnitId: 'ca-app-pub-6316701082348182~6132425552',
+        size: AdSize.smartBanner,
+        targetingInfo: const MobileAdTargetingInfo(
+          keywords: <String>['flutterio', 'beautiful apps'],
+          contentUrl: 'https://flutter.io',
+          childDirected: false,
+        ),
+      );
+    } else if (Platform.isIOS) {
+      myBanner = BannerAd(
+        adUnitId: 'ca-app-pub-6316701082348182~4791423725',
+        size: AdSize.smartBanner,
+        targetingInfo: const MobileAdTargetingInfo(
+          keywords: <String>['flutterio', 'beautiful apps'],
+          contentUrl: 'https://flutter.io',
+          childDirected: false,
+        ),
+      );
+    }
+  }
+
+  BannerAd myBanner;
+
   @override
   Widget build(BuildContext context) {
     final authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
@@ -104,6 +132,12 @@ class SignInScreen extends StatelessWidget {
             ),
           );
         } else {
+          myBanner
+            ..load()
+            ..show(
+              anchorOffset: 60.0,
+              anchorType: AnchorType.bottom,
+            );
           return Scaffold(
             appBar: AppBar(
               leading: Icon(
