@@ -5,13 +5,14 @@ import 'package:meta/meta.dart';
 abstract class SignInEvent extends Equatable {}
 
 class SignInWithEmailAndPasswordOnPressed extends SignInEvent {
+  SignInWithEmailAndPasswordOnPressed({
+    @required this.email,
+    @required this.password,
+  })  : assert(email != null),
+        assert(password != null);
+
   final String email;
   final String password;
-
-  SignInWithEmailAndPasswordOnPressed(
-      {@required this.email, @required this.password})
-      : assert(email != null),
-        assert(password != null);
 
   @override
   List<Object> get props => [email, password];

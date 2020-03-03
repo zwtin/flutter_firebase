@@ -2,14 +2,14 @@ import 'package:meta/meta.dart';
 
 @immutable
 class CurrentUser {
-  const CurrentUser(
-      {@required this.id,
-      @required this.name,
-      @required this.photoUrl,
-      @required this.isAnonymous,
-      @required this.createdAt,
-      @required this.updatedAt})
-      : assert(id != null),
+  const CurrentUser({
+    @required this.id,
+    @required this.name,
+    @required this.photoUrl,
+    @required this.isAnonymous,
+    @required this.createdAt,
+    @required this.updatedAt,
+  })  : assert(id != null),
         assert(name != null),
         assert(photoUrl != null),
         assert(isAnonymous != null),
