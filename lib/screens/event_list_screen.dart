@@ -4,6 +4,7 @@ import 'package:flutter_firebase/blocs/event_list/event_list_state.dart';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_bloc.dart';
 import 'package:flutter_firebase/models/event.dart';
+import 'package:flutter_firebase/screens/event_detail_screen.dart';
 
 class EventListScreen extends StatelessWidget {
   @override
@@ -204,7 +205,13 @@ class EventListScreen extends StatelessWidget {
                     final event = snapshot.data[index];
                     return Card(
                       child: InkWell(
-                        onTap: () => eventListBloc.read.add(null),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute<EventDetailScreen>(
+                              builder: (context) => EventDetailScreen(),
+                            ),
+                          );
+                        },
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           children: <Widget>[
@@ -217,16 +224,14 @@ class EventListScreen extends StatelessWidget {
                             ),
                             Row(
                               children: <Widget>[
-                                Expanded(
+                                Flexible(
                                   child: Image.network(
                                     event.imageUrl,
                                     fit: BoxFit.none,
-                                    height: 128,
                                   ),
                                 ),
                               ],
                             ),
-                            Text(event.description),
                           ],
                         ),
                       ),
