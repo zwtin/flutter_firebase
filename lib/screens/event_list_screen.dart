@@ -241,6 +241,23 @@ class EventListScreen extends StatelessWidget {
                 );
               },
             ),
+            floatingActionButton: FloatingActionButton(
+              child: IconButton(
+                icon: Icon(
+                  Icons.add,
+                  color: Colors.white70,
+                ),
+              ),
+              backgroundColor: Colors.blue,
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).push(
+                  MaterialPageRoute<EventDetailScreen>(
+                    builder: (context) => EventDetailScreen(),
+                    fullscreenDialog: true,
+                  ),
+                );
+              },
+            ),
           );
         } else {
           return Scaffold(

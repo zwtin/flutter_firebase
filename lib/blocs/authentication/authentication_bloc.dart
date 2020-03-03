@@ -27,6 +27,11 @@ class AuthenticationBloc implements Bloc {
     _stateController.sink.add(AuthenticationFailure());
   }
 
+  Future<bool> isSignIn() async {
+    final aaa = await _authRepository.isSignedIn();
+    return aaa;
+  }
+
   @override
   Future<void> dispose() async {
     await _stateController.close();

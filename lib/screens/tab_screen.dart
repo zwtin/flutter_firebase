@@ -18,14 +18,14 @@ class TabScreen extends StatelessWidget {
       tabBar: CupertinoTabBar(
         items: [
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.home),
+            icon: Icon(Icons.home),
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.person),
+            icon: Icon(Icons.person),
           ),
         ],
         activeColor: Colors.blue,
-        inactiveColor: Colors.black,
+        inactiveColor: Colors.white,
         backgroundColor: Colors.orange,
       ),
       controller: _cupertinoTabController,

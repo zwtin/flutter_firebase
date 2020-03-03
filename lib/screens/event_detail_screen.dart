@@ -5,9 +5,14 @@ class EventDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(
-          Icons.menu,
-          color: Colors.white,
+        leading: IconButton(
+          icon: Icon(
+            Icons.chevron_left,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
         title: Text(
           'AppBar',
@@ -17,26 +22,6 @@ class EventDetailScreen extends StatelessWidget {
         ),
         backgroundColor: Colors.orange,
         centerTitle: true,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.face,
-              color: Colors.white,
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.email,
-              color: Colors.white,
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.favorite,
-              color: Colors.white,
-            ),
-          ),
-        ],
       ),
       body: Center(
         child: Column(
