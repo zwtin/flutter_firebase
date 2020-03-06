@@ -65,6 +65,11 @@ jobs:
     - name: install flutter library
       run: flutter pub get
 
+    - name: make icon and splash
+      run: |
+        flutter pub run flutter_launcher_icons:main
+        flutter pub pub run flutter_native_splash:create
+
     - name: flutter build ios
       run: flutter build ios --release --no-codesign
 
