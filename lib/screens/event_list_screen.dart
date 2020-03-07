@@ -5,6 +5,7 @@ import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_bloc.dart';
 import 'package:flutter_firebase/models/event.dart';
 import 'package:flutter_firebase/screens/event_detail_screen.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class EventListScreen extends StatelessWidget {
   @override
@@ -200,9 +201,15 @@ class EventListScreen extends StatelessWidget {
               stream: (snapshot.data as EventListSuccess).eventList,
               builder:
                   (BuildContext context, AsyncSnapshot<List<Event>> snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
                 return ListView.builder(
                   itemBuilder: (BuildContext context, int index) {
                     final event = snapshot.data[index];
+
                     return Card(
                       child: InkWell(
                         onTap: () {
@@ -224,11 +231,16 @@ class EventListScreen extends StatelessWidget {
                             ),
                             Row(
                               children: <Widget>[
-                                Flexible(
-                                  child: Image.network(
-                                    event.imageUrl,
-                                    fit: BoxFit.none,
-                                  ),
+                                FutureBuilder<dynamic>(
+                                  future: FirebaseStorage.instance
+                                      .ref()
+                                      .child(event.imageUrl)
+                                      .getDownloadURL(),
+                                  builder: (context, snap) {
+                                    return Image.network(
+                                      snap.data.toString(),
+                                    );
+                                  },
                                 ),
                               ],
                             ),
