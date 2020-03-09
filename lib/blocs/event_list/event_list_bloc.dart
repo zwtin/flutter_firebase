@@ -2,14 +2,17 @@ import 'dart:async';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_repository.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_state.dart';
+import 'package:flutter_firebase/blocs/storage/storage_repository.dart';
 
 class EventListBloc implements Bloc {
-  EventListBloc(this._eventListRepository)
-      : assert(_eventListRepository != null) {
+  EventListBloc(this._eventListRepository, this._storageRepository)
+      : assert(_eventListRepository != null),
+        assert(_storageRepository != null) {
     _start();
   }
 
   final EventListRepository _eventListRepository;
+  final StorageRepository _storageRepository;
 
   final _stateController = StreamController<EventListState>();
   final _readController = StreamController<void>();

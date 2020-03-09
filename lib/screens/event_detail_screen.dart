@@ -1,6 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase/models/event.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class EventDetailScreen extends StatelessWidget {
+  EventDetailScreen(this._event) : assert(_event != null);
+  final Event _event;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,6 +41,20 @@ class EventDetailScreen extends StatelessWidget {
               textColor: Colors.white,
               onPressed: () {
                 Navigator.of(context).pop();
+              },
+            ),
+            FutureBuilder<dynamic>(
+              future: FirebaseStorage.instance
+                  .ref()
+                  .child(_event.imageUrl)
+                  .getDownloadURL(),
+              builder: (context, snap) {
+                return CachedNetworkImage(
+                  placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  imageUrl: snap.data.toString(),
+                );
               },
             ),
           ],

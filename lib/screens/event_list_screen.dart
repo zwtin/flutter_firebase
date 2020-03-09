@@ -6,6 +6,10 @@ import 'package:flutter_firebase/blocs/event_list/event_list_bloc.dart';
 import 'package:flutter_firebase/models/event.dart';
 import 'package:flutter_firebase/screens/event_detail_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_firebase/blocs/authentication/authentication_bloc.dart';
+import 'package:flutter_firebase/repositories/firebase_authentication_repository.dart';
+import 'package:flutter_firebase/screens/sign_in_screen.dart';
 
 class EventListScreen extends StatelessWidget {
   @override
@@ -215,7 +219,7 @@ class EventListScreen extends StatelessWidget {
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute<EventDetailScreen>(
-                              builder: (context) => EventDetailScreen(),
+                              builder: (context) => EventDetailScreen(event),
                             ),
                           );
                         },
@@ -231,16 +235,24 @@ class EventListScreen extends StatelessWidget {
                             ),
                             Row(
                               children: <Widget>[
-                                FutureBuilder<dynamic>(
-                                  future: FirebaseStorage.instance
-                                      .ref()
-                                      .child(event.imageUrl)
-                                      .getDownloadURL(),
-                                  builder: (context, snap) {
-                                    return Image.network(
-                                      snap.data.toString(),
-                                    );
-                                  },
+                                SizedBox(
+                                  width: 128,
+                                  height: 128,
+                                  child: FutureBuilder<dynamic>(
+                                    future: FirebaseStorage.instance
+                                        .ref()
+                                        .child(event.imageUrl)
+                                        .getDownloadURL(),
+                                    builder: (context, snap) {
+                                      return CachedNetworkImage(
+                                        placeholder: (context, url) =>
+                                            const Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                        imageUrl: snap.data.toString(),
+                                      );
+                                    },
+                                  ),
                                 ),
                               ],
                             ),
@@ -264,7 +276,14 @@ class EventListScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context, rootNavigator: true).push(
                   MaterialPageRoute<EventDetailScreen>(
-                    builder: (context) => EventDetailScreen(),
+                    builder: (context) => BlocProvider<AuthenticationBloc>(
+                      creator: (_context, _bag) {
+                        return AuthenticationBloc(
+                          FirebaseAuthenticationRepository(),
+                        );
+                      },
+                      child: SignInScreen(),
+                    ),
                     fullscreenDialog: true,
                   ),
                 );
