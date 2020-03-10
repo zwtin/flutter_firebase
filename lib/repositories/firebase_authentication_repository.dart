@@ -16,7 +16,7 @@ class FirebaseAuthenticationRepository extends AuthenticationRepository {
   Future<CurrentUser> getCurrentUser() async {
     final currentUser = await _firebaseAuth.currentUser();
     return CurrentUser(
-        id: currentUser.uid,
+        id: currentUser.uid ?? '',
         name: currentUser.displayName ?? '',
         photoUrl: currentUser.photoUrl ?? '',
         isAnonymous: currentUser.isAnonymous,
@@ -33,5 +33,28 @@ class FirebaseAuthenticationRepository extends AuthenticationRepository {
   @override
   Future<void> signOut() {
     return Future.wait([_firebaseAuth.signOut(), _googleSignIn.signOut()]);
+  }
+
+  @override
+  Future<void> signInWithEmailAndPassword(String email, String password) async {
+    await _firebaseAuth.signInWithEmailAndPassword(
+        email: email, password: password);
+  }
+
+  @override
+  Future<void> signInWithGoogle() async {
+    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    await _firebaseAuth.signInWithCredential(credential);
+  }
+
+  @override
+  Future<void> signInAnonymously() async {
+    await _firebaseAuth.signInAnonymously();
   }
 }

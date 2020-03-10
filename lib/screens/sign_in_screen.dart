@@ -9,95 +9,99 @@ class SignInScreen extends StatelessWidget {
     final authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
 
     return StreamBuilder<AuthenticationState>(
-      stream: authenticationBloc.onAdd,
+      stream: authenticationBloc.screenState,
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data is AuthenticationInProgress) {
           return Scaffold(
             appBar: AppBar(
-              leading: Icon(
-                Icons.menu,
-                color: Colors.white,
-              ),
               title: Text(
-                'AppBar',
+                'マイページ',
                 style: TextStyle(
                   color: Colors.white,
                 ),
               ),
               backgroundColor: Colors.orange,
-              centerTitle: true,
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.face,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.email,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.favorite,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
             ),
             body: const Center(
               child: CircularProgressIndicator(),
             ),
           );
         } else if (snapshot.hasData && snapshot.data is AuthenticationFailure) {
+          final _mailController = TextEditingController();
+          final _passwordController = TextEditingController();
           return Scaffold(
             appBar: AppBar(
-              leading: Icon(
-                Icons.menu,
-                color: Colors.white,
-              ),
               title: Text(
-                'AppBar',
+                'マイページ',
                 style: TextStyle(
                   color: Colors.white,
                 ),
               ),
               backgroundColor: Colors.orange,
-              centerTitle: true,
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.face,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.email,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.favorite,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
             ),
             body: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  const Text('no user login'),
+                  const Text('メール'),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: TextField(
+                      controller: _mailController,
+                    ),
+                  ),
+                  const Text('パスワード'),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: TextField(
+                      controller: _passwordController,
+                    ),
+                  ),
                   RaisedButton(
-                    child: const Text('Button'),
+                    child: const Text('ログイン'),
                     color: Colors.orange,
                     textColor: Colors.white,
-                    onPressed: () => authenticationBloc.read.add(null),
+                    onPressed: () {
+                      if (_mailController.text.isEmpty) {
+                        return;
+                      }
+                      if (_passwordController.text.isEmpty) {
+                        return;
+                      }
+                      authenticationBloc.loginWithMailAndPassword(
+                        _mailController.text,
+                        _passwordController.text,
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        } else if (snapshot.hasData && snapshot.data is AuthenticationSuccess) {
+          final user = (snapshot.data as AuthenticationSuccess).currentUser;
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(
+                'マイページ',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              backgroundColor: Colors.orange,
+            ),
+            body: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(user.id),
+                  RaisedButton(
+                    child: const Text('ログアウト'),
+                    color: Colors.orange,
+                    textColor: Colors.white,
+                    onPressed: authenticationBloc.signOut,
                   ),
                 ],
               ),
@@ -106,53 +110,16 @@ class SignInScreen extends StatelessWidget {
         } else {
           return Scaffold(
             appBar: AppBar(
-              leading: Icon(
-                Icons.menu,
-                color: Colors.white,
-              ),
               title: Text(
-                'AppBar',
+                'マイページ',
                 style: TextStyle(
                   color: Colors.white,
                 ),
               ),
               backgroundColor: Colors.orange,
-              centerTitle: true,
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.face,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.email,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.favorite,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
             ),
-            body: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const Text('no user login'),
-                  RaisedButton(
-                    child: const Text('Button'),
-                    color: Colors.orange,
-                    textColor: Colors.white,
-                    onPressed: () => authenticationBloc.read.add(null),
-                  ),
-                ],
-              ),
+            body: const Center(
+              child: CircularProgressIndicator(),
             ),
           );
         }

@@ -5,36 +5,65 @@ import 'package:flutter_firebase/blocs/authentication/authentication_repository.
 
 class AuthenticationBloc implements Bloc {
   AuthenticationBloc(this._authRepository) : assert(_authRepository != null) {
-    _readController.stream.listen((_) => _start());
+    checkCurrentUser();
   }
 
   final AuthenticationRepository _authRepository;
 
   final _stateController = StreamController<AuthenticationState>();
-  final _readController = StreamController<void>();
 
-  // input
-  StreamSink<void> get read => _readController.sink;
   // output
-  Stream<AuthenticationState> get onAdd => _stateController.stream;
+  Stream<AuthenticationState> get screenState => _stateController.stream;
 
-  void _start() {
+  Future<void> checkCurrentUser() async {
     _stateController.sink.add(AuthenticationInProgress());
-    Timer(const Duration(seconds: 3), _onTimer);
+    final isSignedIn = await _authRepository.isSignedIn();
+    if (isSignedIn) {
+      final currentUser = await _authRepository.getCurrentUser();
+      if (currentUser == null) {
+        _stateController.sink.add(AuthenticationFailure());
+      } else {
+        _stateController.sink.add(AuthenticationSuccess(currentUser));
+      }
+    } else {
+      _stateController.sink.add(AuthenticationFailure());
+    }
   }
 
-  void _onTimer() {
-    _stateController.sink.add(AuthenticationFailure());
+  Future<void> loginWithMailAndPassword(String email, String password) async {
+    _stateController.sink.add(AuthenticationInProgress());
+    await _authRepository.signInWithEmailAndPassword(email, password);
+    final isSignedIn = await _authRepository.isSignedIn();
+    if (isSignedIn) {
+      final currentUser = await _authRepository.getCurrentUser();
+      if (currentUser == null) {
+        _stateController.sink.add(AuthenticationFailure());
+      } else {
+        _stateController.sink.add(AuthenticationSuccess(currentUser));
+      }
+    } else {
+      _stateController.sink.add(AuthenticationFailure());
+    }
   }
 
-  Future<bool> isSignIn() async {
-    final aaa = await _authRepository.isSignedIn();
-    return aaa;
+  Future<void> signOut() async {
+    _stateController.sink.add(AuthenticationInProgress());
+    await _authRepository.signOut();
+    final isSignedIn = await _authRepository.isSignedIn();
+    if (isSignedIn) {
+      final currentUser = await _authRepository.getCurrentUser();
+      if (currentUser == null) {
+        _stateController.sink.add(AuthenticationFailure());
+      } else {
+        _stateController.sink.add(AuthenticationSuccess(currentUser));
+      }
+    } else {
+      _stateController.sink.add(AuthenticationFailure());
+    }
   }
 
   @override
   Future<void> dispose() async {
     await _stateController.close();
-    await _readController.close();
   }
 }
