@@ -22,38 +22,13 @@ class EventListScreen extends StatelessWidget {
         if (snapshot.hasData && snapshot.data is EventListInProgress) {
           return Scaffold(
             appBar: AppBar(
-              leading: Icon(
-                Icons.menu,
-                color: Colors.white,
-              ),
               title: Text(
-                'AppBar',
+                'ホーム',
                 style: TextStyle(
                   color: Colors.white,
                 ),
               ),
               backgroundColor: Colors.orange,
-              centerTitle: true,
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.face,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.email,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.favorite,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
             ),
             body: const Center(
               child: CircularProgressIndicator(),
@@ -62,38 +37,13 @@ class EventListScreen extends StatelessWidget {
         } else if (snapshot.hasData && snapshot.data is EventListEmpty) {
           return Scaffold(
             appBar: AppBar(
-              leading: Icon(
-                Icons.menu,
-                color: Colors.white,
-              ),
               title: Text(
-                'AppBar',
+                'ホーム',
                 style: TextStyle(
                   color: Colors.white,
                 ),
               ),
               backgroundColor: Colors.orange,
-              centerTitle: true,
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.face,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.email,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.favorite,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
             ),
             body: ListView.builder(
               itemBuilder: (BuildContext context, int index) {
@@ -116,38 +66,13 @@ class EventListScreen extends StatelessWidget {
         } else if (snapshot.hasData && snapshot.data is EventListFailure) {
           return Scaffold(
             appBar: AppBar(
-              leading: Icon(
-                Icons.menu,
-                color: Colors.white,
-              ),
               title: Text(
-                'AppBar',
+                'ホーム',
                 style: TextStyle(
                   color: Colors.white,
                 ),
               ),
               backgroundColor: Colors.orange,
-              centerTitle: true,
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.face,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.email,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.favorite,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
             ),
             body: Center(
               child: Column(
@@ -168,38 +93,13 @@ class EventListScreen extends StatelessWidget {
         } else if (snapshot.hasData && snapshot.data is EventListSuccess) {
           return Scaffold(
             appBar: AppBar(
-              leading: Icon(
-                Icons.menu,
-                color: Colors.white,
-              ),
               title: Text(
-                'AppBar',
+                'ホーム',
                 style: TextStyle(
                   color: Colors.white,
                 ),
               ),
               backgroundColor: Colors.orange,
-              centerTitle: true,
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.face,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.email,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.favorite,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
             ),
             body: StreamBuilder(
               stream: (snapshot.data as EventListSuccess).eventList,
@@ -266,11 +166,9 @@ class EventListScreen extends StatelessWidget {
               },
             ),
             floatingActionButton: FloatingActionButton(
-              child: IconButton(
-                icon: Icon(
-                  Icons.add,
-                  color: Colors.white70,
-                ),
+              child: Icon(
+                Icons.add,
+                color: Colors.white70,
               ),
               backgroundColor: Colors.blue,
               onPressed: () {
@@ -293,38 +191,13 @@ class EventListScreen extends StatelessWidget {
         } else {
           return Scaffold(
             appBar: AppBar(
-              leading: Icon(
-                Icons.menu,
-                color: Colors.white,
-              ),
               title: Text(
-                'AppBar',
+                'ホーム',
                 style: TextStyle(
                   color: Colors.white,
                 ),
               ),
               backgroundColor: Colors.orange,
-              centerTitle: true,
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.face,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.email,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.favorite,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
             ),
             body: const Center(
               child: CircularProgressIndicator(),

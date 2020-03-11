@@ -27,8 +27,6 @@ class SignInScreen extends StatelessWidget {
             ),
           );
         } else if (snapshot.hasData && snapshot.data is AuthenticationFailure) {
-          final _mailController = TextEditingController();
-          final _passwordController = TextEditingController();
           return Scaffold(
             appBar: AppBar(
               title: Text(
@@ -44,36 +42,12 @@ class SignInScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  const Text('メール'),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: TextField(
-                      controller: _mailController,
-                    ),
-                  ),
-                  const Text('パスワード'),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: TextField(
-                      controller: _passwordController,
-                    ),
-                  ),
+                  const Text('読み込みに失敗しました'),
                   RaisedButton(
-                    child: const Text('ログイン'),
+                    child: const Text('再読み込み'),
                     color: Colors.orange,
                     textColor: Colors.white,
-                    onPressed: () {
-                      if (_mailController.text.isEmpty) {
-                        return;
-                      }
-                      if (_passwordController.text.isEmpty) {
-                        return;
-                      }
-                      authenticationBloc.loginWithMailAndPassword(
-                        _mailController.text,
-                        _passwordController.text,
-                      );
-                    },
+                    onPressed: authenticationBloc.checkCurrentUser,
                   ),
                 ],
               ),
@@ -81,6 +55,61 @@ class SignInScreen extends StatelessWidget {
           );
         } else if (snapshot.hasData && snapshot.data is AuthenticationSuccess) {
           final user = (snapshot.data as AuthenticationSuccess).currentUser;
+          String _mail;
+          String _password;
+          if (user == null) {
+            return Scaffold(
+              appBar: AppBar(
+                title: Text(
+                  'マイページ',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                backgroundColor: Colors.orange,
+              ),
+              body: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const Text('メール'),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: TextField(
+                        onChanged: (String str) {
+                          _mail = str;
+                        },
+                      ),
+                    ),
+                    const Text('パスワード'),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: TextField(
+                        onChanged: (String str) {
+                          _password = str;
+                        },
+                      ),
+                    ),
+                    RaisedButton(
+                      child: const Text('ログイン'),
+                      color: Colors.orange,
+                      textColor: Colors.white,
+                      onPressed: () {
+                        if (_mail.isEmpty || _password.isEmpty) {
+                          return;
+                        }
+                        authenticationBloc.loginWithMailAndPassword(
+                          _mail,
+                          _password,
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
           return Scaffold(
             appBar: AppBar(
               title: Text(

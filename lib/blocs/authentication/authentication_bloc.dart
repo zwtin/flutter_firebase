@@ -17,47 +17,47 @@ class AuthenticationBloc implements Bloc {
 
   Future<void> checkCurrentUser() async {
     _stateController.sink.add(AuthenticationInProgress());
-    final isSignedIn = await _authRepository.isSignedIn();
-    if (isSignedIn) {
-      final currentUser = await _authRepository.getCurrentUser();
-      if (currentUser == null) {
-        _stateController.sink.add(AuthenticationFailure());
-      } else {
+    try {
+      final isSignedIn = await _authRepository.isSignedIn();
+      if (isSignedIn) {
+        final currentUser = await _authRepository.getCurrentUser();
         _stateController.sink.add(AuthenticationSuccess(currentUser));
+      } else {
+        _stateController.sink.add(AuthenticationSuccess(null));
       }
-    } else {
+    } on Exception catch (error) {
       _stateController.sink.add(AuthenticationFailure());
     }
   }
 
   Future<void> loginWithMailAndPassword(String email, String password) async {
     _stateController.sink.add(AuthenticationInProgress());
-    await _authRepository.signInWithEmailAndPassword(email, password);
-    final isSignedIn = await _authRepository.isSignedIn();
-    if (isSignedIn) {
-      final currentUser = await _authRepository.getCurrentUser();
-      if (currentUser == null) {
-        _stateController.sink.add(AuthenticationFailure());
-      } else {
+    try {
+      await _authRepository.signInWithEmailAndPassword(email, password);
+      final isSignedIn = await _authRepository.isSignedIn();
+      if (isSignedIn) {
+        final currentUser = await _authRepository.getCurrentUser();
         _stateController.sink.add(AuthenticationSuccess(currentUser));
+      } else {
+        _stateController.sink.add(AuthenticationSuccess(null));
       }
-    } else {
+    } on Exception catch (error) {
       _stateController.sink.add(AuthenticationFailure());
     }
   }
 
   Future<void> signOut() async {
     _stateController.sink.add(AuthenticationInProgress());
-    await _authRepository.signOut();
-    final isSignedIn = await _authRepository.isSignedIn();
-    if (isSignedIn) {
-      final currentUser = await _authRepository.getCurrentUser();
-      if (currentUser == null) {
-        _stateController.sink.add(AuthenticationFailure());
-      } else {
+    try {
+      await _authRepository.signOut();
+      final isSignedIn = await _authRepository.isSignedIn();
+      if (isSignedIn) {
+        final currentUser = await _authRepository.getCurrentUser();
         _stateController.sink.add(AuthenticationSuccess(currentUser));
+      } else {
+        _stateController.sink.add(AuthenticationSuccess(null));
       }
-    } else {
+    } on Exception catch (error) {
       _stateController.sink.add(AuthenticationFailure());
     }
   }
