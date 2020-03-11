@@ -55,8 +55,6 @@ class SignInScreen extends StatelessWidget {
           );
         } else if (snapshot.hasData && snapshot.data is AuthenticationSuccess) {
           final user = (snapshot.data as AuthenticationSuccess).currentUser;
-          String _mail;
-          String _password;
           if (user == null) {
             return Scaffold(
               appBar: AppBar(
@@ -78,7 +76,10 @@ class SignInScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       child: TextField(
                         onChanged: (String str) {
-                          _mail = str;
+                          authenticationBloc.inputEmail = str;
+                        },
+                        onSubmitted: (String str) {
+                          authenticationBloc.inputEmail = str;
                         },
                       ),
                     ),
@@ -87,7 +88,10 @@ class SignInScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       child: TextField(
                         onChanged: (String str) {
-                          _password = str;
+                          authenticationBloc.inputPassword = str;
+                        },
+                        onSubmitted: (String str) {
+                          authenticationBloc.inputPassword = str;
                         },
                       ),
                     ),
@@ -95,15 +99,7 @@ class SignInScreen extends StatelessWidget {
                       child: const Text('ログイン'),
                       color: Colors.orange,
                       textColor: Colors.white,
-                      onPressed: () {
-                        if (_mail.isEmpty || _password.isEmpty) {
-                          return;
-                        }
-                        authenticationBloc.loginWithMailAndPassword(
-                          _mail,
-                          _password,
-                        );
-                      },
+                      onPressed: authenticationBloc.loginWithEmailAndPassword,
                     ),
                   ],
                 ),

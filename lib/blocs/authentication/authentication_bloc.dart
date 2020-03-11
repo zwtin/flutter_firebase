@@ -11,6 +11,8 @@ class AuthenticationBloc implements Bloc {
   final AuthenticationRepository _authRepository;
 
   final _stateController = StreamController<AuthenticationState>();
+  String inputEmail;
+  String inputPassword;
 
   // output
   Stream<AuthenticationState> get screenState => _stateController.stream;
@@ -30,10 +32,16 @@ class AuthenticationBloc implements Bloc {
     }
   }
 
-  Future<void> loginWithMailAndPassword(String email, String password) async {
+  Future<void> loginWithEmailAndPassword() async {
+    if (inputEmail.isEmpty || inputPassword.isEmpty) {
+      return;
+    }
     _stateController.sink.add(AuthenticationInProgress());
     try {
-      await _authRepository.signInWithEmailAndPassword(email, password);
+      await _authRepository.signInWithEmailAndPassword(
+        inputEmail,
+        inputPassword,
+      );
       final isSignedIn = await _authRepository.isSignedIn();
       if (isSignedIn) {
         final currentUser = await _authRepository.getCurrentUser();
@@ -48,6 +56,8 @@ class AuthenticationBloc implements Bloc {
 
   Future<void> signOut() async {
     _stateController.sink.add(AuthenticationInProgress());
+    inputEmail = '';
+    inputPassword = '';
     try {
       await _authRepository.signOut();
       final isSignedIn = await _authRepository.isSignedIn();
