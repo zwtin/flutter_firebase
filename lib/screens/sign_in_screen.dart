@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/authentication/authentication_state.dart';
 import 'package:flutter_firebase/blocs/authentication/authentication_bloc.dart';
 import 'package:bloc_provider/bloc_provider.dart';
+import 'package:flutter_firebase/blocs/edit_profile/edit_profile_bloc.dart';
+import 'package:flutter_firebase/repositories/firestore_event_list_repository.dart';
+import 'package:flutter_firebase/screens/edit_profile_screen.dart';
 
 class SignInScreen extends StatelessWidget {
   @override
@@ -116,26 +119,47 @@ class SignInScreen extends StatelessWidget {
               ),
               actions: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.menu),
+                  icon: Icon(
+                    Icons.menu,
+                    color: Colors.white,
+                  ),
                   onPressed: () => showDialog<int>(
                     context: context,
-                    builder: (context) {
+                    builder: (_context) {
                       return SimpleDialog(
                         title: Text('タイトル'),
                         children: <Widget>[
                           SimpleDialogOption(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text("1項目目"),
+                            onPressed: () {
+                              Navigator.pop(_context);
+                              Navigator.of(context).push(
+                                MaterialPageRoute<EditProfileScreen>(
+                                  builder: (context) {
+                                    return BlocProvider<EditProfileBloc>(
+                                      creator: (__context, _bag) {
+                                        return EditProfileBloc(
+                                          FirestoreEventListRepository(),
+                                        );
+                                      },
+                                      child: EditProfileScreen(),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                            child: Text("プロフィール編集"),
                           ),
                           SimpleDialogOption(
                             onPressed: () {
-                              Navigator.pop(context);
+                              Navigator.pop(_context);
                               authenticationBloc.signOut();
                             },
                             child: Text("ログアウト"),
                           ),
                           SimpleDialogOption(
-                            onPressed: () => Navigator.pop(context),
+                            onPressed: () {
+                              Navigator.pop(_context);
+                            },
                             child: Text("キャンセル"),
                           ),
                         ],
@@ -153,8 +177,7 @@ class SignInScreen extends StatelessWidget {
                 Image.asset('assets/icon/icon.png'),
                 Text('ユーザー名：${user.id}'),
                 Text('一言：${user.updatedAt}'),
-                Container(
-                  height: 300,
+                Flexible(
                   child: DefaultTabController(
                     length: 2,
                     child: Scaffold(

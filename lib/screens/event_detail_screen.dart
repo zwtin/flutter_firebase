@@ -21,7 +21,7 @@ class EventDetailScreen extends StatelessWidget {
           },
         ),
         title: Text(
-          'AppBar',
+          '詳細',
           style: TextStyle(
             color: Colors.white,
           ),
