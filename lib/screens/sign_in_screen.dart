@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/authentication/authentication_state.dart';
 import 'package:flutter_firebase/blocs/authentication/authentication_bloc.dart';
 import 'package:bloc_provider/bloc_provider.dart';
-import 'package:flutter_firebase/blocs/edit_profile/edit_profile_bloc.dart';
-import 'package:flutter_firebase/repositories/firestore_event_list_repository.dart';
-import 'package:flutter_firebase/screens/edit_profile_screen.dart';
+import 'package:flutter_firebase/blocs/profile/profile_bloc.dart';
+import 'package:flutter_firebase/repositories/firestore_user_repository.dart';
+import 'package:flutter_firebase/screens/profile_screen.dart';
 
 class SignInScreen extends StatelessWidget {
   @override
@@ -109,106 +109,14 @@ class SignInScreen extends StatelessWidget {
               ),
             );
           }
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(
-                'マイページ',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.menu,
-                    color: Colors.white,
-                  ),
-                  onPressed: () => showDialog<int>(
-                    context: context,
-                    builder: (_context) {
-                      return SimpleDialog(
-                        title: Text('タイトル'),
-                        children: <Widget>[
-                          SimpleDialogOption(
-                            onPressed: () {
-                              Navigator.pop(_context);
-                              Navigator.of(context).push(
-                                MaterialPageRoute<EditProfileScreen>(
-                                  builder: (context) {
-                                    return BlocProvider<EditProfileBloc>(
-                                      creator: (__context, _bag) {
-                                        return EditProfileBloc(
-                                          FirestoreEventListRepository(),
-                                        );
-                                      },
-                                      child: EditProfileScreen(),
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                            child: Text("プロフィール編集"),
-                          ),
-                          SimpleDialogOption(
-                            onPressed: () {
-                              Navigator.pop(_context);
-                              authenticationBloc.signOut();
-                            },
-                            child: Text("ログアウト"),
-                          ),
-                          SimpleDialogOption(
-                            onPressed: () {
-                              Navigator.pop(_context);
-                            },
-                            child: Text("キャンセル"),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ],
-              backgroundColor: Colors.orange,
-            ),
-            body: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Image.asset('assets/icon/icon.png'),
-                Text('ユーザー名：${user.id}'),
-                Text('一言：${user.updatedAt}'),
-                Flexible(
-                  child: DefaultTabController(
-                    length: 2,
-                    child: Scaffold(
-                      appBar: PreferredSize(
-                        preferredSize: const Size.fromHeight(50),
-                        child: AppBar(
-                          elevation: 0,
-                          backgroundColor: Colors.white10,
-                          bottom: const TabBar(
-                            tabs: <Widget>[
-                              Tab(text: 'LEFT'),
-                              Tab(text: 'RIGHT'),
-                            ],
-                          ),
-                        ),
-                      ),
-                      body: const TabBarView(
-                        children: <Widget>[
-                          Center(
-                            child: Text('LEFT'),
-                          ),
-                          Center(
-                            child: Text('RIGHT'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          return BlocProvider<ProfileBloc>(
+            creator: (_context, _bag) {
+              return ProfileBloc(
+                user.id,
+                FirestoreUserRepository(),
+              );
+            },
+            child: ProfileScreen(authenticationBloc),
           );
         } else {
           return Scaffold(

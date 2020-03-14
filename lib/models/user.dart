@@ -5,15 +5,13 @@ class User {
   const User({
     @required this.id,
     @required this.name,
-    @required this.photoUrl,
-    @required this.createAt,
-    @required this.updateAt,
+    @required this.imageUrl,
+    @required this.introduction,
   })  : assert(id != null),
         assert(name != null);
 
   final String id;
   final String name;
-  final String photoUrl;
-  final String createAt;
-  final String updateAt;
+  final String imageUrl;
+  final String introduction;
 }
