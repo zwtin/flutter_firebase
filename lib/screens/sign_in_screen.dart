@@ -114,22 +114,77 @@ class SignInScreen extends StatelessWidget {
                   color: Colors.white,
                 ),
               ),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.menu),
+                  onPressed: () => showDialog<int>(
+                    context: context,
+                    builder: (context) {
+                      return SimpleDialog(
+                        title: Text('タイトル'),
+                        children: <Widget>[
+                          SimpleDialogOption(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text("1項目目"),
+                          ),
+                          SimpleDialogOption(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              authenticationBloc.signOut();
+                            },
+                            child: Text("ログアウト"),
+                          ),
+                          SimpleDialogOption(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text("キャンセル"),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
               backgroundColor: Colors.orange,
             ),
-            body: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(user.id),
-                  RaisedButton(
-                    child: const Text('ログアウト'),
-                    color: Colors.orange,
-                    textColor: Colors.white,
-                    onPressed: authenticationBloc.signOut,
+            body: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Image.asset('assets/icon/icon.png'),
+                Text('ユーザー名：${user.id}'),
+                Text('一言：${user.updatedAt}'),
+                Container(
+                  height: 300,
+                  child: DefaultTabController(
+                    length: 2,
+                    child: Scaffold(
+                      appBar: PreferredSize(
+                        preferredSize: const Size.fromHeight(50),
+                        child: AppBar(
+                          elevation: 0,
+                          backgroundColor: Colors.white10,
+                          bottom: const TabBar(
+                            tabs: <Widget>[
+                              Tab(text: 'LEFT'),
+                              Tab(text: 'RIGHT'),
+                            ],
+                          ),
+                        ),
+                      ),
+                      body: const TabBarView(
+                        children: <Widget>[
+                          Center(
+                            child: Text('LEFT'),
+                          ),
+                          Center(
+                            child: Text('RIGHT'),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         } else {
