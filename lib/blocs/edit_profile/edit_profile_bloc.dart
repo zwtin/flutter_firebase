@@ -1,36 +1,36 @@
 import 'dart:async';
 import 'package:bloc_provider/bloc_provider.dart';
-import 'package:flutter_firebase/blocs/authentication/authentication_state.dart';
-import 'package:flutter_firebase/blocs/event_list/event_list_repository.dart';
+import 'package:flutter_firebase/blocs/edit_profile/edit_profile_repository.dart';
+import 'package:flutter_firebase/blocs/edit_profile/edit_profile_state.dart';
+import 'package:flutter_firebase/models/user.dart';
 
 class EditProfileBloc implements Bloc {
-  EditProfileBloc(this._eventListRepository)
-      : assert(_eventListRepository != null) {
-    _readController.stream.listen((_) => _start());
-  }
+  EditProfileBloc(this._editProfileRepository)
+      : assert(_editProfileRepository != null);
 
-  final EventListRepository _eventListRepository;
+  final EditProfileRepository _editProfileRepository;
 
-  final _stateController = StreamController<AuthenticationState>();
-  final _readController = StreamController<void>();
+  final _stateController = StreamController<EditProfileState>();
+  String name;
+  String introduction;
 
-  // input
-  StreamSink<void> get read => _readController.sink;
   // output
-  Stream<AuthenticationState> get onAdd => _stateController.stream;
+  Stream<EditProfileState> get screenState => _stateController.stream;
 
-  void _start() {
-    _stateController.sink.add(AuthenticationInProgress());
-    Timer(const Duration(seconds: 3), _onTimer);
-  }
-
-  void _onTimer() {
-    _stateController.sink.add(AuthenticationFailure());
+  Future<void> updateProfile(User user) async {
+    _stateController.sink.add(EditProfileInProgress());
+    await _editProfileRepository.update(
+        user.id,
+        User(
+            id: user.id,
+            name: name,
+            introduction: introduction,
+            imageUrl: 'zwtin.jpg'));
+    _stateController.sink.add(EditProfileSuccess());
   }
 
   @override
   Future<void> dispose() async {
     await _stateController.close();
-    await _readController.close();
   }
 }

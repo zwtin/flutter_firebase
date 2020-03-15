@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/authentication/authentication_bloc.dart';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/profile/profile_bloc.dart';
-import 'package:flutter_firebase/repositories/firestore_event_list_repository.dart';
+import 'package:flutter_firebase/repositories/firestore_user_repository.dart';
 import 'package:flutter_firebase/screens/edit_profile_screen.dart';
 import 'package:flutter_firebase/blocs/profile/profile_state.dart';
 import 'package:flutter_firebase/models/user.dart';
@@ -102,10 +102,11 @@ class ProfileScreen extends StatelessWidget {
                                         return BlocProvider<EditProfileBloc>(
                                           creator: (__context, _bag) {
                                             return EditProfileBloc(
-                                              FirestoreEventListRepository(),
+                                              FirestoreUserRepository(),
                                             );
                                           },
-                                          child: EditProfileScreen(),
+                                          child:
+                                              EditProfileScreen(snapshot.data),
                                         );
                                       },
                                     ),
