@@ -25,7 +25,7 @@ class ProfileScreen extends StatelessWidget {
         if (snapshot.hasData && snapshot.data is ProfileInProgress) {
           return Scaffold(
             appBar: AppBar(
-              title: Text(
+              title: const Text(
                 'マイページ',
                 style: TextStyle(
                   color: Colors.white,
@@ -40,7 +40,7 @@ class ProfileScreen extends StatelessWidget {
         } else if (snapshot.hasData && snapshot.data is ProfileFailure) {
           return Scaffold(
             appBar: AppBar(
-              title: Text(
+              title: const Text(
                 'マイページ',
                 style: TextStyle(
                   color: Colors.white,
@@ -75,7 +75,7 @@ class ProfileScreen extends StatelessWidget {
               }
               return Scaffold(
                 appBar: AppBar(
-                  title: Text(
+                  title: const Text(
                     'マイページ',
                     style: TextStyle(
                       color: Colors.white,
@@ -91,7 +91,7 @@ class ProfileScreen extends StatelessWidget {
                         context: context,
                         builder: (_context) {
                           return SimpleDialog(
-                            title: Text('タイトル'),
+                            title: const Text('タイトル'),
                             children: <Widget>[
                               SimpleDialogOption(
                                 onPressed: () {
@@ -112,20 +112,20 @@ class ProfileScreen extends StatelessWidget {
                                     ),
                                   );
                                 },
-                                child: Text("プロフィール編集"),
+                                child: const Text('プロフィール編集'),
                               ),
                               SimpleDialogOption(
                                 onPressed: () {
                                   Navigator.pop(_context);
                                   authenticationBloc.signOut();
                                 },
-                                child: Text("ログアウト"),
+                                child: const Text('ログアウト'),
                               ),
                               SimpleDialogOption(
                                 onPressed: () {
                                   Navigator.pop(_context);
                                 },
-                                child: Text("キャンセル"),
+                                child: const Text('キャンセル'),
                               ),
                             ],
                           );
@@ -135,61 +135,92 @@ class ProfileScreen extends StatelessWidget {
                   ],
                   backgroundColor: Colors.orange,
                 ),
-                body: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(
-                      width: 128,
-                      height: 128,
-                      child: FutureBuilder<dynamic>(
-                        future: FirebaseStorage.instance
-                            .ref()
-                            .child(snapshot.data.imageUrl)
-                            .getDownloadURL(),
-                        builder: (context, snap) {
-                          return CachedNetworkImage(
-                            placeholder: (context, url) => const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                            imageUrl: snap.data.toString(),
-                          );
-                        },
-                      ),
-                    ),
-                    Text('ユーザー名：${snapshot.data.name}'),
-                    Text('一言：${snapshot.data.introduction}'),
-                    Flexible(
-                      child: DefaultTabController(
-                        length: 2,
-                        child: Scaffold(
-                          appBar: PreferredSize(
-                            preferredSize: const Size.fromHeight(50),
-                            child: AppBar(
-                              elevation: 0,
-                              backgroundColor: Colors.white10,
-                              bottom: const TabBar(
-                                tabs: <Widget>[
-                                  Tab(text: 'LEFT'),
-                                  Tab(text: 'RIGHT'),
-                                ],
-                              ),
-                            ),
-                          ),
-                          body: const TabBarView(
-                            children: <Widget>[
-                              Center(
-                                child: Text('LEFT'),
+                body: DefaultTabController(
+                  length: 2,
+                  child: NestedScrollView(
+                    headerSliverBuilder:
+                        (BuildContext context, bool innerBoxIsScrolled) {
+                      return <Widget>[
+                        SliverList(
+                          delegate: SliverChildListDelegate(
+                            [
+                              SizedBox(
+                                width: 128,
+                                height: 128,
+                                child: FutureBuilder<dynamic>(
+                                  future: FirebaseStorage.instance
+                                      .ref()
+                                      .child(snapshot.data.imageUrl)
+                                      .getDownloadURL(),
+                                  builder: (context, snap) {
+                                    return CachedNetworkImage(
+                                      placeholder: (context, url) =>
+                                          const Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                      imageUrl: snap.data.toString(),
+                                    );
+                                  },
+                                ),
                               ),
                               Center(
-                                child: Text('RIGHT'),
+                                child: Text('ユーザー名：${snapshot.data.name}'),
+                              ),
+                              Center(
+                                child: Text('一言：${snapshot.data.introduction}'),
                               ),
                             ],
                           ),
                         ),
-                      ),
+                        const SliverPersistentHeader(
+                          pinned: true,
+                          delegate: _StickyTabBarDelegate(
+                            TabBar(
+                              tabs: <Widget>[
+                                Tab(
+                                  text: 'LEFT',
+                                ),
+                                Tab(
+                                  text: 'RIGHT',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ];
+                    },
+                    body: TabBarView(
+                      children: <Widget>[
+                        ListView.builder(
+                          itemBuilder: (BuildContext context, int index) {
+                            return Card(
+                              child: Padding(
+                                child: Text(
+                                  '$index',
+                                  style: const TextStyle(fontSize: 22),
+                                ),
+                                padding: const EdgeInsets.all(20),
+                              ),
+                            );
+                          },
+                          itemCount: 10,
+                        ),
+                        ListView.builder(
+                          itemBuilder: (BuildContext context, int index) {
+                            return Card(
+                              child: Padding(
+                                child: Text(
+                                  '$index',
+                                  style: const TextStyle(fontSize: 22),
+                                ),
+                                padding: const EdgeInsets.all(20),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               );
             },
@@ -197,7 +228,7 @@ class ProfileScreen extends StatelessWidget {
         } else {
           return Scaffold(
             appBar: AppBar(
-              title: Text(
+              title: const Text(
                 'ホーム',
                 style: TextStyle(
                   color: Colors.white,
@@ -212,5 +243,28 @@ class ProfileScreen extends StatelessWidget {
         }
       },
     );
+  }
+}
+
+class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
+  const _StickyTabBarDelegate(this.tabBar);
+
+  final TabBar tabBar;
+
+  @override
+  double get minExtent => tabBar.preferredSize.height;
+
+  @override
+  double get maxExtent => tabBar.preferredSize.height;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(color: const Color(0xFFFAFAFA), child: tabBar);
+  }
+
+  @override
+  bool shouldRebuild(_StickyTabBarDelegate oldDelegate) {
+    return tabBar != oldDelegate.tabBar;
   }
 }
