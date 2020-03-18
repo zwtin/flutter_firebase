@@ -199,6 +199,26 @@ class EditProfileScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  Center(
+                    child: GestureDetector(
+                      child: Container(
+                        color: Colors.yellow,
+                        height: 200,
+                        width: 200,
+                        child: StreamBuilder(
+                          stream: editProfileBloc.selectedImage,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData && snapshot.data is Image) {
+                              return snapshot.data as Image;
+                            } else {
+                              return Text('no image');
+                            }
+                          },
+                        ),
+                      ),
+                      onTap: editProfileBloc.getImage,
+                    ),
+                  ),
                   const Text('ユーザー名'),
                   Padding(
                     padding: const EdgeInsets.all(16),
