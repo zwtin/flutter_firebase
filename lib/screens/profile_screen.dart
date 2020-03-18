@@ -172,10 +172,11 @@ class ProfileScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        const SliverPersistentHeader(
+                        SliverPersistentHeader(
                           pinned: true,
-                          delegate: _StickyTabBarDelegate(
-                            TabBar(
+                          delegate: SliverTabBarDelegate(
+                            tabBar: const TabBar(
+                              unselectedLabelColor: Colors.grey,
                               tabs: <Widget>[
                                 Tab(
                                   text: 'LEFT',
@@ -203,7 +204,6 @@ class ProfileScreen extends StatelessWidget {
                               ),
                             );
                           },
-                          itemCount: 10,
                         ),
                         ListView.builder(
                           itemBuilder: (BuildContext context, int index) {
@@ -246,8 +246,8 @@ class ProfileScreen extends StatelessWidget {
   }
 }
 
-class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
-  const _StickyTabBarDelegate(this.tabBar);
+class SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
+  SliverTabBarDelegate({@required this.tabBar}) : assert(tabBar != null);
 
   final TabBar tabBar;
 
@@ -260,11 +260,14 @@ class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(color: const Color(0xFFFAFAFA), child: tabBar);
+    return Container(
+      color: Color(0xFFFAFAFA),
+      child: tabBar,
+    );
   }
 
   @override
-  bool shouldRebuild(_StickyTabBarDelegate oldDelegate) {
-    return tabBar != oldDelegate.tabBar;
+  bool shouldRebuild(SliverTabBarDelegate oldDelegate) {
+    return false;
   }
 }
