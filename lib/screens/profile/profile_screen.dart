@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase/blocs/authentication/authentication_bloc.dart';
+import 'package:flutter_firebase/blocs/sign_in/sign_in_bloc.dart';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/profile/profile_bloc.dart';
 import 'package:flutter_firebase/repositories/firestore_user_repository.dart';
-import 'package:flutter_firebase/screens/edit_profile_screen.dart';
+import 'package:flutter_firebase/screens/edit_profile/edit_profile_screen.dart';
 import 'package:flutter_firebase/blocs/profile/profile_state.dart';
 import 'package:flutter_firebase/models/user.dart';
 import 'package:flutter_firebase/blocs/edit_profile/edit_profile_bloc.dart';
@@ -11,9 +11,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen(this.authenticationBloc)
-      : assert(authenticationBloc != null);
-  final AuthenticationBloc authenticationBloc;
+  const ProfileScreen(this._signInBloc) : assert(_signInBloc != null);
+  final SignInBloc _signInBloc;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +57,7 @@ class ProfileScreen extends StatelessWidget {
                     child: const Text('再読み込み'),
                     color: Colors.orange,
                     textColor: Colors.white,
-                    onPressed: authenticationBloc.checkCurrentUser,
+                    onPressed: _signInBloc.checkCurrentUser,
                   ),
                 ],
               ),
@@ -117,7 +116,7 @@ class ProfileScreen extends StatelessWidget {
                               SimpleDialogOption(
                                 onPressed: () {
                                   Navigator.pop(_context);
-                                  authenticationBloc.signOut();
+                                  _signInBloc.signOut();
                                 },
                                 child: const Text('ログアウト'),
                               ),

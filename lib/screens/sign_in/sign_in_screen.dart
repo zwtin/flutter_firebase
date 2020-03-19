@@ -1,24 +1,24 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase/blocs/authentication/authentication_state.dart';
-import 'package:flutter_firebase/blocs/authentication/authentication_bloc.dart';
+import 'package:flutter_firebase/blocs/sign_in/sign_in_state.dart';
+import 'package:flutter_firebase/blocs/sign_in/sign_in_bloc.dart';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/profile/profile_bloc.dart';
 import 'package:flutter_firebase/blocs/sign_up/sign_up_bloc.dart';
 import 'package:flutter_firebase/repositories/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/repositories/firestore_user_repository.dart';
-import 'package:flutter_firebase/screens/profile_screen.dart';
-import 'package:flutter_firebase/screens/sign_up_screen.dart';
+import 'package:flutter_firebase/screens/profile/profile_screen.dart';
+import 'package:flutter_firebase/screens/sign_up/sign_up_screen.dart';
 
 class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
+    final authenticationBloc = BlocProvider.of<SignInBloc>(context);
 
-    return StreamBuilder<AuthenticationState>(
+    return StreamBuilder<SignInState>(
       stream: authenticationBloc.screenState,
       builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data is AuthenticationInProgress) {
+        if (snapshot.hasData && snapshot.data is SignInInProgress) {
           return Scaffold(
             appBar: AppBar(
               title: Text(
@@ -33,7 +33,7 @@ class SignInScreen extends StatelessWidget {
               child: CircularProgressIndicator(),
             ),
           );
-        } else if (snapshot.hasData && snapshot.data is AuthenticationFailure) {
+        } else if (snapshot.hasData && snapshot.data is SignInFailure) {
           return Scaffold(
             appBar: AppBar(
               title: Text(
@@ -60,8 +60,8 @@ class SignInScreen extends StatelessWidget {
               ),
             ),
           );
-        } else if (snapshot.hasData && snapshot.data is AuthenticationSuccess) {
-          final user = (snapshot.data as AuthenticationSuccess).currentUser;
+        } else if (snapshot.hasData && snapshot.data is SignInSuccess) {
+          final user = (snapshot.data as SignInSuccess).currentUser;
           if (user == null) {
             return Scaffold(
               appBar: AppBar(

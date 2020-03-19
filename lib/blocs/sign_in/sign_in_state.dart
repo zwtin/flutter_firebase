@@ -1,22 +1,22 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
+import 'package:flutter_firebase/models/current_user.dart';
 
 @immutable
 abstract class SignInState extends Equatable {}
 
-class SignInEmpty extends SignInState {
-  @override
-  List<Object> get props => [];
-}
-
-class SignInLoading extends SignInState {
+class SignInInProgress extends SignInState {
   @override
   List<Object> get props => [];
 }
 
 class SignInSuccess extends SignInState {
+  SignInSuccess(this.currentUser);
+
+  final CurrentUser currentUser;
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [currentUser];
 }
 
 class SignInFailure extends SignInState {

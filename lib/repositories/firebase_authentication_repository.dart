@@ -1,11 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_firebase/blocs/sign_up/sign_up_repository.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_firebase/blocs/authentication/authentication_repository.dart';
+import 'package:flutter_firebase/blocs/sign_in/sign_in_repository.dart';
 import 'package:flutter_firebase/models/current_user.dart';
 
 class FirebaseAuthenticationRepository
-    implements AuthenticationRepository, SignUpRepository {
+    implements SignInRepository, SignUpRepository {
   FirebaseAuthenticationRepository(
       {FirebaseAuth firebaseAuth, GoogleSignIn googleSignIn})
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,

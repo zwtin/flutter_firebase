@@ -7,9 +7,9 @@ import 'package:flutter_firebase/models/event.dart';
 import 'package:flutter_firebase/screens/event_detail_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_firebase/blocs/authentication/authentication_bloc.dart';
+import 'package:flutter_firebase/blocs/sign_in/sign_in_bloc.dart';
 import 'package:flutter_firebase/repositories/firebase_authentication_repository.dart';
-import 'package:flutter_firebase/screens/sign_in_screen.dart';
+import 'package:flutter_firebase/screens/sign_in/sign_in_screen.dart';
 
 class EventListScreen extends StatelessWidget {
   @override
@@ -174,9 +174,9 @@ class EventListScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context, rootNavigator: true).push(
                   MaterialPageRoute<EventDetailScreen>(
-                    builder: (context) => BlocProvider<AuthenticationBloc>(
+                    builder: (context) => BlocProvider<SignInBloc>(
                       creator: (_context, _bag) {
-                        return AuthenticationBloc(
+                        return SignInBloc(
                           FirebaseAuthenticationRepository(),
                         );
                       },

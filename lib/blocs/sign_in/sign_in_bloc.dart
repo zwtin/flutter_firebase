@@ -1,35 +1,79 @@
 import 'dart:async';
 import 'package:bloc_provider/bloc_provider.dart';
-import 'package:flutter_firebase/blocs/authentication/authentication_state.dart';
-import 'package:flutter_firebase/blocs/event_list/event_list_repository.dart';
+import 'package:flutter_firebase/blocs/sign_in/sign_in_state.dart';
+import 'package:flutter_firebase/blocs/sign_in/sign_in_repository.dart';
 
 class SignInBloc implements Bloc {
-  SignInBloc(this._eventListRepository) : assert(_eventListRepository != null) {
-    _readController.stream.listen((_) => _start());
+  SignInBloc(this._authRepository) : assert(_authRepository != null) {
+    checkCurrentUser();
   }
 
-  final EventListRepository _eventListRepository;
+  final SignInRepository _authRepository;
 
-  final _stateController = StreamController<AuthenticationState>();
-  final _readController = StreamController<void>();
+  final _stateController = StreamController<SignInState>();
+  String inputEmail;
+  String inputPassword;
 
-  // input
-  StreamSink<void> get read => _readController.sink;
   // output
-  Stream<AuthenticationState> get onAdd => _stateController.stream;
+  Stream<SignInState> get screenState => _stateController.stream;
 
-  void _start() {
-    _stateController.sink.add(AuthenticationInProgress());
-    Timer(const Duration(seconds: 3), _onTimer);
+  Future<void> checkCurrentUser() async {
+    _stateController.sink.add(SignInInProgress());
+    try {
+      final isSignedIn = await _authRepository.isSignedIn();
+      if (isSignedIn) {
+        final currentUser = await _authRepository.getCurrentUser();
+        _stateController.sink.add(SignInSuccess(currentUser));
+      } else {
+        _stateController.sink.add(SignInSuccess(null));
+      }
+    } on Exception catch (error) {
+      _stateController.sink.add(SignInFailure());
+    }
   }
 
-  void _onTimer() {
-    _stateController.sink.add(AuthenticationFailure());
+  Future<void> loginWithEmailAndPassword() async {
+    if (inputEmail.isEmpty || inputPassword.isEmpty) {
+      return;
+    }
+    _stateController.sink.add(SignInInProgress());
+    try {
+      await _authRepository.signInWithEmailAndPassword(
+        inputEmail,
+        inputPassword,
+      );
+      final isSignedIn = await _authRepository.isSignedIn();
+      if (isSignedIn) {
+        final currentUser = await _authRepository.getCurrentUser();
+        _stateController.sink.add(SignInSuccess(currentUser));
+      } else {
+        _stateController.sink.add(SignInSuccess(null));
+      }
+    } on Exception catch (error) {
+      _stateController.sink.add(SignInFailure());
+    }
+  }
+
+  Future<void> signOut() async {
+    _stateController.sink.add(SignInInProgress());
+    inputEmail = '';
+    inputPassword = '';
+    try {
+      await _authRepository.signOut();
+      final isSignedIn = await _authRepository.isSignedIn();
+      if (isSignedIn) {
+        final currentUser = await _authRepository.getCurrentUser();
+        _stateController.sink.add(SignInSuccess(currentUser));
+      } else {
+        _stateController.sink.add(SignInSuccess(null));
+      }
+    } on Exception catch (error) {
+      _stateController.sink.add(SignInFailure());
+    }
   }
 
   @override
   Future<void> dispose() async {
     await _stateController.close();
-    await _readController.close();
   }
 }
