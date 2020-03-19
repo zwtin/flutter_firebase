@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_firebase/blocs/sign_up/sign_up_repository.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_firebase/blocs/authentication/authentication_repository.dart';
 import 'package:flutter_firebase/models/current_user.dart';
 
-class FirebaseAuthenticationRepository extends AuthenticationRepository {
+class FirebaseAuthenticationRepository
+    implements AuthenticationRepository, SignUpRepository {
   FirebaseAuthenticationRepository(
       {FirebaseAuth firebaseAuth, GoogleSignIn googleSignIn})
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
@@ -57,4 +59,16 @@ class FirebaseAuthenticationRepository extends AuthenticationRepository {
   Future<void> signInAnonymously() async {
     await _firebaseAuth.signInAnonymously();
   }
+
+  @override
+  Future<void> signUpWithEmailAndPassword(String email, String password) async {
+    await _firebaseAuth.signInWithEmailAndPassword(
+        email: email, password: password);
+  }
+
+  @override
+  Future<void> signUpWithGoogle() async {}
+
+  @override
+  Future<void> signUpWithApple() async {}
 }

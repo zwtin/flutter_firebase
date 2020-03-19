@@ -1,10 +1,14 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/authentication/authentication_state.dart';
 import 'package:flutter_firebase/blocs/authentication/authentication_bloc.dart';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/profile/profile_bloc.dart';
+import 'package:flutter_firebase/blocs/sign_up/sign_up_bloc.dart';
+import 'package:flutter_firebase/repositories/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/repositories/firestore_user_repository.dart';
 import 'package:flutter_firebase/screens/profile_screen.dart';
+import 'package:flutter_firebase/screens/sign_up_screen.dart';
 
 class SignInScreen extends StatelessWidget {
   @override
@@ -103,6 +107,41 @@ class SignInScreen extends StatelessWidget {
                       color: Colors.orange,
                       textColor: Colors.white,
                       onPressed: authenticationBloc.loginWithEmailAndPassword,
+                    ),
+                    Platform.isAndroid
+                        ? RaisedButton(
+                            child: const Text('Google'),
+                            color: Colors.orange,
+                            textColor: Colors.white,
+                            onPressed:
+                                authenticationBloc.loginWithEmailAndPassword,
+                          )
+                        : RaisedButton(
+                            child: const Text('Apple'),
+                            color: Colors.orange,
+                            textColor: Colors.white,
+                            onPressed:
+                                authenticationBloc.loginWithEmailAndPassword,
+                          ),
+                    RaisedButton(
+                      child: const Text('新規会員登録はこちら'),
+                      color: Colors.orange,
+                      textColor: Colors.white,
+                      onPressed: () {
+                        Navigator.of(context, rootNavigator: true).push(
+                          MaterialPageRoute<SignUpScreen>(
+                            builder: (context) => BlocProvider<SignUpBloc>(
+                              creator: (_context, _bag) {
+                                return SignUpBloc(
+                                  FirebaseAuthenticationRepository(),
+                                );
+                              },
+                              child: SignUpScreen(),
+                            ),
+                            fullscreenDialog: true,
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
