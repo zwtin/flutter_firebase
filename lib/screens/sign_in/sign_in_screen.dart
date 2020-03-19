@@ -13,10 +13,10 @@ import 'package:flutter_firebase/screens/sign_up/sign_up_screen.dart';
 class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final authenticationBloc = BlocProvider.of<SignInBloc>(context);
+    final signInBloc = BlocProvider.of<SignInBloc>(context);
 
     return StreamBuilder<SignInState>(
-      stream: authenticationBloc.screenState,
+      stream: signInBloc.screenState,
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data is SignInInProgress) {
           return Scaffold(
@@ -54,7 +54,7 @@ class SignInScreen extends StatelessWidget {
                     child: const Text('再読み込み'),
                     color: Colors.orange,
                     textColor: Colors.white,
-                    onPressed: authenticationBloc.checkCurrentUser,
+                    onPressed: signInBloc.checkCurrentUser,
                   ),
                 ],
               ),
@@ -83,10 +83,10 @@ class SignInScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       child: TextField(
                         onChanged: (String str) {
-                          authenticationBloc.inputEmail = str;
+                          signInBloc.inputEmail = str;
                         },
                         onSubmitted: (String str) {
-                          authenticationBloc.inputEmail = str;
+                          signInBloc.inputEmail = str;
                         },
                       ),
                     ),
@@ -95,10 +95,10 @@ class SignInScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       child: TextField(
                         onChanged: (String str) {
-                          authenticationBloc.inputPassword = str;
+                          signInBloc.inputPassword = str;
                         },
                         onSubmitted: (String str) {
-                          authenticationBloc.inputPassword = str;
+                          signInBloc.inputPassword = str;
                         },
                       ),
                     ),
@@ -106,23 +106,33 @@ class SignInScreen extends StatelessWidget {
                       child: const Text('ログイン'),
                       color: Colors.orange,
                       textColor: Colors.white,
-                      onPressed: authenticationBloc.loginWithEmailAndPassword,
+                      onPressed: signInBloc.loginWithEmailAndPassword,
                     ),
                     Platform.isAndroid
                         ? RaisedButton(
                             child: const Text('Google'),
                             color: Colors.orange,
                             textColor: Colors.white,
-                            onPressed:
-                                authenticationBloc.loginWithEmailAndPassword,
+                            onPressed: signInBloc.loginWithEmailAndPassword,
                           )
                         : RaisedButton(
                             child: const Text('Apple'),
                             color: Colors.orange,
                             textColor: Colors.white,
-                            onPressed:
-                                authenticationBloc.loginWithEmailAndPassword,
+                            onPressed: signInBloc.loginWithEmailAndPassword,
                           ),
+                    RaisedButton(
+                      child: const Text('Twitter'),
+                      color: Colors.orange,
+                      textColor: Colors.white,
+                      onPressed: signInBloc.loginWithEmailAndPassword,
+                    ),
+                    RaisedButton(
+                      child: const Text('Facebook'),
+                      color: Colors.orange,
+                      textColor: Colors.white,
+                      onPressed: signInBloc.loginWithEmailAndPassword,
+                    ),
                     RaisedButton(
                       child: const Text('新規会員登録はこちら'),
                       color: Colors.orange,
@@ -155,7 +165,7 @@ class SignInScreen extends StatelessWidget {
                 FirestoreUserRepository(),
               );
             },
-            child: ProfileScreen(authenticationBloc),
+            child: ProfileScreen(signInBloc),
           );
         } else {
           return Scaffold(

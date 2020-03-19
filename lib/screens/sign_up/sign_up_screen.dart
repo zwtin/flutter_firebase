@@ -10,7 +10,7 @@ class SignUpScreen extends StatelessWidget {
     final signUpBloc = BlocProvider.of<SignUpBloc>(context);
 
     return StreamBuilder<SignUpState>(
-      stream: signUpBloc.onAdd,
+      stream: signUpBloc.screenState,
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data is SignUpInProgress) {
           return Scaffold(
@@ -95,29 +95,35 @@ class SignUpScreen extends StatelessWidget {
                     ),
                   ),
                   RaisedButton(
-                    child: const Text('ログイン'),
+                    child: const Text('会員登録'),
                     color: Colors.orange,
                     textColor: Colors.white,
-                    onPressed: () {},
+                    onPressed: signUpBloc.signUpWithEmailAndPassword,
                   ),
                   Platform.isAndroid
                       ? RaisedButton(
                           child: const Text('Google'),
                           color: Colors.orange,
                           textColor: Colors.white,
-                          onPressed: () {},
+                          onPressed: signUpBloc.signUpWithGoogle,
                         )
                       : RaisedButton(
                           child: const Text('Apple'),
                           color: Colors.orange,
                           textColor: Colors.white,
-                          onPressed: () {},
+                          onPressed: signUpBloc.signUpWithApple,
                         ),
+                  RaisedButton(
+                    child: const Text('Twitter'),
+                    color: Colors.orange,
+                    textColor: Colors.white,
+                    onPressed: signUpBloc.signUpWithTwitter,
+                  ),
                   RaisedButton(
                     child: const Text('Facebook'),
                     color: Colors.orange,
                     textColor: Colors.white,
-                    onPressed: () {},
+                    onPressed: signUpBloc.signUpWithFacebook,
                   ),
                 ],
               ),

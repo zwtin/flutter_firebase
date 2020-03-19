@@ -4,11 +4,11 @@ import 'package:flutter_firebase/blocs/sign_in/sign_in_state.dart';
 import 'package:flutter_firebase/blocs/sign_in/sign_in_repository.dart';
 
 class SignInBloc implements Bloc {
-  SignInBloc(this._authRepository) : assert(_authRepository != null) {
+  SignInBloc(this._signInRepository) : assert(_signInRepository != null) {
     checkCurrentUser();
   }
 
-  final SignInRepository _authRepository;
+  final SignInRepository _signInRepository;
 
   final _stateController = StreamController<SignInState>();
   String inputEmail;
@@ -20,9 +20,9 @@ class SignInBloc implements Bloc {
   Future<void> checkCurrentUser() async {
     _stateController.sink.add(SignInInProgress());
     try {
-      final isSignedIn = await _authRepository.isSignedIn();
+      final isSignedIn = await _signInRepository.isSignedIn();
       if (isSignedIn) {
-        final currentUser = await _authRepository.getCurrentUser();
+        final currentUser = await _signInRepository.getCurrentUser();
         _stateController.sink.add(SignInSuccess(currentUser));
       } else {
         _stateController.sink.add(SignInSuccess(null));
@@ -38,13 +38,13 @@ class SignInBloc implements Bloc {
     }
     _stateController.sink.add(SignInInProgress());
     try {
-      await _authRepository.signInWithEmailAndPassword(
+      await _signInRepository.signInWithEmailAndPassword(
         inputEmail,
         inputPassword,
       );
-      final isSignedIn = await _authRepository.isSignedIn();
+      final isSignedIn = await _signInRepository.isSignedIn();
       if (isSignedIn) {
-        final currentUser = await _authRepository.getCurrentUser();
+        final currentUser = await _signInRepository.getCurrentUser();
         _stateController.sink.add(SignInSuccess(currentUser));
       } else {
         _stateController.sink.add(SignInSuccess(null));
@@ -59,10 +59,10 @@ class SignInBloc implements Bloc {
     inputEmail = '';
     inputPassword = '';
     try {
-      await _authRepository.signOut();
-      final isSignedIn = await _authRepository.isSignedIn();
+      await _signInRepository.signOut();
+      final isSignedIn = await _signInRepository.isSignedIn();
       if (isSignedIn) {
-        final currentUser = await _authRepository.getCurrentUser();
+        final currentUser = await _signInRepository.getCurrentUser();
         _stateController.sink.add(SignInSuccess(currentUser));
       } else {
         _stateController.sink.add(SignInSuccess(null));

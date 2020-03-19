@@ -11,12 +11,8 @@ class SignUpInProgress extends SignUpState {
 }
 
 class SignUpSuccess extends SignUpState {
-  SignUpSuccess(this.currentUser);
-
-  final CurrentUser currentUser;
-
   @override
-  List<Object> get props => [currentUser];
+  List<Object> get props => [];
 }
 
 class SignUpFailure extends SignUpState {
