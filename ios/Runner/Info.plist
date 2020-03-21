@@ -27,7 +27,7 @@
 			<string>zwtin.page.link</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.zwtin.flutterFirebase</string>
+				<string>zwtin.page.link</string>
 			</array>
 		</dict>
 	</array>
