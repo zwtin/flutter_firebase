@@ -63,13 +63,14 @@ class FirebaseAuthenticationRepository
   @override
   Future<void> signUpWithEmailAndPassword(String email, String password) async {
     await _firebaseAuth.sendSignInWithEmailLink(
-        email: email,
-        url: null,
-        handleCodeInApp: null,
-        iOSBundleID: null,
-        androidPackageName: null,
-        androidInstallIfNotAvailable: null,
-        androidMinimumVersion: null);
+      email: email,
+      url: 'flutter-firebase-6f534.firebaseapp.com',
+      handleCodeInApp: true,
+      iOSBundleID: 'com.zwtin.flutterFirebase',
+      androidPackageName: 'com.zwtin.flutter_firebase',
+      androidInstallIfNotAvailable: true,
+      androidMinimumVersion: '21',
+    );
   }
 
   @override
