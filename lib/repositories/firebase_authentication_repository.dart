@@ -62,8 +62,14 @@ class FirebaseAuthenticationRepository
 
   @override
   Future<void> signUpWithEmailAndPassword(String email, String password) async {
-    await _firebaseAuth.signInWithEmailAndPassword(
-        email: email, password: password);
+    await _firebaseAuth.sendSignInWithEmailLink(
+        email: email,
+        url: null,
+        handleCodeInApp: null,
+        iOSBundleID: null,
+        androidPackageName: null,
+        androidInstallIfNotAvailable: null,
+        androidMinimumVersion: null);
   }
 
   @override
