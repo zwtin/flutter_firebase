@@ -24,10 +24,10 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>zwtin.page.link</string>
+			<string>com.zwtin.flutterFirebase</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>zwtin.page.link</string>
+				<string>com.zwtin.flutterFirebase</string>
 			</array>
 		</dict>
 	</array>
