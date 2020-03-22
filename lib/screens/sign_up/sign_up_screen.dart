@@ -48,7 +48,7 @@ class SignUpScreen extends StatelessWidget {
                     child: const Text('再読み込み'),
                     color: Colors.orange,
                     textColor: Colors.white,
-                    onPressed: () {},
+                    onPressed: signUpBloc.reload,
                   ),
                 ],
               ),

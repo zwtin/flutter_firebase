@@ -9,8 +9,12 @@ import 'package:flutter_firebase/repositories/firebase_authentication_repository
 import 'package:flutter_firebase/repositories/firestore_user_repository.dart';
 import 'package:flutter_firebase/screens/profile/profile_screen.dart';
 import 'package:flutter_firebase/screens/sign_up/sign_up_screen.dart';
+import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 
 class SignInScreen extends StatelessWidget {
+  const SignInScreen(this.tabBloc) : assert(tabBloc != null);
+  final TabBloc tabBloc;
+
   @override
   Widget build(BuildContext context) {
     final signInBloc = BlocProvider.of<SignInBloc>(context);

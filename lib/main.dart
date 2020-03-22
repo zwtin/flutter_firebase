@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_firebase/screens/tab_screen.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:bloc_provider/bloc_provider.dart';
+import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 
 void main() {
   Crashlytics.instance.enableInDevMode = true;
@@ -15,10 +16,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp() {
-    initDynamicLinks();
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,13 +23,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home: TabScreen(),
+      home: BlocProvider<TabBloc>(
+        creator: (context, bag) {
+          return TabBloc(context);
+        },
+        child: TabScreen(),
+      ),
     );
-  }
-
-  void initDynamicLinks() async {
-    final PendingDynamicLinkData data =
-        await FirebaseDynamicLinks.instance.getInitialLink();
-    final Uri deepLink = data?.link;
   }
 }

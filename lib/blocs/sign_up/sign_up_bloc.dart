@@ -2,10 +2,11 @@ import 'dart:async';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/sign_up/sign_up_repository.dart';
 import 'package:flutter_firebase/blocs/sign_up/sign_up_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpBloc implements Bloc {
   SignUpBloc(this._signUpRepository) : assert(_signUpRepository != null) {
-    _stateController.sink.add(SignUpSuccess());
+    reload();
   }
 
   final SignUpRepository _signUpRepository;
@@ -17,8 +18,12 @@ class SignUpBloc implements Bloc {
   // output
   Stream<SignUpState> get screenState => _stateController.stream;
 
+  Future<void> reload() async {
+    _stateController.sink.add(SignUpSuccess());
+  }
+
   Future<void> signUpWithEmailAndPassword() async {
-    if (inputEmail.isEmpty || inputPassword.isEmpty) {
+    if (inputEmail.isEmpty) {
       return;
     }
     _stateController.sink.add(SignUpInProgress());
@@ -27,6 +32,8 @@ class SignUpBloc implements Bloc {
         inputEmail,
         inputPassword,
       );
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('email', inputEmail);
     } on Exception catch (error) {
       _stateController.sink.add(SignUpFailure());
     }

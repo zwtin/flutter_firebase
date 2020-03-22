@@ -8,6 +8,7 @@ import 'package:flutter_firebase/repositories/firebase_storage_repository.dart';
 import 'package:flutter_firebase/repositories/firestore_event_list_repository.dart';
 import 'package:flutter_firebase/screens/event_list/event_list_screen.dart';
 import 'package:flutter_firebase/screens/sign_in/sign_in_screen.dart';
+import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 
 class TabScreen extends StatelessWidget {
   final CupertinoTabController _cupertinoTabController =
@@ -15,6 +16,8 @@ class TabScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tabBloc = BlocProvider.of<TabBloc>(context);
+
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
         items: [
@@ -34,29 +37,29 @@ class TabScreen extends StatelessWidget {
         switch (index) {
           case 0:
             return CupertinoTabView(
-              builder: (context) {
+              builder: (BuildContext context) {
                 return BlocProvider<EventListBloc>(
-                  creator: (_context, _bag) {
+                  creator: (BuildContext context, BlocCreatorBag bag) {
                     return EventListBloc(
                       FirestoreEventListRepository(),
                       FirebaseStorageRepository(),
                     );
                   },
-                  child: EventListScreen(),
+                  child: EventListScreen(tabBloc),
                 );
               },
             );
             break;
           case 1:
             return CupertinoTabView(
-              builder: (context) {
+              builder: (BuildContext context) {
                 return BlocProvider<SignInBloc>(
-                  creator: (_context, _bag) {
+                  creator: (BuildContext context, BlocCreatorBag bag) {
                     return SignInBloc(
                       FirebaseAuthenticationRepository(),
                     );
                   },
-                  child: SignInScreen(),
+                  child: SignInScreen(tabBloc),
                 );
               },
             );

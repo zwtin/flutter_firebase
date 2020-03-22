@@ -10,8 +10,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_firebase/blocs/sign_in/sign_in_bloc.dart';
 import 'package:flutter_firebase/repositories/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/screens/sign_in/sign_in_screen.dart';
+import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 
 class EventListScreen extends StatelessWidget {
+  const EventListScreen(this.tabBloc) : assert(tabBloc != null);
+  final TabBloc tabBloc;
+
   @override
   Widget build(BuildContext context) {
     final eventListBloc = BlocProvider.of<EventListBloc>(context);
@@ -171,21 +175,7 @@ class EventListScreen extends StatelessWidget {
                 color: Colors.white70,
               ),
               backgroundColor: Colors.blue,
-              onPressed: () {
-                Navigator.of(context, rootNavigator: true).push(
-                  MaterialPageRoute<EventDetailScreen>(
-                    builder: (context) => BlocProvider<SignInBloc>(
-                      creator: (_context, _bag) {
-                        return SignInBloc(
-                          FirebaseAuthenticationRepository(),
-                        );
-                      },
-                      child: SignInScreen(),
-                    ),
-                    fullscreenDialog: true,
-                  ),
-                );
-              },
+              onPressed: () {},
             ),
           );
         } else {
