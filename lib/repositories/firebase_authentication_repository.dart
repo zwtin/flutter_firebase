@@ -64,7 +64,7 @@ class FirebaseAuthenticationRepository
   Future<void> signUpWithEmailAndPassword(String email, String password) async {
     await _firebaseAuth.sendSignInWithEmailLink(
       email: email,
-      url: 'https://flutter-firebase-6f534.firebaseapp.com',
+      url: 'https://zwtin.page.link/zXbp',
       handleCodeInApp: true,
       iOSBundleID: 'com.zwtin.flutterFirebase',
       androidPackageName: 'com.zwtin.flutter_firebase',
