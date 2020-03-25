@@ -7,6 +7,8 @@ class User {
     @required this.name,
     @required this.imageUrl,
     @required this.introduction,
+    @required this.postedItems,
+    @required this.favoriteItems,
   })  : assert(id != null),
         assert(name != null);
 
@@ -14,4 +16,6 @@ class User {
   final String name;
   final String imageUrl;
   final String introduction;
+  final List<String> postedItems;
+  final List<String> favoriteItems;
 }
