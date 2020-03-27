@@ -5,12 +5,14 @@ import 'package:flutter_firebase/blocs/sign_up/sign_up_bloc.dart';
 import 'package:flutter_firebase/repositories/firebase_authentication_repository.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class TabBloc implements Bloc {
   TabBloc(this.context) : assert(context != null) {
     initDynamicLinks();
   }
   final BuildContext context;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   void openNewRegister() {
     Navigator.of(context, rootNavigator: true).push(
