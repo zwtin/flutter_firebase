@@ -110,6 +110,44 @@ class EventDetailScreen extends StatelessWidget {
                             ),
                           ],
                         ),
+                        Row(
+                          children: <Widget>[
+                            StreamBuilder(
+                              stream: eventDetailBloc.like,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<bool> snapshot) {
+                                if (snapshot.data == true) {
+                                  return IconButton(
+                                    icon: Icon(Icons.favorite),
+                                    onPressed: eventDetailBloc.likeButtonAction,
+                                  );
+                                }
+                                return IconButton(
+                                  icon: Icon(Icons.favorite_border),
+                                  onPressed: eventDetailBloc.likeButtonAction,
+                                );
+                              },
+                            ),
+                            StreamBuilder(
+                              stream: eventDetailBloc.favorite,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<bool> snapshot) {
+                                if (snapshot.data == true) {
+                                  return IconButton(
+                                    icon: Icon(Icons.star),
+                                    onPressed:
+                                        eventDetailBloc.favoriteButtonAction,
+                                  );
+                                }
+                                return IconButton(
+                                  icon: Icon(Icons.star_border),
+                                  onPressed:
+                                      eventDetailBloc.favoriteButtonAction,
+                                );
+                              },
+                            ),
+                          ],
+                        )
                       ],
                     ),
                   ),

@@ -11,12 +11,18 @@ class EventDetailBloc implements Bloc {
   }
 
   final String _id;
+  bool likeState = false;
+  bool favoriteState = false;
   final EventDetailRepository _eventDetailRepository;
 
   final _stateController = StreamController<EventDetailState>();
+  final _likeController = StreamController<bool>();
+  final _favoriteController = StreamController<bool>();
 
   // output
   Stream<EventDetailState> get screenState => _stateController.stream;
+  Stream<bool> get like => _likeController.stream;
+  Stream<bool> get favorite => _favoriteController.stream;
 
   void getEventDetail() {
     try {
@@ -27,8 +33,20 @@ class EventDetailBloc implements Bloc {
     }
   }
 
+  void likeButtonAction() {
+    likeState = !likeState;
+    _likeController.sink.add(likeState);
+  }
+
+  void favoriteButtonAction() {
+    favoriteState = !favoriteState;
+    _favoriteController.sink.add(favoriteState);
+  }
+
   @override
   Future<void> dispose() async {
     await _stateController.close();
+    await _likeController.close();
+    await _favoriteController.close();
   }
 }
