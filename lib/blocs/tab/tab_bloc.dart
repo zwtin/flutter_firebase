@@ -10,6 +10,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 class TabBloc implements Bloc {
   TabBloc(this.context) : assert(context != null) {
     initDynamicLinks();
+    _firebaseMessaging.requestNotificationPermissions();
   }
   final BuildContext context;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
