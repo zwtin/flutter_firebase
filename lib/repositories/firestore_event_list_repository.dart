@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_repository.dart';
 import 'package:flutter_firebase/models/event.dart';
+import 'package:flutter_firebase/blocs/event_detail/event_detail_repository.dart';
 
-class FirestoreEventListRepository implements EventListRepository {
+class FirestoreEventListRepository
+    implements EventListRepository, EventDetailRepository {
   FirestoreEventListRepository({Firestore firestore})
       : _firestore = firestore ?? Firestore.instance;
 
@@ -21,5 +23,20 @@ class FirestoreEventListRepository implements EventListRepository {
         );
       }).toList();
     });
+  }
+
+  @override
+  Stream<Event> getEvent(String id) {
+    return _firestore.collection('events').document(id).snapshots().map(
+      (snapshot) {
+        return Event(
+          id: snapshot.documentID,
+          title: snapshot.data['title'] as String,
+          description: snapshot.data['description'] as String,
+          date: (snapshot.data['date'] as Timestamp).toDate(),
+          imageUrl: snapshot.data['image_url'] as String,
+        );
+      },
+    );
   }
 }

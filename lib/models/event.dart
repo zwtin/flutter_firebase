@@ -14,13 +14,6 @@ class Event {
         assert(date != null),
         assert(imageUrl != null);
 
-  Event.fromJson(Map<String, dynamic> json)
-      : id = json['id'] as String,
-        title = json['title'] as String,
-        description = json['description'] as String,
-        date = json['date'] as DateTime,
-        imageUrl = json['image_url'] as String;
-
   final String id; // ID
   final String title; // タイトル
   final String description; // 紹介文

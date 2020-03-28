@@ -4,12 +4,11 @@ import 'package:flutter_firebase/blocs/event_list/event_list_state.dart';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_bloc.dart';
 import 'package:flutter_firebase/models/event.dart';
-import 'package:flutter_firebase/screens/event_detail_screen.dart';
+import 'package:flutter_firebase/screens/event_detail/event_detail_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_firebase/blocs/sign_in/sign_in_bloc.dart';
-import 'package:flutter_firebase/repositories/firebase_authentication_repository.dart';
-import 'package:flutter_firebase/screens/sign_in/sign_in_screen.dart';
+import 'package:flutter_firebase/blocs/event_detail/event_detail_bloc.dart';
+import 'package:flutter_firebase/repositories/firestore_event_list_repository.dart';
 import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 
 class EventListScreen extends StatelessWidget {
@@ -123,7 +122,17 @@ class EventListScreen extends StatelessWidget {
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute<EventDetailScreen>(
-                              builder: (context) => EventDetailScreen(event),
+                              builder: (context) {
+                                return BlocProvider<EventDetailBloc>(
+                                  creator: (_context, _bag) {
+                                    return EventDetailBloc(
+                                      event.id,
+                                      FirestoreEventListRepository(),
+                                    );
+                                  },
+                                  child: EventDetailScreen(),
+                                );
+                              },
                             ),
                           );
                         },

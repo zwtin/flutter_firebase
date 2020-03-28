@@ -9,6 +9,9 @@ import 'package:flutter_firebase/models/user.dart';
 import 'package:flutter_firebase/blocs/edit_profile/edit_profile_bloc.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_firebase/blocs/event_detail/event_detail_bloc.dart';
+import 'package:flutter_firebase/screens/event_detail/event_detail_screen.dart';
+import 'package:flutter_firebase/repositories/firestore_event_list_repository.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen(this._signInBloc) : assert(_signInBloc != null);
@@ -194,28 +197,70 @@ class ProfileScreen extends StatelessWidget {
                         ListView.builder(
                           itemBuilder: (BuildContext context, int index) {
                             return Card(
-                              child: Padding(
-                                child: Text(
-                                  '$index',
-                                  style: const TextStyle(fontSize: 22),
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute<EventDetailScreen>(
+                                      builder: (context) {
+                                        return BlocProvider<EventDetailBloc>(
+                                          creator: (_context, _bag) {
+                                            return EventDetailBloc(
+                                              snapshot.data.postedItems
+                                                  .elementAt(index),
+                                              FirestoreEventListRepository(),
+                                            );
+                                          },
+                                          child: EventDetailScreen(),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                                child: Padding(
+                                  child: Text(
+                                    '${snapshot.data.postedItems.elementAt(index)}',
+                                    style: const TextStyle(fontSize: 22),
+                                  ),
+                                  padding: const EdgeInsets.all(20),
                                 ),
-                                padding: const EdgeInsets.all(20),
                               ),
                             );
                           },
+                          itemCount: snapshot.data.postedItems.length,
                         ),
                         ListView.builder(
                           itemBuilder: (BuildContext context, int index) {
                             return Card(
-                              child: Padding(
-                                child: Text(
-                                  '$index',
-                                  style: const TextStyle(fontSize: 22),
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute<EventDetailScreen>(
+                                      builder: (context) {
+                                        return BlocProvider<EventDetailBloc>(
+                                          creator: (_context, _bag) {
+                                            return EventDetailBloc(
+                                              snapshot.data.favoriteItems
+                                                  .elementAt(index),
+                                              FirestoreEventListRepository(),
+                                            );
+                                          },
+                                          child: EventDetailScreen(),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                                child: Padding(
+                                  child: Text(
+                                    '${snapshot.data.favoriteItems.elementAt(index)}',
+                                    style: const TextStyle(fontSize: 22),
+                                  ),
+                                  padding: const EdgeInsets.all(20),
                                 ),
-                                padding: const EdgeInsets.all(20),
                               ),
                             );
                           },
+                          itemCount: snapshot.data.favoriteItems.length,
                         ),
                       ],
                     ),

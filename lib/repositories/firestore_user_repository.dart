@@ -19,6 +19,10 @@ class FirestoreUserRepository
           name: snapshot.data['name'] as String,
           imageUrl: snapshot.data['image_url'] as String,
           introduction: snapshot.data['introduction'] as String,
+          postedItems:
+              List<String>.from(snapshot.data['posted_items'] as List<dynamic>),
+          favoriteItems: List<String>.from(
+              snapshot.data['favorite_items'] as List<dynamic>),
         );
       },
     );
