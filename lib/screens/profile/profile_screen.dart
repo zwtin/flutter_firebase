@@ -199,26 +199,27 @@ class ProfileScreen extends StatelessWidget {
                             return Card(
                               child: InkWell(
                                 onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute<EventDetailScreen>(
-                                      builder: (context) {
-                                        return BlocProvider<EventDetailBloc>(
-                                          creator: (_context, _bag) {
-                                            return EventDetailBloc(
-                                              snapshot.data.postedItems
-                                                  .elementAt(index),
-                                              FirestoreEventListRepository(),
-                                            );
-                                          },
-                                          child: EventDetailScreen(),
-                                        );
-                                      },
-                                    ),
-                                  );
+//                                  Navigator.of(context).push(
+//                                    MaterialPageRoute<EventDetailScreen>(
+//                                      builder: (context) {
+//                                        return BlocProvider<EventDetailBloc>(
+//                                          creator: (_context, _bag) {
+//                                            return EventDetailBloc(
+//                                              snapshot.data.postedItems
+//                                                  .elementAt(index),
+//                                              FirestoreEventListRepository(),
+//                                            );
+//                                          },
+//                                          child: EventDetailScreen(),
+//                                        );
+//                                      },
+//                                    ),
+//                                  );
                                 },
                                 child: Padding(
                                   child: Text(
-                                    '${snapshot.data.postedItems.elementAt(index)}',
+//                                    '${snapshot.data.postedItems.elementAt(index)}',
+                                    '$index',
                                     style: const TextStyle(fontSize: 22),
                                   ),
                                   padding: const EdgeInsets.all(20),
@@ -226,33 +227,34 @@ class ProfileScreen extends StatelessWidget {
                               ),
                             );
                           },
-                          itemCount: snapshot.data.postedItems.length,
+//                          itemCount: snapshot.data.postedItems.length,
                         ),
                         ListView.builder(
                           itemBuilder: (BuildContext context, int index) {
                             return Card(
                               child: InkWell(
                                 onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute<EventDetailScreen>(
-                                      builder: (context) {
-                                        return BlocProvider<EventDetailBloc>(
-                                          creator: (_context, _bag) {
-                                            return EventDetailBloc(
-                                              snapshot.data.favoriteItems
-                                                  .elementAt(index),
-                                              FirestoreEventListRepository(),
-                                            );
-                                          },
-                                          child: EventDetailScreen(),
-                                        );
-                                      },
-                                    ),
-                                  );
+//                                  Navigator.of(context).push(
+//                                    MaterialPageRoute<EventDetailScreen>(
+//                                      builder: (context) {
+//                                        return BlocProvider<EventDetailBloc>(
+//                                          creator: (_context, _bag) {
+//                                            return EventDetailBloc(
+//                                              snapshot.data.favoriteItems
+//                                                  .elementAt(index),
+//                                              FirestoreEventListRepository(),
+//                                            );
+//                                          },
+//                                          child: EventDetailScreen(),
+//                                        );
+//                                      },
+//                                    ),
+//                                  );
                                 },
                                 child: Padding(
                                   child: Text(
-                                    '${snapshot.data.favoriteItems.elementAt(index)}',
+//                                    '${snapshot.data.favoriteItems.elementAt(index)}',
+                                    '$index',
                                     style: const TextStyle(fontSize: 22),
                                   ),
                                   padding: const EdgeInsets.all(20),
@@ -260,7 +262,7 @@ class ProfileScreen extends StatelessWidget {
                               ),
                             );
                           },
-                          itemCount: snapshot.data.favoriteItems.length,
+//                          itemCount: snapshot.data.favoriteItems.length,
                         ),
                       ],
                     ),

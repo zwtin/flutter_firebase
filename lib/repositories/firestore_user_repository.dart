@@ -12,17 +12,13 @@ class FirestoreUserRepository
 
   @override
   Stream<User> fetch(String id) {
-    return _firestore.collection('user').document(id).snapshots().map(
-      (snapshot) {
+    return _firestore.collection('users').document(id).snapshots().map(
+      (DocumentSnapshot snapshot) {
         return User(
           id: snapshot.documentID,
           name: snapshot.data['name'] as String,
           imageUrl: snapshot.data['image_url'] as String,
           introduction: snapshot.data['introduction'] as String,
-          postedItems:
-              List<String>.from(snapshot.data['posted_items'] as List<dynamic>),
-          favoriteItems: List<String>.from(
-              snapshot.data['favorite_items'] as List<dynamic>),
         );
       },
     );

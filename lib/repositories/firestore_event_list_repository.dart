@@ -12,29 +12,39 @@ class FirestoreEventListRepository
 
   @override
   Stream<List<Event>> fetch() {
-    return _firestore.collection('events').snapshots().map((snapshot) {
-      return snapshot.documents.map((docs) {
-        return Event(
-          id: docs.documentID,
-          title: docs.data['title'] as String,
-          description: docs.data['description'] as String,
-          date: docs.data['date']?.toDate() as DateTime,
-          imageUrl: docs.data['image_url'] as String,
-        );
-      }).toList();
-    });
+    return _firestore.collectionGroup('items').snapshots().map(
+      (snapshot) {
+        return snapshot.documents.map(
+          (docs) {
+            return Event(
+              id: docs.documentID,
+              title: docs.data['title'] as String,
+              description: docs.data['description'] as String,
+              date: docs.data['date']?.toDate() as DateTime,
+              imageUrl: docs.data['image_url'] as String,
+            );
+          },
+        ).toList();
+      },
+    );
   }
 
   @override
   Stream<Event> getEvent(String id) {
-    return _firestore.collection('events').document(id).snapshots().map(
-      (snapshot) {
+    return _firestore
+        .collectionGroup('items')
+        .where('id', isEqualTo: id)
+        .snapshots()
+        .map(
+      (QuerySnapshot snapshot) {
         return Event(
-          id: snapshot.documentID,
-          title: snapshot.data['title'] as String,
-          description: snapshot.data['description'] as String,
-          date: (snapshot.data['date'] as Timestamp).toDate(),
-          imageUrl: snapshot.data['image_url'] as String,
+          id: snapshot.documents.elementAt(0).documentID,
+          title: snapshot.documents.elementAt(0).data['title'] as String,
+          description:
+              snapshot.documents.elementAt(0).data['description'] as String,
+          date: (snapshot.documents.elementAt(0).data['date'] as Timestamp)
+              .toDate(),
+          imageUrl: snapshot.documents.elementAt(0).data['image_url'] as String,
         );
       },
     );
