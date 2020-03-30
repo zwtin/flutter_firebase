@@ -4,6 +4,7 @@ import 'package:flutter_firebase/blocs/event_list/event_list_state.dart';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_bloc.dart';
 import 'package:flutter_firebase/entities/event.dart';
+import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/models/firestore_like_repository.dart';
 import 'package:flutter_firebase/screens/event_detail/event_detail_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -130,6 +131,7 @@ class EventListScreen extends StatelessWidget {
                                       event.id,
                                       FirestoreEventListRepository(),
                                       FirestoreLikeRepository(),
+                                      FirebaseAuthenticationRepository(),
                                     );
                                   },
                                   child: EventDetailScreen(),
