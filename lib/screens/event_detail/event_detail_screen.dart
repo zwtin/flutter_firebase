@@ -2,8 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/event_detail/event_detail_state.dart';
-import 'package:flutter_firebase/models/event.dart';
-import 'package:flutter_firebase/models/event.dart';
+import 'package:flutter_firebase/entities/event.dart';
+import 'package:flutter_firebase/entities/event.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_firebase/blocs/event_detail/event_detail_bloc.dart';
 
@@ -118,23 +118,11 @@ class EventDetailScreen extends StatelessWidget {
                                   : Icon(Icons.favorite_border),
                               onPressed: eventDetailBloc.likeButtonAction,
                             ),
-                            StreamBuilder(
-                              stream: eventDetailBloc.favorite,
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<bool> snapshot) {
-                                if (snapshot.data == true) {
-                                  return IconButton(
-                                    icon: Icon(Icons.star),
-                                    onPressed:
-                                        eventDetailBloc.favoriteButtonAction,
-                                  );
-                                }
-                                return IconButton(
-                                  icon: Icon(Icons.star_border),
-                                  onPressed:
-                                      eventDetailBloc.favoriteButtonAction,
-                                );
-                              },
+                            IconButton(
+                              icon: snapshot.data.isOwnLike
+                                  ? Icon(Icons.star)
+                                  : Icon(Icons.star_border),
+                              onPressed: eventDetailBloc.likeButtonAction,
                             ),
                           ],
                         )

@@ -3,9 +3,9 @@ import 'dart:io';
 import 'dart:math';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_firebase/blocs/edit_profile/edit_profile_repository.dart';
+import 'package:flutter_firebase/repositories/edit_profile_repository.dart';
 import 'package:flutter_firebase/blocs/edit_profile/edit_profile_state.dart';
-import 'package:flutter_firebase/models/user.dart';
+import 'package:flutter_firebase/entities/user.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 

@@ -3,12 +3,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_state.dart';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_bloc.dart';
-import 'package:flutter_firebase/models/event.dart';
+import 'package:flutter_firebase/entities/event.dart';
+import 'package:flutter_firebase/models/firestore_like_repository.dart';
 import 'package:flutter_firebase/screens/event_detail/event_detail_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_firebase/blocs/event_detail/event_detail_bloc.dart';
-import 'package:flutter_firebase/repositories/firestore_event_list_repository.dart';
+import 'package:flutter_firebase/models/firestore_event_list_repository.dart';
 import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 
 class EventListScreen extends StatelessWidget {
@@ -128,6 +129,7 @@ class EventListScreen extends StatelessWidget {
                                     return EventDetailBloc(
                                       event.id,
                                       FirestoreEventListRepository(),
+                                      FirestoreLikeRepository(),
                                     );
                                   },
                                   child: EventDetailScreen(),

@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:flutter_firebase/models/event.dart';
+import 'package:flutter_firebase/entities/event.dart';
 
 @immutable
 abstract class EventListState extends Equatable {}

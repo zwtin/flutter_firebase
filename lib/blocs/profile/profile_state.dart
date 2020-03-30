@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:flutter_firebase/models/user.dart';
+import 'package:flutter_firebase/entities/user.dart';
 
 @immutable
 abstract class ProfileState extends Equatable {}

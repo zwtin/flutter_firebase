@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/sign_in/sign_in_state.dart';
-import 'package:flutter_firebase/blocs/sign_in/sign_in_repository.dart';
+import 'package:flutter_firebase/repositories/sign_in_repository.dart';
 
 class SignInBloc implements Bloc {
   SignInBloc(this._signInRepository) : assert(_signInRepository != null) {

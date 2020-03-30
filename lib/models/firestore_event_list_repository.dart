@@ -1,8 +1,8 @@
 import 'package:rxdart/rxdart.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_firebase/blocs/event_list/event_list_repository.dart';
-import 'package:flutter_firebase/models/event.dart';
-import 'package:flutter_firebase/blocs/event_detail/event_detail_repository.dart';
+import 'package:flutter_firebase/repositories/event_list_repository.dart';
+import 'package:flutter_firebase/entities/event.dart';
+import 'package:flutter_firebase/repositories/event_detail_repository.dart';
 
 class FirestoreEventListRepository
     implements EventListRepository, EventDetailRepository {

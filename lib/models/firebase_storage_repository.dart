@@ -1,5 +1,5 @@
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_firebase/blocs/storage/storage_repository.dart';
+import 'package:flutter_firebase/repositories/storage_repository.dart';
 
 class FirebaseStorageRepository extends StorageRepository {
   FirebaseStorageRepository({FirebaseStorage storage})

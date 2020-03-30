@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_firebase/blocs/edit_profile/edit_profile_repository.dart';
-import 'package:flutter_firebase/blocs/profile/profile_repository.dart';
-import 'package:flutter_firebase/models/user.dart';
+import 'package:flutter_firebase/repositories/edit_profile_repository.dart';
+import 'package:flutter_firebase/repositories/profile_repository.dart';
+import 'package:flutter_firebase/entities/user.dart';
 
 class FirestoreUserRepository
     implements ProfileRepository, EditProfileRepository {

@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:bloc_provider/bloc_provider.dart';
-import 'package:flutter_firebase/blocs/event_list/event_list_repository.dart';
+import 'package:flutter_firebase/repositories/event_list_repository.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_state.dart';
-import 'package:flutter_firebase/blocs/storage/storage_repository.dart';
+import 'package:flutter_firebase/repositories/storage_repository.dart';
 
 class EventListBloc implements Bloc {
   EventListBloc(this._eventListRepository, this._storageRepository)

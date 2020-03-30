@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:bloc_provider/bloc_provider.dart';
-import 'package:flutter_firebase/blocs/sign_up/sign_up_repository.dart';
+import 'package:flutter_firebase/repositories/sign_up_repository.dart';
 import 'package:flutter_firebase/blocs/sign_up/sign_up_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

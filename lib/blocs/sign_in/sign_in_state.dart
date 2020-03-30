@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:flutter_firebase/models/current_user.dart';
+import 'package:flutter_firebase/entities/current_user.dart';
 
 @immutable
 abstract class SignInState extends Equatable {}

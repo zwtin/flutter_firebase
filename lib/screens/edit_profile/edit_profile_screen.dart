@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/edit_profile/edit_profile_bloc.dart';
 import 'package:flutter_firebase/blocs/edit_profile/edit_profile_state.dart';
-import 'package:flutter_firebase/models/user.dart';
+import 'package:flutter_firebase/entities/user.dart';
 
 class EditProfileScreen extends StatelessWidget {
   const EditProfileScreen(this._user) : assert(_user != null);
