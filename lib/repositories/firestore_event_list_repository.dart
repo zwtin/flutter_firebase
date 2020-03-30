@@ -1,3 +1,4 @@
+import 'package:rxdart/rxdart.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_repository.dart';
 import 'package:flutter_firebase/models/event.dart';
@@ -12,7 +13,7 @@ class FirestoreEventListRepository
 
   @override
   Stream<List<Event>> fetch() {
-    return _firestore.collectionGroup('items').snapshots().map(
+    return _firestore.collection('items').snapshots().map(
       (snapshot) {
         return snapshot.documents.map(
           (docs) {
@@ -22,6 +23,7 @@ class FirestoreEventListRepository
               description: docs.data['description'] as String,
               date: docs.data['date']?.toDate() as DateTime,
               imageUrl: docs.data['image_url'] as String,
+              isOwnLike: false,
             );
           },
         ).toList();
@@ -31,20 +33,22 @@ class FirestoreEventListRepository
 
   @override
   Stream<Event> getEvent(String id) {
-    return _firestore
-        .collectionGroup('items')
-        .where('id', isEqualTo: id)
-        .snapshots()
-        .map(
-      (QuerySnapshot snapshot) {
+    return Rx.combineLatest2(
+      _firestore.collection('items').document(id).snapshots(),
+      _firestore
+          .collection('items')
+          .document(id)
+          .collection('liked_users')
+          .document('UEjZYlyaEdc5wR4IN0VjpiNHE2r1')
+          .snapshots(),
+      (DocumentSnapshot snapshot, DocumentSnapshot streamB) {
         return Event(
-          id: snapshot.documents.elementAt(0).documentID,
-          title: snapshot.documents.elementAt(0).data['title'] as String,
-          description:
-              snapshot.documents.elementAt(0).data['description'] as String,
-          date: (snapshot.documents.elementAt(0).data['date'] as Timestamp)
-              .toDate(),
-          imageUrl: snapshot.documents.elementAt(0).data['image_url'] as String,
+          id: snapshot.data['id'] as String,
+          title: snapshot.data['title'] as String,
+          description: snapshot.data['description'] as String,
+          date: (snapshot.data['date'] as Timestamp).toDate(),
+          imageUrl: snapshot.data['image_url'] as String,
+          isOwnLike: streamB.exists,
         );
       },
     );
