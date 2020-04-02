@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/profile/profile_state.dart';
 import 'package:flutter_firebase/repositories/profile_repository.dart';
+import 'package:rxdart/rxdart.dart';
 
 class ProfileBloc implements Bloc {
   ProfileBloc(this._id, this._profileRepository)

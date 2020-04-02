@@ -1,25 +1,26 @@
 import 'dart:async';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/event_detail/event_detail_state.dart';
-import 'package:flutter_firebase/repositories/event_detail_repository.dart';
+import 'package:flutter_firebase/repositories/event_repository.dart';
 import 'package:flutter_firebase/repositories/like_repository.dart';
 import 'package:flutter_firebase/repositories/sign_in_repository.dart';
+import 'package:rxdart/rxdart.dart';
 
 class EventDetailBloc implements Bloc {
   EventDetailBloc(
     this._id,
-    this._eventDetailRepository,
+    this._eventRepository,
     this._likeRepository,
     this._signInRepository,
   )   : assert(_id != null),
-        assert(_eventDetailRepository != null),
+        assert(_eventRepository != null),
         assert(_likeRepository != null),
         assert(_signInRepository != null) {
     getEventDetail();
   }
 
   final String _id;
-  final EventDetailRepository _eventDetailRepository;
+  final EventRepository _eventRepository;
   final LikeRepository _likeRepository;
   final SignInRepository _signInRepository;
 
@@ -30,7 +31,7 @@ class EventDetailBloc implements Bloc {
 
   void getEventDetail() {
     try {
-      final event = _eventDetailRepository.getEvent(_id);
+      final event = _eventRepository.getEventDetail(_id);
       _stateController.sink.add(EventDetailSuccess(event: event));
     } on Exception catch (error) {
       _stateController.sink.add(EventDetailFailure(exception: error));

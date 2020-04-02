@@ -1,18 +1,13 @@
 import 'package:rxdart/rxdart.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_firebase/repositories/event_list_repository.dart';
+import 'package:flutter_firebase/repositories/event_repository.dart';
 import 'package:flutter_firebase/entities/event.dart';
-import 'package:flutter_firebase/repositories/event_detail_repository.dart';
 
-class FirestoreEventListRepository
-    implements EventListRepository, EventDetailRepository {
-  FirestoreEventListRepository({Firestore firestore})
-      : _firestore = firestore ?? Firestore.instance;
-
-  final Firestore _firestore;
+class FirestoreEventRepository implements EventRepository {
+  final _firestore = Firestore.instance;
 
   @override
-  Stream<List<Event>> fetch() {
+  Stream<List<Event>> getEventList() {
     return _firestore.collection('items').snapshots().map(
       (snapshot) {
         return snapshot.documents.map(
@@ -32,7 +27,7 @@ class FirestoreEventListRepository
   }
 
   @override
-  Stream<Event> getEvent(String id) {
+  Stream<Event> getEventDetail(String id) {
     return Rx.combineLatest2(
       _firestore.collection('items').document(id).snapshots(),
       _firestore

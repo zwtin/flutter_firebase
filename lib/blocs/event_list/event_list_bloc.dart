@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'package:bloc_provider/bloc_provider.dart';
-import 'package:flutter_firebase/repositories/event_list_repository.dart';
+import 'package:flutter_firebase/repositories/event_repository.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_state.dart';
 import 'package:flutter_firebase/repositories/storage_repository.dart';
+import 'package:rxdart/rxdart.dart';
 
 class EventListBloc implements Bloc {
   EventListBloc(this._eventListRepository, this._storageRepository)
@@ -11,7 +12,7 @@ class EventListBloc implements Bloc {
     _start();
   }
 
-  final EventListRepository _eventListRepository;
+  final EventRepository _eventListRepository;
   final StorageRepository _storageRepository;
 
   final _stateController = StreamController<EventListState>();
@@ -24,7 +25,7 @@ class EventListBloc implements Bloc {
 
   void _start() {
     _stateController.sink
-        .add(EventListSuccess(eventList: _eventListRepository.fetch()));
+        .add(EventListSuccess(eventList: _eventListRepository.getEventList()));
   }
 
   @override

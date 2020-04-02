@@ -5,7 +5,7 @@ import 'package:flutter_firebase/blocs/sign_in/sign_in_bloc.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_bloc.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/models/firebase_storage_repository.dart';
-import 'package:flutter_firebase/models/firestore_event_list_repository.dart';
+import 'package:flutter_firebase/models/firestore_event_repository.dart';
 import 'package:flutter_firebase/screens/event_list/event_list_screen.dart';
 import 'package:flutter_firebase/screens/sign_in/sign_in_screen.dart';
 import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
@@ -41,7 +41,7 @@ class TabScreen extends StatelessWidget {
                 return BlocProvider<EventListBloc>(
                   creator: (BuildContext context, BlocCreatorBag bag) {
                     return EventListBloc(
-                      FirestoreEventListRepository(),
+                      FirestoreEventRepository(),
                       FirebaseStorageRepository(),
                     );
                   },

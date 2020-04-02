@@ -11,7 +11,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_firebase/blocs/event_detail/event_detail_bloc.dart';
 import 'package:flutter_firebase/screens/event_detail/event_detail_screen.dart';
-import 'package:flutter_firebase/models/firestore_event_list_repository.dart';
+import 'package:flutter_firebase/models/firestore_event_repository.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen(this._signInBloc) : assert(_signInBloc != null);

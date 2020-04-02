@@ -6,6 +6,7 @@ import 'package:flutter_firebase/models/firebase_authentication_repository.dart'
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:rxdart/rxdart.dart';
 
 class TabBloc implements Bloc {
   TabBloc(this.context) : assert(context != null) {
@@ -18,14 +19,16 @@ class TabBloc implements Bloc {
   void openNewRegister() {
     Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute<SignUpScreen>(
-        builder: (context) => BlocProvider<SignUpBloc>(
-          creator: (_context, _bag) {
-            return SignUpBloc(
-              FirebaseAuthenticationRepository(),
-            );
-          },
-          child: SignUpScreen(),
-        ),
+        builder: (context) {
+          return BlocProvider<SignUpBloc>(
+            creator: (BuildContext context, BlocCreatorBag bag) {
+              return SignUpBloc(
+                FirebaseAuthenticationRepository(),
+              );
+            },
+            child: SignUpScreen(),
+          );
+        },
         fullscreenDialog: true,
       ),
     );

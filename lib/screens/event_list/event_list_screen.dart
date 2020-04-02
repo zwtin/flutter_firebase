@@ -10,7 +10,7 @@ import 'package:flutter_firebase/screens/event_detail/event_detail_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_firebase/blocs/event_detail/event_detail_bloc.dart';
-import 'package:flutter_firebase/models/firestore_event_list_repository.dart';
+import 'package:flutter_firebase/models/firestore_event_repository.dart';
 import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 
 class EventListScreen extends StatelessWidget {
@@ -129,7 +129,7 @@ class EventListScreen extends StatelessWidget {
                                   creator: (_context, _bag) {
                                     return EventDetailBloc(
                                       event.id,
-                                      FirestoreEventListRepository(),
+                                      FirestoreEventRepository(),
                                       FirestoreLikeRepository(),
                                       FirebaseAuthenticationRepository(),
                                     );

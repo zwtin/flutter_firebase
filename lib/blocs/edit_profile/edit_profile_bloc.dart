@@ -8,6 +8,7 @@ import 'package:flutter_firebase/blocs/edit_profile/edit_profile_state.dart';
 import 'package:flutter_firebase/entities/user.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:rxdart/rxdart.dart';
 
 class EditProfileBloc implements Bloc {
   EditProfileBloc(this._editProfileRepository)
