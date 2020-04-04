@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/sign_in/sign_in_state.dart';
+import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -13,6 +14,9 @@ class SignInBloc implements Bloc {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  final currentUserController = PublishSubject<CurrentUser>();
+  final loadingController = BehaviorSubject<bool>.seeded(false);
 
 //
 //  Future<void> checkCurrentUser() async {
@@ -34,12 +38,17 @@ class SignInBloc implements Bloc {
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       return;
     }
+    loadingController.sink.add(true);
     try {
       await _authenticationRepository.signInWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
-    } on Exception catch (error) {}
+      final currentUser = await _authenticationRepository.getCurrentUser();
+      currentUserController.sink.add(currentUser);
+    } on Exception catch (error) {
+      loadingController.sink.add(false);
+    }
   }
 //
 //  Future<void> signOut() async {
@@ -61,5 +70,8 @@ class SignInBloc implements Bloc {
 //  }
 
   @override
-  Future<void> dispose() async {}
+  Future<void> dispose() async {
+    await currentUserController.close();
+    await loadingController.close();
+  }
 }
