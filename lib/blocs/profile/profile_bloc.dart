@@ -37,10 +37,14 @@ class ProfileBloc implements Bloc {
   void start() {
     _authenticationRepository.getCurrentUserStream().listen(
       (CurrentUser currentUser) {
-        currentUserController.sink.add(currentUser);
-        getUser(id: currentUser.id);
-        getCreateItems(id: currentUser.id);
-        getFavoriteItems(id: currentUser.id);
+        if (currentUser == null) {
+          currentUserController.sink.add(null);
+        } else {
+          currentUserController.sink.add(currentUser);
+          getUser(id: currentUser.id);
+          getCreateItems(id: currentUser.id);
+          getFavoriteItems(id: currentUser.id);
+        }
       },
     );
   }
@@ -56,11 +60,15 @@ class ProfileBloc implements Bloc {
   void getCreateItems({@required String id}) {
     _userRepository.getCreatedItemIds(userId: id).listen(
       (List<String> ids) {
-        _itemRepository.getSelectedItemListStream(ids: ids).listen(
-          (List<Item> items) {
-            createItemsController.sink.add(items);
-          },
-        );
+        if (ids.isEmpty) {
+          createItemsController.sink.add([]);
+        } else {
+          _itemRepository.getSelectedItemListStream(ids: ids).listen(
+            (List<Item> items) {
+              createItemsController.sink.add(items);
+            },
+          );
+        }
       },
     );
   }
@@ -68,11 +76,15 @@ class ProfileBloc implements Bloc {
   void getFavoriteItems({@required String id}) {
     _userRepository.getFavoriteItemIds(userId: id).listen(
       (List<String> ids) {
-        _itemRepository.getSelectedItemListStream(ids: ids).listen(
-          (List<Item> items) {
-            favoriteItemsController.sink.add(items);
-          },
-        );
+        if (ids.isEmpty) {
+          favoriteItemsController.sink.add([]);
+        } else {
+          _itemRepository.getSelectedItemListStream(ids: ids).listen(
+            (List<Item> items) {
+              favoriteItemsController.sink.add(items);
+            },
+          );
+        }
       },
     );
   }

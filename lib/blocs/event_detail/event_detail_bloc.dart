@@ -38,35 +38,40 @@ class EventDetailBloc implements Bloc {
   final BehaviorSubject<bool> favoriteController =
       BehaviorSubject<bool>.seeded(false);
 
-  Future<void> setup() async {
+  void setup() {
+    _itemRepository.getItemDetail(id: id).listen(
+      (Item item) {
+        itemController.sink.add(item);
+      },
+    );
     _authenticationRepository.getCurrentUserStream().listen(
       (CurrentUser currentUser) {
-        _itemRepository.getItemDetail(id: id).listen(
-          (Item item) {
-            itemController.sink.add(item);
-          },
-        );
-        _likeRepository.getLike(userId: currentUser.id, itemId: id).listen(
-          (bool isLiked) {
-            likeController.sink.add(isLiked);
-          },
-        );
-        _favoriteRepository
-            .getFavorite(userId: currentUser.id, itemId: id)
-            .listen(
-          (bool isFavorite) {
-            favoriteController.sink.add(isFavorite);
-          },
-        );
+        if (currentUser == null) {
+          likeController.sink.add(false);
+          favoriteController.sink.add(false);
+        } else {
+          _likeRepository.getLike(userId: currentUser.id, itemId: id).listen(
+            (bool isLiked) {
+              likeController.sink.add(isLiked);
+            },
+          );
+          _favoriteRepository
+              .getFavorite(userId: currentUser.id, itemId: id)
+              .listen(
+            (bool isFavorite) {
+              favoriteController.sink.add(isFavorite);
+            },
+          );
+        }
       },
     );
   }
 
   Future<void> likeButtonAction() async {
-    if (likeController.value == null) {
+    final currentUser = await _authenticationRepository.getCurrentUser();
+    if (currentUser == null) {
       return;
     }
-    final currentUser = await _authenticationRepository.getCurrentUser();
     if (likeController.value) {
       await _likeRepository.removeLike(userId: currentUser.id, itemId: id);
     } else {
@@ -75,10 +80,10 @@ class EventDetailBloc implements Bloc {
   }
 
   Future<void> favoriteButtonAction() async {
-    if (favoriteController.value == null) {
+    final currentUser = await _authenticationRepository.getCurrentUser();
+    if (currentUser == null) {
       return;
     }
-    final currentUser = await _authenticationRepository.getCurrentUser();
     if (favoriteController.value) {
       await _favoriteRepository.removeFavorite(
           userId: currentUser.id, itemId: id);

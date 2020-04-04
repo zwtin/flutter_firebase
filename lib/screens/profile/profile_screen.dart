@@ -101,159 +101,165 @@ class ProfileScreen extends StatelessWidget {
               stream: profileBloc.userController.stream,
               builder:
                   (BuildContext context, AsyncSnapshot<User> userSnapshot) {
-                return DefaultTabController(
-                  length: 2,
-                  child: NestedScrollView(
-                    headerSliverBuilder:
-                        (BuildContext context, bool innerBoxIsScrolled) {
-                      return <Widget>[
-                        SliverList(
-                          delegate: SliverChildListDelegate(
-                            [
-                              SizedBox(
-                                width: 128,
-                                height: 128,
-                                child: FutureBuilder<dynamic>(
-                                  future: FirebaseStorage.instance
-                                      .ref()
-                                      .child(userSnapshot.data.imageUrl)
-                                      .getDownloadURL(),
-                                  builder: (context, snap) {
-                                    return CachedNetworkImage(
-                                      placeholder: (context, url) =>
-                                          const Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                      imageUrl: snap.data.toString(),
-                                    );
-                                  },
+                if (userSnapshot.hasData) {
+                  return DefaultTabController(
+                    length: 2,
+                    child: NestedScrollView(
+                      headerSliverBuilder:
+                          (BuildContext context, bool innerBoxIsScrolled) {
+                        return <Widget>[
+                          SliverList(
+                            delegate: SliverChildListDelegate(
+                              [
+                                SizedBox(
+                                  width: 128,
+                                  height: 128,
+                                  child: FutureBuilder<dynamic>(
+                                    future: FirebaseStorage.instance
+                                        .ref()
+                                        .child(userSnapshot.data.imageUrl)
+                                        .getDownloadURL(),
+                                    builder: (context, snap) {
+                                      return CachedNetworkImage(
+                                        placeholder: (context, url) =>
+                                            const Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                        imageUrl: snap.data.toString(),
+                                      );
+                                    },
+                                  ),
                                 ),
-                              ),
-                              Center(
-                                child: Text('ユーザー名：${userSnapshot.data.name}'),
-                              ),
-                              Center(
-                                child: Text(
-                                    '一言：${userSnapshot.data.introduction}'),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SliverPersistentHeader(
-                          pinned: true,
-                          delegate: SliverTabBarDelegate(
-                            tabBar: const TabBar(
-                              unselectedLabelColor: Colors.grey,
-                              tabs: <Widget>[
-                                Tab(
-                                  text: '投稿した記事',
+                                Center(
+                                  child:
+                                      Text('ユーザー名：${userSnapshot.data.name}'),
                                 ),
-                                Tab(
-                                  text: 'お気に入り記事',
+                                Center(
+                                  child: Text(
+                                      '一言：${userSnapshot.data.introduction}'),
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                      ];
-                    },
-                    body: TabBarView(
-                      children: <Widget>[
-                        StreamBuilder(
-                          stream: profileBloc.createItemsController.stream,
-                          builder: (BuildContext context,
-                              AsyncSnapshot<List<Item>> snapshot) {
-                            return ListView.builder(
-                              itemBuilder: (BuildContext context, int index) {
-                                return Card(
-                                  child: InkWell(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute<EventDetailScreen>(
-                                          builder: (context) {
-                                            return BlocProvider<
-                                                EventDetailBloc>(
-                                              creator: (__context, _bag) {
-                                                return EventDetailBloc(
-                                                  snapshot.data
-                                                      .elementAt(index)
-                                                      .id,
-                                                  FirestoreItemRepository(),
-                                                  FirestoreLikeRepository(),
-                                                  FirestoreFavoriteRepository(),
-                                                  FirebaseAuthenticationRepository(),
-                                                );
-                                              },
-                                              child: EventDetailScreen(),
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    },
-                                    child: Padding(
-                                      child: Text(
-                                        '${snapshot.data.elementAt(index).id}',
-                                        style: const TextStyle(fontSize: 22),
-                                      ),
-                                      padding: const EdgeInsets.all(20),
-                                    ),
+                          SliverPersistentHeader(
+                            pinned: true,
+                            delegate: SliverTabBarDelegate(
+                              tabBar: const TabBar(
+                                unselectedLabelColor: Colors.grey,
+                                tabs: <Widget>[
+                                  Tab(
+                                    text: '投稿した記事',
                                   ),
-                                );
-                              },
-                              itemCount:
-                                  snapshot.hasData ? snapshot.data.length : 0,
-                            );
-                          },
-                        ),
-                        StreamBuilder(
-                          stream: profileBloc.favoriteItemsController.stream,
-                          builder: (BuildContext context,
-                              AsyncSnapshot<List<Item>> snapshot) {
-                            return ListView.builder(
-                              itemBuilder: (BuildContext context, int index) {
-                                return Card(
-                                  child: InkWell(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute<EventDetailScreen>(
-                                          builder: (context) {
-                                            return BlocProvider<
-                                                EventDetailBloc>(
-                                              creator: (__context, _bag) {
-                                                return EventDetailBloc(
-                                                  snapshot.data
-                                                      .elementAt(index)
-                                                      .id,
-                                                  FirestoreItemRepository(),
-                                                  FirestoreLikeRepository(),
-                                                  FirestoreFavoriteRepository(),
-                                                  FirebaseAuthenticationRepository(),
-                                                );
-                                              },
-                                              child: EventDetailScreen(),
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    },
-                                    child: Padding(
-                                      child: Text(
-                                        '${snapshot.data.elementAt(index).id}',
-                                        style: const TextStyle(fontSize: 22),
-                                      ),
-                                      padding: const EdgeInsets.all(20),
-                                    ),
+                                  Tab(
+                                    text: 'お気に入り記事',
                                   ),
-                                );
-                              },
-                              itemCount:
-                                  snapshot.hasData ? snapshot.data.length : 0,
-                            );
-                          },
-                        ),
-                      ],
+                                ],
+                              ),
+                            ),
+                          ),
+                        ];
+                      },
+                      body: TabBarView(
+                        children: <Widget>[
+                          StreamBuilder(
+                            stream: profileBloc.createItemsController.stream,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<List<Item>> snapshot) {
+                              return ListView.builder(
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Card(
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute<EventDetailScreen>(
+                                            builder: (context) {
+                                              return BlocProvider<
+                                                  EventDetailBloc>(
+                                                creator: (__context, _bag) {
+                                                  return EventDetailBloc(
+                                                    snapshot.data
+                                                        .elementAt(index)
+                                                        .id,
+                                                    FirestoreItemRepository(),
+                                                    FirestoreLikeRepository(),
+                                                    FirestoreFavoriteRepository(),
+                                                    FirebaseAuthenticationRepository(),
+                                                  );
+                                                },
+                                                child: EventDetailScreen(),
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
+                                      child: Padding(
+                                        child: Text(
+                                          '${snapshot.data.elementAt(index).id}',
+                                          style: const TextStyle(fontSize: 22),
+                                        ),
+                                        padding: const EdgeInsets.all(20),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                itemCount:
+                                    snapshot.hasData ? snapshot.data.length : 0,
+                              );
+                            },
+                          ),
+                          StreamBuilder(
+                            stream: profileBloc.favoriteItemsController.stream,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<List<Item>> snapshot) {
+                              return ListView.builder(
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Card(
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute<EventDetailScreen>(
+                                            builder: (context) {
+                                              return BlocProvider<
+                                                  EventDetailBloc>(
+                                                creator: (__context, _bag) {
+                                                  return EventDetailBloc(
+                                                    snapshot.data
+                                                        .elementAt(index)
+                                                        .id,
+                                                    FirestoreItemRepository(),
+                                                    FirestoreLikeRepository(),
+                                                    FirestoreFavoriteRepository(),
+                                                    FirebaseAuthenticationRepository(),
+                                                  );
+                                                },
+                                                child: EventDetailScreen(),
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
+                                      child: Padding(
+                                        child: Text(
+                                          '${snapshot.data.elementAt(index).id}',
+                                          style: const TextStyle(fontSize: 22),
+                                        ),
+                                        padding: const EdgeInsets.all(20),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                itemCount:
+                                    snapshot.hasData ? snapshot.data.length : 0,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                  );
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
                 );
               },
             ),

@@ -19,7 +19,7 @@ class SignInScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'マイページ',
+          'ログイン',
           style: TextStyle(
             color: Colors.white,
           ),
