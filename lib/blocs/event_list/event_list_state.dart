@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:flutter_firebase/entities/event.dart';
+import 'package:flutter_firebase/entities/item.dart';
 
 @immutable
 abstract class EventListState extends Equatable {}
@@ -18,7 +18,7 @@ class EventListInProgress extends EventListState {
 class EventListSuccess extends EventListState {
   EventListSuccess({@required this.eventList}) : assert(eventList != null);
 
-  final Stream<List<Event>> eventList;
+  final Stream<List<Item>> eventList;
 
   @override
   List<Object> get props => [eventList];

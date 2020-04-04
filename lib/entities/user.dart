@@ -8,7 +8,9 @@ class User {
     @required this.imageUrl,
     @required this.introduction,
   })  : assert(id != null),
-        assert(name != null);
+        assert(name != null),
+        assert(imageUrl != null),
+        assert(introduction != null);
 
   final String id;
   final String name;

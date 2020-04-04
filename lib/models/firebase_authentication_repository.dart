@@ -1,29 +1,31 @@
+import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_firebase/repositories/sign_up_repository.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_firebase/repositories/sign_in_repository.dart';
 import 'package:flutter_firebase/entities/current_user.dart';
+import 'package:flutter_firebase/repositories/authentication_repository.dart';
 
-class FirebaseAuthenticationRepository
-    implements SignInRepository, SignUpRepository {
-  FirebaseAuthenticationRepository(
-      {FirebaseAuth firebaseAuth, GoogleSignIn googleSignIn})
-      : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-        _googleSignIn = googleSignIn ?? GoogleSignIn();
+class FirebaseAuthenticationRepository implements AuthenticationRepository {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  final FirebaseAuth _firebaseAuth;
-  final GoogleSignIn _googleSignIn;
+  @override
+  Stream<CurrentUser> getCurrentUserStream() {
+    return _firebaseAuth.onAuthStateChanged.map(
+      (FirebaseUser firebaseUser) {
+        if (firebaseUser == null) {
+          return null;
+        }
+        return CurrentUser(
+          id: firebaseUser.uid,
+        );
+      },
+    );
+  }
 
   @override
   Future<CurrentUser> getCurrentUser() async {
     final currentUser = await _firebaseAuth.currentUser();
     return CurrentUser(
-        id: currentUser.uid ?? '',
-        name: currentUser.displayName ?? '',
-        photoUrl: currentUser.photoUrl ?? '',
-        isAnonymous: currentUser.isAnonymous,
-        createdAt: currentUser.metadata.creationTime,
-        updatedAt: currentUser.metadata.lastSignInTime);
+      id: currentUser.uid ?? '',
+    );
   }
 
   @override
@@ -34,34 +36,24 @@ class FirebaseAuthenticationRepository
 
   @override
   Future<void> signOut() {
-    return Future.wait([_firebaseAuth.signOut(), _googleSignIn.signOut()]);
+    return Future.wait([_firebaseAuth.signOut()]);
   }
 
   @override
-  Future<void> signInWithEmailAndPassword(String email, String password) async {
+  Future<void> signInWithEmailAndPassword({
+    @required String email,
+    @required String password,
+  }) async {
     await _firebaseAuth.signInWithEmailAndPassword(
-        email: email, password: password);
-  }
-
-  @override
-  Future<void> signInWithGoogle() async {
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
+      email: email,
+      password: password,
     );
-    await _firebaseAuth.signInWithCredential(credential);
   }
 
   @override
-  Future<void> signInAnonymously() async {
-    await _firebaseAuth.signInAnonymously();
-  }
-
-  @override
-  Future<void> signUpWithEmailAndPassword(String email, String password) async {
+  Future<void> sendSignInWithEmailLink({
+    @required String email,
+  }) async {
     await _firebaseAuth.sendSignInWithEmailLink(
       email: email,
       url: 'https://zwtin.page.link/zXbp',
@@ -74,25 +66,13 @@ class FirebaseAuthenticationRepository
   }
 
   @override
-  Future<void> signInWithEmailAndLink(
-    String email,
-    String password,
-    String link,
-  ) async {
+  Future<void> createUserWithEmailAndPassword({
+    @required String email,
+    @required String password,
+  }) async {
     await _firebaseAuth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
-
-    await _firebaseAuth.signInWithEmailAndLink(
-      email: email,
-      link: link,
-    );
   }
-
-  @override
-  Future<void> signUpWithGoogle() async {}
-
-  @override
-  Future<void> signUpWithApple() async {}
 }

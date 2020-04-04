@@ -1,61 +1,96 @@
 import 'dart:async';
 import 'package:bloc_provider/bloc_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/event_detail/event_detail_state.dart';
-import 'package:flutter_firebase/repositories/event_repository.dart';
+import 'package:flutter_firebase/entities/current_user.dart';
+import 'package:flutter_firebase/entities/item.dart';
+import 'package:flutter_firebase/repositories/authentication_repository.dart';
+import 'package:flutter_firebase/repositories/favorite_repository.dart';
+import 'package:flutter_firebase/repositories/item_repository.dart';
 import 'package:flutter_firebase/repositories/like_repository.dart';
-import 'package:flutter_firebase/repositories/sign_in_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
 class EventDetailBloc implements Bloc {
   EventDetailBloc(
-    this._id,
-    this._eventRepository,
+    this.id,
+    this._itemRepository,
     this._likeRepository,
-    this._signInRepository,
-  )   : assert(_id != null),
-        assert(_eventRepository != null),
+    this._favoriteRepository,
+    this._authenticationRepository,
+  )   : assert(id != null),
+        assert(_itemRepository != null),
         assert(_likeRepository != null),
-        assert(_signInRepository != null) {
-    getEventDetail();
+        assert(_favoriteRepository != null),
+        assert(_authenticationRepository != null) {
+    setup();
   }
 
-  final String _id;
-  final EventRepository _eventRepository;
+  final String id;
+  final ItemRepository _itemRepository;
   final LikeRepository _likeRepository;
-  final SignInRepository _signInRepository;
+  final FavoriteRepository _favoriteRepository;
+  final AuthenticationRepository _authenticationRepository;
 
-  final _stateController = StreamController<EventDetailState>();
+  final BehaviorSubject<Item> itemController =
+      BehaviorSubject<Item>.seeded(null);
+  final BehaviorSubject<bool> likeController =
+      BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<bool> favoriteController =
+      BehaviorSubject<bool>.seeded(false);
 
-  // output
-  Stream<EventDetailState> get screenState => _stateController.stream;
-
-  void getEventDetail() {
-    try {
-      final event = _eventRepository.getEventDetail(_id);
-      _stateController.sink.add(EventDetailSuccess(event: event));
-    } on Exception catch (error) {
-      _stateController.sink.add(EventDetailFailure(exception: error));
-    }
+  Future<void> setup() async {
+    _authenticationRepository.getCurrentUserStream().listen(
+      (CurrentUser currentUser) {
+        _itemRepository.getItemDetail(id: id).listen(
+          (Item item) {
+            itemController.sink.add(item);
+          },
+        );
+        _likeRepository.getLike(userId: currentUser.id, itemId: id).listen(
+          (bool isLiked) {
+            likeController.sink.add(isLiked);
+          },
+        );
+        _favoriteRepository
+            .getFavorite(userId: currentUser.id, itemId: id)
+            .listen(
+          (bool isFavorite) {
+            favoriteController.sink.add(isFavorite);
+          },
+        );
+      },
+    );
   }
 
   Future<void> likeButtonAction() async {
-    final currentUser = await _signInRepository.getCurrentUser();
-    await _likeRepository.like(
-      userId: currentUser.id,
-      itemId: _id,
-    );
+    if (likeController.value == null) {
+      return;
+    }
+    final currentUser = await _authenticationRepository.getCurrentUser();
+    if (likeController.value) {
+      await _likeRepository.removeLike(userId: currentUser.id, itemId: id);
+    } else {
+      await _likeRepository.setLike(userId: currentUser.id, itemId: id);
+    }
   }
 
   Future<void> favoriteButtonAction() async {
-    final currentUser = await _signInRepository.getCurrentUser();
-    await _likeRepository.like(
-      userId: currentUser.id,
-      itemId: _id,
-    );
+    if (favoriteController.value == null) {
+      return;
+    }
+    final currentUser = await _authenticationRepository.getCurrentUser();
+    if (favoriteController.value) {
+      await _favoriteRepository.removeFavorite(
+          userId: currentUser.id, itemId: id);
+    } else {
+      await _favoriteRepository.setFavorite(userId: currentUser.id, itemId: id);
+    }
   }
 
   @override
   Future<void> dispose() async {
-    await _stateController.close();
+    await itemController.close();
+    await likeController.close();
+    await favoriteController.close();
   }
 }

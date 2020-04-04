@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_firebase/repositories/like_repository.dart';
+import 'package:flutter_firebase/repositories/favorite_repository.dart';
 
-class FirestoreLikeRepository implements LikeRepository {
+class FirestoreFavoriteRepository implements FavoriteRepository {
   final _firestore = Firestore.instance;
 
   @override
-  Future<bool> checkLike({
+  Future<bool> checkFavorite({
     @required String userId,
     @required String itemId,
   }) async {
     final liked = await _firestore
         .collection('users')
         .document(userId)
-        .collection('like_items')
+        .collection('favorite_items')
         .document(itemId)
         .get()
         .then(
@@ -25,14 +25,14 @@ class FirestoreLikeRepository implements LikeRepository {
   }
 
   @override
-  Stream<bool> getLike({
+  Stream<bool> getFavorite({
     @required String userId,
     @required String itemId,
   }) {
     return _firestore
         .collection('users')
         .document(userId)
-        .collection('like_items')
+        .collection('favorite_items')
         .document(itemId)
         .snapshots()
         .map(
@@ -43,7 +43,7 @@ class FirestoreLikeRepository implements LikeRepository {
   }
 
   @override
-  Future<void> setLike({
+  Future<void> setFavorite({
     @required String userId,
     @required String itemId,
   }) async {
@@ -53,7 +53,7 @@ class FirestoreLikeRepository implements LikeRepository {
       _firestore
           .collection('users')
           .document(userId)
-          .collection('like_items')
+          .collection('favorite_items')
           .document(itemId),
       itemMap,
     );
@@ -62,7 +62,7 @@ class FirestoreLikeRepository implements LikeRepository {
       _firestore
           .collection('items')
           .document(itemId)
-          .collection('liked_users')
+          .collection('favorited_users')
           .document(userId),
       userMap,
     );
@@ -70,7 +70,7 @@ class FirestoreLikeRepository implements LikeRepository {
   }
 
   @override
-  Future<void> removeLike({
+  Future<void> removeFavorite({
     @required String userId,
     @required String itemId,
   }) async {
@@ -79,14 +79,14 @@ class FirestoreLikeRepository implements LikeRepository {
       _firestore
           .collection('users')
           .document(userId)
-          .collection('like_items')
+          .collection('favorite_items')
           .document(itemId),
     );
     batch.delete(
       _firestore
           .collection('items')
           .document(itemId)
-          .collection('liked_users')
+          .collection('favorited_users')
           .document(userId),
     );
     await batch.commit();

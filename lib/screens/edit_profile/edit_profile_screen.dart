@@ -63,7 +63,7 @@ class EditProfileScreen extends StatelessWidget {
                         color: Colors.orange,
                         textColor: Colors.white,
                         onPressed: () {
-                          editProfileBloc.updateProfile(_user);
+//                          editProfileBloc.updateProfile(_user);
                         },
                       ),
                     ],
@@ -124,7 +124,7 @@ class EditProfileScreen extends StatelessWidget {
                     color: Colors.orange,
                     textColor: Colors.white,
                     onPressed: () {
-                      editProfileBloc.updateProfile(_user);
+//                      editProfileBloc.updateProfile(_user);
                     },
                   ),
                 ],
@@ -176,7 +176,7 @@ class EditProfileScreen extends StatelessWidget {
                     color: Colors.orange,
                     textColor: Colors.white,
                     onPressed: () {
-                      editProfileBloc.updateProfile(_user);
+//                      editProfileBloc.updateProfile(_user);
                     },
                   ),
                 ],
@@ -216,7 +216,7 @@ class EditProfileScreen extends StatelessWidget {
                           },
                         ),
                       ),
-                      onTap: editProfileBloc.getImage,
+//                      onTap: editProfileBloc.getImage,
                     ),
                   ),
                   const Text('ユーザー名'),
@@ -248,7 +248,7 @@ class EditProfileScreen extends StatelessWidget {
                     color: Colors.orange,
                     textColor: Colors.white,
                     onPressed: () {
-                      editProfileBloc.updateProfile(_user);
+//                      editProfileBloc.updateProfile(_user);
                     },
                   ),
                 ],
