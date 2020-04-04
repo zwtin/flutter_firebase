@@ -50,7 +50,7 @@ class ProfileBloc implements Bloc {
   }
 
   void getUser({@required String id}) {
-    _userRepository.getUserDetail(userId: id).listen(
+    _userRepository.getUserStream(userId: id).listen(
       (User user) {
         userController.sink.add(user);
       },

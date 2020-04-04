@@ -9,7 +9,7 @@ class FirestoreUserRepository implements UserRepository {
   final _firestore = Firestore.instance;
 
   @override
-  Stream<User> getUserDetail({@required String userId}) {
+  Stream<User> getUserStream({@required String userId}) {
     return _firestore.collection('users').document(userId).snapshots().map(
       (DocumentSnapshot snapshot) {
         return User(
@@ -22,17 +22,34 @@ class FirestoreUserRepository implements UserRepository {
     );
   }
 
-//  @override
-//  Future<void> update(String id, User user) async {
-//    await _firestore
-//        .collection('user')
-//        .document(id)
-//        .updateData(<String, dynamic>{
-//      'name': user.name,
-//      'image_url': user.imageUrl,
-//      'introduction': user.introduction
-//    });
-//  }
+  @override
+  Future<User> getUser({@required String userId}) async {
+    final user =
+        await _firestore.collection('users').document(userId).get().then(
+      (DocumentSnapshot snapshot) {
+        return User(
+          id: snapshot.data['id'] as String,
+          name: snapshot.data['name'] as String,
+          imageUrl: snapshot.data['image_url'] as String,
+          introduction: snapshot.data['introduction'] as String,
+        );
+      },
+    );
+    return user;
+  }
+
+  @override
+  Future<void> updateUser(
+      {@required String userId, @required User newUser}) async {
+    await _firestore.collection('users').document(userId).updateData(
+      <String, dynamic>{
+        'name': newUser.name,
+        'image_url': newUser.imageUrl,
+        'introduction': newUser.introduction
+      },
+    );
+  }
+
   @override
   Stream<List<String>> getCreatedItemIds({@required String userId}) {
     return _firestore

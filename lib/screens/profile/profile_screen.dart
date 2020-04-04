@@ -68,7 +68,7 @@ class ProfileScreen extends StatelessWidget {
                                           FirebaseAuthenticationRepository(),
                                         );
                                       },
-                                      child: EditProfileScreen(User()),
+                                      child: EditProfileScreen(),
                                     );
                                   },
                                 ),
