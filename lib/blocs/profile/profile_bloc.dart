@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase/blocs/profile/profile_state.dart';
 import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:flutter_firebase/entities/item.dart';
 import 'package:flutter_firebase/entities/user.dart';

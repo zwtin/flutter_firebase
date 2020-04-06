@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_firebase/entities/item.dart';
 import 'package:flutter_firebase/entities/user.dart';
 import 'package:flutter_firebase/repositories/user_repository.dart';
-import 'package:rxdart/rxdart.dart';
 
 class FirestoreUserRepository implements UserRepository {
   final _firestore = Firestore.instance;

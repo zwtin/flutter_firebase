@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/entities/user.dart';
-import 'package:flutter_firebase/entities/item.dart';
 
 abstract class UserRepository {
   Stream<User> getUserStream({@required String userId});
