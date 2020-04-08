@@ -16,6 +16,8 @@ class TabBloc implements Bloc {
   final BuildContext context;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
+  final BehaviorSubject<int> indexController = BehaviorSubject<int>.seeded(0);
+
   void openNewRegister() {
     Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute<SignUpScreen>(
@@ -67,5 +69,7 @@ class TabBloc implements Bloc {
   }
 
   @override
-  Future<void> dispose() async {}
+  Future<void> dispose() async {
+    await indexController.close();
+  }
 }

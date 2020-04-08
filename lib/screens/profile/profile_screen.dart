@@ -22,8 +22,8 @@ import 'package:flutter_firebase/models/firestore_like_repository.dart';
 import 'package:flutter_firebase/models/firestore_favorite_repository.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen(this.tabBloc) : assert(tabBloc != null);
-  final TabBloc tabBloc;
+//  const ProfileScreen(this.tabBloc) : assert(tabBloc != null);
+//  final TabBloc tabBloc;
 
   @override
   Widget build(BuildContext context) {

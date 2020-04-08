@@ -13,8 +13,8 @@ import 'package:flutter_firebase/models/firestore_item_repository.dart';
 import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 
 class EventListScreen extends StatelessWidget {
-  const EventListScreen(this.tabBloc) : assert(tabBloc != null);
-  final TabBloc tabBloc;
+//  const EventListScreen(this.tabBloc) : assert(tabBloc != null);
+//  final TabBloc tabBloc;
 
   @override
   Widget build(BuildContext context) {
