@@ -26,6 +26,7 @@ class TabScreen extends StatelessWidget {
               selectedItemBackgroundColor: Colors.orange,
               selectedItemIconColor: Colors.white,
               selectedItemLabelColor: Colors.black,
+              showSelectedItemShadow: false,
             ),
             selectedIndex: indexSnapshot.data ?? 0,
             onSelectTab: (int index) {
@@ -47,8 +48,8 @@ class TabScreen extends StatelessWidget {
             children: <Widget>[
               Navigator(
                 onGenerateRoute: (settings) {
-                  return MaterialPageRoute<Widget>(
-                    builder: (context) {
+                  return PageRouteBuilder<Widget>(
+                    pageBuilder: (context, animation1, animation2) {
                       return BlocProvider<EventListBloc>(
                         creator: (BuildContext context, BlocCreatorBag bag) {
                           return EventListBloc(
@@ -63,8 +64,8 @@ class TabScreen extends StatelessWidget {
               ),
               Navigator(
                 onGenerateRoute: (settings) {
-                  return MaterialPageRoute<Widget>(
-                    builder: (context) {
+                  return PageRouteBuilder<Widget>(
+                    pageBuilder: (context, animation1, animation2) {
                       return BlocProvider<ProfileBloc>(
                         creator: (BuildContext context, BlocCreatorBag bag) {
                           return ProfileBloc(
