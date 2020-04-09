@@ -29,9 +29,7 @@ class TabScreen extends StatelessWidget {
               showSelectedItemShadow: false,
             ),
             selectedIndex: indexSnapshot.data ?? 0,
-            onSelectTab: (int index) {
-              tabBloc.indexController.sink.add(index);
-            },
+            onSelectTab: tabBloc.tabTappedAction,
             items: [
               FFNavigationBarItem(
                 iconData: Icons.home,
@@ -51,7 +49,7 @@ class TabScreen extends StatelessWidget {
                   return PageRouteBuilder<Widget>(
                     pageBuilder: (context, animation1, animation2) {
                       return BlocProvider<EventListBloc>(
-                        creator: (BuildContext context, BlocCreatorBag bag) {
+                        creator: (BuildContext context1, BlocCreatorBag bag) {
                           return EventListBloc(
                             FirestoreItemRepository(),
                           );
@@ -67,7 +65,7 @@ class TabScreen extends StatelessWidget {
                   return PageRouteBuilder<Widget>(
                     pageBuilder: (context, animation1, animation2) {
                       return BlocProvider<ProfileBloc>(
-                        creator: (BuildContext context, BlocCreatorBag bag) {
+                        creator: (BuildContext context1, BlocCreatorBag bag) {
                           return ProfileBloc(
                             FirestoreUserRepository(),
                             FirestoreItemRepository(),

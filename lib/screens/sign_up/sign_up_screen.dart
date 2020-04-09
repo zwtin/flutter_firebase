@@ -1,71 +1,38 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/sign_up/sign_up_bloc.dart';
-import 'package:flutter_firebase/blocs/sign_up/sign_up_state.dart';
 import 'package:bloc_provider/bloc_provider.dart';
+import 'package:flutter_firebase/entities/current_user.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final signUpBloc = BlocProvider.of<SignUpBloc>(context);
 
-    return StreamBuilder<SignUpState>(
-      stream: signUpBloc.screenState,
-      builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data is SignUpInProgress) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(
-                'マイページ',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-              backgroundColor: Colors.orange,
-            ),
-            body: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        } else if (snapshot.hasData && snapshot.data is SignUpFailure) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(
-                'マイページ',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-              backgroundColor: Colors.orange,
-            ),
-            body: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const Text('読み込みに失敗しました'),
-                  RaisedButton(
-                    child: const Text('再読み込み'),
-                    color: Colors.orange,
-                    textColor: Colors.white,
-//                    onPressed: signUpBloc.reload,
-                  ),
-                ],
-              ),
-            ),
-          );
-        } else if (snapshot.hasData && snapshot.data is SignUpSuccess) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(
-                'マイページ',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-              backgroundColor: Colors.orange,
-            ),
-            body: Center(
+    signUpBloc.currentUserController.listen(
+      (CurrentUser currentUser) {
+        if (currentUser != null) {
+          Navigator.of(context).pop();
+        }
+      },
+    );
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'ログイン',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.orange,
+      ),
+      body: StreamBuilder(
+        stream: signUpBloc.loadingController.stream,
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          return LoadingOverlay(
+            child: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -74,78 +41,55 @@ class SignUpScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: TextField(
-                      onChanged: (String str) {
-                        signUpBloc.inputEmail = str;
-                      },
-                      onSubmitted: (String str) {
-                        signUpBloc.inputEmail = str;
-                      },
+                      controller: signUpBloc.emailController,
                     ),
                   ),
                   const Text('パスワード'),
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: TextField(
-                      onChanged: (String str) {
-                        signUpBloc.inputPassword = str;
-                      },
-                      onSubmitted: (String str) {
-                        signUpBloc.inputPassword = str;
-                      },
+                      controller: signUpBloc.passwordController,
                     ),
                   ),
                   RaisedButton(
-                    child: const Text('会員登録'),
+                    child: const Text('ログイン'),
                     color: Colors.orange,
                     textColor: Colors.white,
-//                    onPressed: signUpBloc.signUpWithEmailAndPassword,
+                    onPressed: signUpBloc.loginWithEmailAndPassword,
                   ),
                   Platform.isAndroid
                       ? RaisedButton(
                           child: const Text('Google'),
                           color: Colors.orange,
                           textColor: Colors.white,
-//                          onPressed: signUpBloc.signUpWithGoogle,
+                          onPressed: () {},
                         )
                       : RaisedButton(
                           child: const Text('Apple'),
                           color: Colors.orange,
                           textColor: Colors.white,
-//                          onPressed: signUpBloc.signUpWithApple,
+                          onPressed: () {},
                         ),
                   RaisedButton(
                     child: const Text('Twitter'),
                     color: Colors.orange,
                     textColor: Colors.white,
-//                    onPressed: signUpBloc.signUpWithTwitter,
+                    onPressed: () {},
                   ),
                   RaisedButton(
                     child: const Text('Facebook'),
                     color: Colors.orange,
                     textColor: Colors.white,
-//                    onPressed: signUpBloc.signUpWithFacebook,
+                    onPressed: () {},
                   ),
                 ],
               ),
             ),
+            isLoading: snapshot.data ?? false,
+            color: Colors.grey,
           );
-        } else {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(
-                'マイページ',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-              backgroundColor: Colors.orange,
-            ),
-            body: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-      },
+        },
+      ),
     );
   }
 }

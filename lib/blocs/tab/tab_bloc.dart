@@ -17,6 +17,7 @@ class TabBloc implements Bloc {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   final BehaviorSubject<int> indexController = BehaviorSubject<int>.seeded(0);
+  final PublishSubject<int> rootTransitionController = PublishSubject<int>();
 
   void openNewRegister() {
     Navigator.of(context, rootNavigator: true).push(
@@ -68,8 +69,17 @@ class TabBloc implements Bloc {
     );
   }
 
+  Future<void> tabTappedAction(int index) {
+    if (indexController.value == index) {
+      rootTransitionController.sink.add(index);
+    } else {
+      indexController.sink.add(index);
+    }
+  }
+
   @override
   Future<void> dispose() async {
     await indexController.close();
+    await rootTransitionController.close();
   }
 }

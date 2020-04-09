@@ -22,12 +22,18 @@ import 'package:flutter_firebase/models/firestore_like_repository.dart';
 import 'package:flutter_firebase/models/firestore_favorite_repository.dart';
 
 class ProfileScreen extends StatelessWidget {
-//  const ProfileScreen(this.tabBloc) : assert(tabBloc != null);
-//  final TabBloc tabBloc;
-
   @override
   Widget build(BuildContext context) {
     final profileBloc = BlocProvider.of<ProfileBloc>(context);
+    final tabBloc = BlocProvider.of<TabBloc>(context);
+
+    tabBloc.rootTransitionController.listen(
+      (int index) {
+        if (index == 1) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
+      },
+    );
 
     return StreamBuilder(
       stream: profileBloc.currentUserController.stream,

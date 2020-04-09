@@ -13,12 +13,18 @@ import 'package:flutter_firebase/models/firestore_item_repository.dart';
 import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 
 class EventListScreen extends StatelessWidget {
-//  const EventListScreen(this.tabBloc) : assert(tabBloc != null);
-//  final TabBloc tabBloc;
-
   @override
   Widget build(BuildContext context) {
     final eventListBloc = BlocProvider.of<EventListBloc>(context);
+    final tabBloc = BlocProvider.of<TabBloc>(context);
+
+    tabBloc.rootTransitionController.listen(
+      (int index) {
+        if (index == 0) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
+      },
+    );
 
     return Scaffold(
       appBar: AppBar(
