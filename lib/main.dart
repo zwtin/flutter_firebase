@@ -10,7 +10,11 @@ void main() {
   Crashlytics.instance.enableInDevMode = true;
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
   runZoned(
-    () => runApp(MyApp()),
+    () {
+      return runApp(
+        MyApp(),
+      );
+    },
     onError: Crashlytics.instance.recordError,
   );
 }
@@ -24,8 +28,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.orange,
       ),
       home: BlocProvider<TabBloc>(
-        creator: (context, bag) {
-          return TabBloc(context);
+        creator: (BuildContext context, BlocCreatorBag bag) {
+          return TabBloc();
         },
         child: TabScreen(),
       ),

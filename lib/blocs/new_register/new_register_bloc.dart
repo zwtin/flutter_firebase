@@ -5,27 +5,29 @@ import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
-class SignUpBloc implements Bloc {
-  SignUpBloc(this._authenticationRepository)
+class NewRegisterBloc implements Bloc {
+  NewRegisterBloc(this._authenticationRepository)
       : assert(_authenticationRepository != null);
 
   final AuthenticationRepository _authenticationRepository;
 
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   final PublishSubject<CurrentUser> currentUserController =
       PublishSubject<CurrentUser>();
   final BehaviorSubject<bool> loadingController =
       BehaviorSubject<bool>.seeded(false);
 
-  Future<void> sendSignInWithEmailLink() async {
-    if (emailController.text.isEmpty) {
+  Future<void> loginWithEmailAndPassword() async {
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       return;
     }
     loadingController.sink.add(true);
     try {
-      await _authenticationRepository.sendSignInWithEmailLink(
+      await _authenticationRepository.signInWithEmailAndPassword(
         email: emailController.text,
+        password: passwordController.text,
       );
       final currentUser = await _authenticationRepository.getCurrentUser();
       currentUserController.sink.add(currentUser);

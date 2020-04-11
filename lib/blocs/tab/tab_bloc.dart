@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/screens/sign_up/sign_up_screen.dart';
@@ -9,33 +10,15 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:rxdart/rxdart.dart';
 
 class TabBloc implements Bloc {
-  TabBloc(this.context) : assert(context != null) {
+  TabBloc() {
     initDynamicLinks();
     _firebaseMessaging.requestNotificationPermissions();
   }
-  final BuildContext context;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   final BehaviorSubject<int> indexController = BehaviorSubject<int>.seeded(0);
   final PublishSubject<int> rootTransitionController = PublishSubject<int>();
-
-  void openNewRegister() {
-    Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute<SignUpScreen>(
-        builder: (context) {
-          return BlocProvider<SignUpBloc>(
-            creator: (BuildContext context, BlocCreatorBag bag) {
-              return SignUpBloc(
-                FirebaseAuthenticationRepository(),
-              );
-            },
-            child: SignUpScreen(),
-          );
-        },
-        fullscreenDialog: true,
-      ),
-    );
-  }
+  final PublishSubject<int> newRegisterController = PublishSubject<int>();
 
   Future<void> initDynamicLinks() async {
     final data = await FirebaseDynamicLinks.instance.getInitialLink();
@@ -43,6 +26,7 @@ class TabBloc implements Bloc {
 
     if (deepLink != null) {
       print(deepLink.path);
+      newRegisterController.sink.add(indexController.value);
     }
 
     FirebaseDynamicLinks.instance.onLink(
@@ -55,11 +39,12 @@ class TabBloc implements Bloc {
           final mode = query['mode'];
           final oobCode = query['oobCode'];
 
-          final prefs = await SharedPreferences.getInstance();
-          final inputEmail = prefs.getString('email');
-          if (inputEmail != null) {
-            openNewRegister();
-          }
+//          final prefs = await SharedPreferences.getInstance();
+//          final inputEmail = prefs.getString('email');
+//          if (inputEmail != null) {
+//            openNewRegister();
+//          }
+          newRegisterController.sink.add(indexController.value);
         }
       },
       onError: (OnLinkErrorException e) async {
@@ -69,7 +54,7 @@ class TabBloc implements Bloc {
     );
   }
 
-  Future<void> tabTappedAction(int index) {
+  void tabTappedAction(int index) {
     if (indexController.value == index) {
       rootTransitionController.sink.add(index);
     } else {
@@ -81,5 +66,6 @@ class TabBloc implements Bloc {
   Future<void> dispose() async {
     await indexController.close();
     await rootTransitionController.close();
+    await newRegisterController.close();
   }
 }

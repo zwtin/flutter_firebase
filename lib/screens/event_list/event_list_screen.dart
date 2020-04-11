@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_bloc.dart';
+import 'package:flutter_firebase/blocs/new_register/new_register_bloc.dart';
 import 'package:flutter_firebase/entities/item.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/models/firestore_favorite_repository.dart';
@@ -11,20 +12,12 @@ import 'package:flutter_firebase/screens/event_detail/event_detail_screen.dart';
 import 'package:flutter_firebase/blocs/event_detail/event_detail_bloc.dart';
 import 'package:flutter_firebase/models/firestore_item_repository.dart';
 import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
+import 'package:flutter_firebase/screens/new_register/new_register_screen.dart';
 
 class EventListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final eventListBloc = BlocProvider.of<EventListBloc>(context);
-    final tabBloc = BlocProvider.of<TabBloc>(context);
-
-    tabBloc.rootTransitionController.listen(
-      (int index) {
-        if (index == 0) {
-          Navigator.of(context).popUntil((route) => route.isFirst);
-        }
-      },
-    );
 
     return Scaffold(
       appBar: AppBar(

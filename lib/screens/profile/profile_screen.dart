@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase/blocs/new_register/new_register_bloc.dart';
 import 'package:flutter_firebase/blocs/sign_in/sign_in_bloc.dart';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/profile/profile_bloc.dart';
@@ -16,6 +17,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_firebase/blocs/event_detail/event_detail_bloc.dart';
 import 'package:flutter_firebase/screens/event_detail/event_detail_screen.dart';
 import 'package:flutter_firebase/models/firestore_item_repository.dart';
+import 'package:flutter_firebase/screens/new_register/new_register_screen.dart';
 import 'package:flutter_firebase/screens/sign_in/sign_in_screen.dart';
 import 'package:flutter_firebase/screens/sign_up/sign_up_screen.dart';
 import 'package:flutter_firebase/models/firestore_like_repository.dart';
@@ -25,15 +27,6 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profileBloc = BlocProvider.of<ProfileBloc>(context);
-    final tabBloc = BlocProvider.of<TabBloc>(context);
-
-    tabBloc.rootTransitionController.listen(
-      (int index) {
-        if (index == 1) {
-          Navigator.of(context).popUntil((route) => route.isFirst);
-        }
-      },
-    );
 
     return StreamBuilder(
       stream: profileBloc.currentUserController.stream,

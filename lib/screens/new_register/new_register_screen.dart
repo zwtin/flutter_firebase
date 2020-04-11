@@ -1,16 +1,16 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase/blocs/sign_up/sign_up_bloc.dart';
+import 'package:flutter_firebase/blocs/new_register/new_register_bloc.dart';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
-class SignUpScreen extends StatelessWidget {
+class NewRegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final signUpBloc = BlocProvider.of<SignUpBloc>(context);
+    final newRegisterBloc = BlocProvider.of<NewRegisterBloc>(context);
 
-    signUpBloc.currentUserController.listen(
+    newRegisterBloc.currentUserController.listen(
       (CurrentUser currentUser) {
         if (currentUser != null) {
           Navigator.of(context).pop();
@@ -21,7 +21,7 @@ class SignUpScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'ログイン',
+          'NewRegisterScreen',
           style: TextStyle(
             color: Colors.white,
           ),
@@ -29,7 +29,7 @@ class SignUpScreen extends StatelessWidget {
         backgroundColor: Colors.orange,
       ),
       body: StreamBuilder(
-        stream: signUpBloc.loadingController.stream,
+        stream: newRegisterBloc.loadingController.stream,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           return LoadingOverlay(
             child: Center(
@@ -41,14 +41,21 @@ class SignUpScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: TextField(
-                      controller: signUpBloc.emailController,
+                      controller: newRegisterBloc.emailController,
+                    ),
+                  ),
+                  const Text('パスワード'),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: TextField(
+                      controller: newRegisterBloc.passwordController,
                     ),
                   ),
                   RaisedButton(
-                    child: const Text('メール送信'),
+                    child: const Text('ログイン'),
                     color: Colors.orange,
                     textColor: Colors.white,
-                    onPressed: signUpBloc.sendSignInWithEmailLink,
+                    onPressed: newRegisterBloc.loginWithEmailAndPassword,
                   ),
                   Platform.isAndroid
                       ? RaisedButton(
