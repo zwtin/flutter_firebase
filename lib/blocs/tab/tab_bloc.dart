@@ -23,6 +23,7 @@ class TabBloc implements Bloc {
     if (deepLink != null) {
       print(deepLink.path);
       newRegisterController.sink.add(indexController.value);
+      rootTransitionController.sink.add(indexController.value);
     }
 
     FirebaseDynamicLinks.instance.onLink(
@@ -41,6 +42,7 @@ class TabBloc implements Bloc {
 //            openNewRegister();
 //          }
           newRegisterController.sink.add(indexController.value);
+          rootTransitionController.sink.add(indexController.value);
         }
       },
       onError: (OnLinkErrorException e) async {
