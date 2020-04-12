@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/sign_up/sign_up_bloc.dart';
 import 'package:bloc_provider/bloc_provider.dart';
-import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -10,18 +9,10 @@ class SignUpScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final signUpBloc = BlocProvider.of<SignUpBloc>(context);
 
-    signUpBloc.currentUserController.listen(
-      (CurrentUser currentUser) {
-        if (currentUser != null) {
-          Navigator.of(context).pop();
-        }
-      },
-    );
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'ログイン',
+          '新規会員登録',
           style: TextStyle(
             color: Colors.white,
           ),

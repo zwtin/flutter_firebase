@@ -13,8 +13,6 @@ class SignUpBloc implements Bloc {
 
   final TextEditingController emailController = TextEditingController();
 
-  final PublishSubject<CurrentUser> currentUserController =
-      PublishSubject<CurrentUser>();
   final BehaviorSubject<bool> loadingController =
       BehaviorSubject<bool>.seeded(false);
 
@@ -27,8 +25,6 @@ class SignUpBloc implements Bloc {
       await _authenticationRepository.sendSignInWithEmailLink(
         email: emailController.text,
       );
-      final currentUser = await _authenticationRepository.getCurrentUser();
-      currentUserController.sink.add(currentUser);
     } on Exception catch (error) {
       loadingController.sink.add(false);
     }
@@ -36,7 +32,6 @@ class SignUpBloc implements Bloc {
 
   @override
   Future<void> dispose() async {
-    await currentUserController.close();
     await loadingController.close();
   }
 }
