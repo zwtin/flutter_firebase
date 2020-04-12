@@ -56,12 +56,12 @@ class FirebaseAuthenticationRepository implements AuthenticationRepository {
   }) async {
     await _firebaseAuth.sendSignInWithEmailLink(
       email: email,
-      url: 'https://zwtin.page.link/zXbp',
+      url: 'https://flutter-firebase-6f534.firebaseapp.com/',
       handleCodeInApp: true,
       iOSBundleID: 'com.zwtin.flutterFirebase',
       androidPackageName: 'com.zwtin.flutter_firebase',
       androidInstallIfNotAvailable: true,
-      androidMinimumVersion: '21',
+      androidMinimumVersion: '1',
     );
   }
 
