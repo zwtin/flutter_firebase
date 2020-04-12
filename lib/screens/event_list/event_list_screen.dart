@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -15,9 +16,45 @@ import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 import 'package:flutter_firebase/screens/new_register/new_register_screen.dart';
 
 class EventListScreen extends StatelessWidget {
+  StreamSubscription<int> rootTransitionSubscription;
+  StreamSubscription<int> newRegisterSubscription;
+
   @override
   Widget build(BuildContext context) {
     final eventListBloc = BlocProvider.of<EventListBloc>(context);
+    final tabBloc = BlocProvider.of<TabBloc>(context);
+
+    rootTransitionSubscription?.cancel();
+    rootTransitionSubscription = tabBloc.rootTransitionController.stream.listen(
+      (int index) {
+        if (index == 0) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
+      },
+    );
+
+    newRegisterSubscription?.cancel();
+    newRegisterSubscription = tabBloc.newRegisterController.stream.listen(
+      (int index) {
+        if (index == 0) {
+          Navigator.of(context, rootNavigator: true).push(
+            MaterialPageRoute<NewRegisterScreen>(
+              builder: (BuildContext context) {
+                return BlocProvider<NewRegisterBloc>(
+                  creator: (BuildContext context, BlocCreatorBag bag) {
+                    return NewRegisterBloc(
+                      FirebaseAuthenticationRepository(),
+                    );
+                  },
+                  child: NewRegisterScreen(),
+                );
+              },
+              fullscreenDialog: true,
+            ),
+          );
+        }
+      },
+    );
 
     return Scaffold(
       appBar: AppBar(

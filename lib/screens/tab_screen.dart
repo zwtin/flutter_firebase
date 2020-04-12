@@ -14,36 +14,12 @@ import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 import 'package:ff_navigation_bar/ff_navigation_bar.dart';
 
 class TabScreen extends StatelessWidget {
+  final EventListScreen _eventListScreen = EventListScreen();
+  final ProfileScreen _profileScreen = ProfileScreen();
+
   @override
   Widget build(BuildContext context) {
     final tabBloc = BlocProvider.of<TabBloc>(context);
-
-    tabBloc.rootTransitionController.stream.listen(
-      (int index) {
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      },
-    );
-
-    tabBloc.newRegisterController.listen(
-      (int index) {
-        Navigator.of(context).popUntil((route) => route.isFirst);
-        Navigator.of(context, rootNavigator: true).push(
-          MaterialPageRoute<NewRegisterScreen>(
-            builder: (BuildContext context) {
-              return BlocProvider<NewRegisterBloc>(
-                creator: (BuildContext context, BlocCreatorBag bag) {
-                  return NewRegisterBloc(
-                    FirebaseAuthenticationRepository(),
-                  );
-                },
-                child: NewRegisterScreen(),
-              );
-            },
-            fullscreenDialog: true,
-          ),
-        );
-      },
-    );
 
     return StreamBuilder(
       stream: tabBloc.indexController.stream,
@@ -83,7 +59,7 @@ class TabScreen extends StatelessWidget {
                             FirestoreItemRepository(),
                           );
                         },
-                        child: EventListScreen(),
+                        child: _eventListScreen,
                       );
                     },
                   );
@@ -101,7 +77,7 @@ class TabScreen extends StatelessWidget {
                             FirebaseAuthenticationRepository(),
                           );
                         },
-                        child: ProfileScreen(),
+                        child: _profileScreen,
                       );
                     },
                   );

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/new_register/new_register_bloc.dart';
 import 'package:flutter_firebase/blocs/sign_in/sign_in_bloc.dart';
@@ -24,9 +25,45 @@ import 'package:flutter_firebase/models/firestore_like_repository.dart';
 import 'package:flutter_firebase/models/firestore_favorite_repository.dart';
 
 class ProfileScreen extends StatelessWidget {
+  StreamSubscription<int> rootTransitionSubscription;
+  StreamSubscription<int> newRegisterSubscription;
+
   @override
   Widget build(BuildContext context) {
     final profileBloc = BlocProvider.of<ProfileBloc>(context);
+    final tabBloc = BlocProvider.of<TabBloc>(context);
+
+    rootTransitionSubscription?.cancel();
+    rootTransitionSubscription = tabBloc.rootTransitionController.stream.listen(
+      (int index) {
+        if (index == 1) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
+      },
+    );
+
+    newRegisterSubscription?.cancel();
+    newRegisterSubscription = tabBloc.newRegisterController.stream.listen(
+      (int index) {
+        if (index == 1) {
+          Navigator.of(context, rootNavigator: true).push(
+            MaterialPageRoute<NewRegisterScreen>(
+              builder: (BuildContext context) {
+                return BlocProvider<NewRegisterBloc>(
+                  creator: (BuildContext context, BlocCreatorBag bag) {
+                    return NewRegisterBloc(
+                      FirebaseAuthenticationRepository(),
+                    );
+                  },
+                  child: NewRegisterScreen(),
+                );
+              },
+              fullscreenDialog: true,
+            ),
+          );
+        }
+      },
+    );
 
     return StreamBuilder(
       stream: profileBloc.currentUserController.stream,

@@ -1,9 +1,5 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:bloc_provider/bloc_provider.dart';
-import 'package:flutter_firebase/screens/sign_up/sign_up_screen.dart';
-import 'package:flutter_firebase/blocs/sign_up/sign_up_bloc.dart';
-import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
