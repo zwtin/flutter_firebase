@@ -46,7 +46,7 @@ class EventListScreen extends StatelessWidget {
                       FirebaseAuthenticationRepository(),
                     );
                   },
-                  dispose: (context, bloc) {
+                  dispose: (BuildContext context, NewRegisterBloc bloc) {
                     bloc.dispose();
                   },
                   child: NewRegisterScreen(),
@@ -83,9 +83,9 @@ class EventListScreen extends StatelessWidget {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute<EventDetailScreen>(
-                            builder: (context) {
+                            builder: (BuildContext context) {
                               return Provider<EventDetailBloc>(
-                                create: (__context) {
+                                create: (BuildContext context) {
                                   return EventDetailBloc(
                                     snapshot.data.elementAt(index).id,
                                     FirestoreItemRepository(),
@@ -94,7 +94,8 @@ class EventListScreen extends StatelessWidget {
                                     FirebaseAuthenticationRepository(),
                                   );
                                 },
-                                dispose: (context, bloc) {
+                                dispose: (BuildContext context,
+                                    EventDetailBloc bloc) {
                                   bloc.dispose();
                                 },
                                 child: EventDetailScreen(),
@@ -106,9 +107,9 @@ class EventListScreen extends StatelessWidget {
                       child: Padding(
                         child: Text(
                           '${snapshot.data.elementAt(index).id}',
-                          style: TextStyle(fontSize: 22.0),
+                          style: const TextStyle(fontSize: 22),
                         ),
-                        padding: EdgeInsets.all(20.0),
+                        padding: const EdgeInsets.all(20),
                       ),
                     ),
                   );

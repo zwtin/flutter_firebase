@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
           return TabBloc();
         },
         dispose: (BuildContext context, TabBloc bloc) {
-          return bloc.dispose();
+          bloc.dispose();
         },
         child: TabScreen(),
       ),
