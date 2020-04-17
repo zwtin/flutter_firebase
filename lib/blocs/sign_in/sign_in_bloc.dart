@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
-class SignInBloc implements Bloc {
+class SignInBloc {
   SignInBloc(this._authenticationRepository)
       : assert(_authenticationRepository != null);
 
@@ -36,7 +35,6 @@ class SignInBloc implements Bloc {
     }
   }
 
-  @override
   Future<void> dispose() async {
     await currentUserController.close();
     await loadingController.close();

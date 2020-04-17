@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/new_register/new_register_bloc.dart';
 import 'package:flutter_firebase/blocs/profile/profile_bloc.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_bloc.dart';
@@ -12,6 +11,7 @@ import 'package:flutter_firebase/screens/new_register/new_register_screen.dart';
 import 'package:flutter_firebase/screens/profile/profile_screen.dart';
 import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 import 'package:ff_navigation_bar/ff_navigation_bar.dart';
+import 'package:provider/provider.dart';
 
 class TabScreen extends StatelessWidget {
   final EventListScreen _eventListScreen = EventListScreen();
@@ -19,7 +19,7 @@ class TabScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tabBloc = BlocProvider.of<TabBloc>(context);
+    final tabBloc = Provider.of<TabBloc>(context);
 
     return StreamBuilder(
       stream: tabBloc.indexController.stream,
@@ -50,14 +50,19 @@ class TabScreen extends StatelessWidget {
             index: indexSnapshot.data ?? 0,
             children: <Widget>[
               Navigator(
-                onGenerateRoute: (settings) {
+                onGenerateRoute: (RouteSettings settings) {
                   return PageRouteBuilder<Widget>(
-                    pageBuilder: (context, animation1, animation2) {
-                      return BlocProvider<EventListBloc>(
-                        creator: (BuildContext context, BlocCreatorBag bag) {
+                    pageBuilder: (BuildContext context,
+                        Animation<double> animation1,
+                        Animation<double> animation2) {
+                      return Provider<EventListBloc>(
+                        create: (BuildContext context) {
                           return EventListBloc(
                             FirestoreItemRepository(),
                           );
+                        },
+                        dispose: (BuildContext context, EventListBloc bloc) {
+                          bloc.dispose();
                         },
                         child: _eventListScreen,
                       );
@@ -66,16 +71,21 @@ class TabScreen extends StatelessWidget {
                 },
               ),
               Navigator(
-                onGenerateRoute: (settings) {
+                onGenerateRoute: (RouteSettings settings) {
                   return PageRouteBuilder<Widget>(
-                    pageBuilder: (context, animation1, animation2) {
-                      return BlocProvider<ProfileBloc>(
-                        creator: (BuildContext context, BlocCreatorBag bag) {
+                    pageBuilder: (BuildContext context,
+                        Animation<double> animation1,
+                        Animation<double> animation2) {
+                      return Provider<ProfileBloc>(
+                        create: (BuildContext context) {
                           return ProfileBloc(
                             FirestoreUserRepository(),
                             FirestoreItemRepository(),
                             FirebaseAuthenticationRepository(),
                           );
+                        },
+                        dispose: (BuildContext context, ProfileBloc bloc) {
+                          bloc.dispose();
                         },
                         child: _profileScreen,
                       );

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:bloc_provider/bloc_provider.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:rxdart/rxdart.dart';
 
-class TabBloc implements Bloc {
+class TabBloc {
   TabBloc() {
     initDynamicLinks();
     _firebaseMessaging.requestNotificationPermissions();
@@ -60,7 +59,6 @@ class TabBloc implements Bloc {
     }
   }
 
-  @override
   Future<void> dispose() async {
     await indexController.close();
     await rootTransitionController.close();

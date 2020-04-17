@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/entities/item.dart';
 import 'package:flutter_firebase/repositories/item_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
-class EventListBloc implements Bloc {
+class EventListBloc {
   EventListBloc(this._itemRepository) : assert(_itemRepository != null) {
     start();
   }
@@ -20,7 +19,6 @@ class EventListBloc implements Bloc {
     itemController.sink.add(items);
   }
 
-  @override
   Future<void> dispose() async {
     await itemController.close();
   }

@@ -29,13 +29,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.4.0"
-  bloc_provider:
-    dependency: "direct main"
-    description:
-      name: bloc_provider
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.7.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -437,7 +430,7 @@ packages:
     source: hosted
     version: "1.0.2"
   provider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: provider
       url: "https://pub.dartlang.org"

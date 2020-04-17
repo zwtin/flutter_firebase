@@ -1,13 +1,25 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/sign_up/sign_up_bloc.dart';
-import 'package:bloc_provider/bloc_provider.dart';
+import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatelessWidget {
+  StreamSubscription<int> newRegisterSubscription;
+
   @override
   Widget build(BuildContext context) {
-    final signUpBloc = BlocProvider.of<SignUpBloc>(context);
+    final signUpBloc = Provider.of<SignUpBloc>(context);
+    final tabBloc = Provider.of<TabBloc>(context);
+
+    newRegisterSubscription?.cancel();
+    newRegisterSubscription = tabBloc.newRegisterController.stream.listen(
+      (int index) {
+        Navigator.of(context).pop();
+      },
+    );
 
     return Scaffold(
       appBar: AppBar(

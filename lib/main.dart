@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_firebase/screens/tab_screen.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   Crashlytics.instance.enableInDevMode = true;
@@ -27,9 +27,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home: BlocProvider<TabBloc>(
-        creator: (BuildContext context, BlocCreatorBag bag) {
+      home: Provider<TabBloc>(
+        create: (BuildContext context) {
           return TabBloc();
+        },
+        dispose: (BuildContext context, TabBloc bloc) {
+          return bloc.dispose();
         },
         child: TabScreen(),
       ),

@@ -1,20 +1,32 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/new_register/new_register_bloc.dart';
-import 'package:bloc_provider/bloc_provider.dart';
+import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:provider/provider.dart';
 
 class NewRegisterScreen extends StatelessWidget {
+  StreamSubscription<int> newRegisterSubscription;
+
   @override
   Widget build(BuildContext context) {
-    final newRegisterBloc = BlocProvider.of<NewRegisterBloc>(context);
+    final newRegisterBloc = Provider.of<NewRegisterBloc>(context);
+    final tabBloc = Provider.of<TabBloc>(context);
 
     newRegisterBloc.currentUserController.listen(
       (CurrentUser currentUser) {
         if (currentUser != null) {
           Navigator.of(context).pop();
         }
+      },
+    );
+
+    newRegisterSubscription?.cancel();
+    newRegisterSubscription = tabBloc.newRegisterController.stream.listen(
+      (int index) {
+        Navigator.of(context).pop();
       },
     );
 

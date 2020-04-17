@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:flutter_firebase/entities/item.dart';
@@ -9,7 +8,7 @@ import 'package:flutter_firebase/repositories/item_repository.dart';
 import 'package:flutter_firebase/repositories/user_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
-class ProfileBloc implements Bloc {
+class ProfileBloc {
   ProfileBloc(
     this._userRepository,
     this._itemRepository,
@@ -92,7 +91,6 @@ class ProfileBloc implements Bloc {
     await _authenticationRepository.signOut();
   }
 
-  @override
   Future<void> dispose() async {
     await currentUserController.close();
     await userController.close();

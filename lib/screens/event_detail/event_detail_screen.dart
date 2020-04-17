@@ -1,14 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/entities/item.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_firebase/blocs/event_detail/event_detail_bloc.dart';
+import 'package:provider/provider.dart';
 
 class EventDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final eventDetailBloc = BlocProvider.of<EventDetailBloc>(context);
+    final eventDetailBloc = Provider.of<EventDetailBloc>(context);
 
     return Scaffold(
       appBar: AppBar(

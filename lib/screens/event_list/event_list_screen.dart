@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_bloc.dart';
 import 'package:flutter_firebase/blocs/new_register/new_register_bloc.dart';
 import 'package:flutter_firebase/entities/item.dart';
@@ -14,6 +13,7 @@ import 'package:flutter_firebase/blocs/event_detail/event_detail_bloc.dart';
 import 'package:flutter_firebase/models/firestore_item_repository.dart';
 import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 import 'package:flutter_firebase/screens/new_register/new_register_screen.dart';
+import 'package:provider/provider.dart';
 
 class EventListScreen extends StatelessWidget {
   StreamSubscription<int> rootTransitionSubscription;
@@ -21,8 +21,8 @@ class EventListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final eventListBloc = BlocProvider.of<EventListBloc>(context);
-    final tabBloc = BlocProvider.of<TabBloc>(context);
+    final eventListBloc = Provider.of<EventListBloc>(context);
+    final tabBloc = Provider.of<TabBloc>(context);
 
     rootTransitionSubscription?.cancel();
     rootTransitionSubscription = tabBloc.rootTransitionController.stream.listen(
@@ -40,11 +40,14 @@ class EventListScreen extends StatelessWidget {
           Navigator.of(context, rootNavigator: true).push(
             MaterialPageRoute<NewRegisterScreen>(
               builder: (BuildContext context) {
-                return BlocProvider<NewRegisterBloc>(
-                  creator: (BuildContext context, BlocCreatorBag bag) {
+                return Provider<NewRegisterBloc>(
+                  create: (BuildContext context) {
                     return NewRegisterBloc(
                       FirebaseAuthenticationRepository(),
                     );
+                  },
+                  dispose: (context, bloc) {
+                    bloc.dispose();
                   },
                   child: NewRegisterScreen(),
                 );
@@ -81,8 +84,8 @@ class EventListScreen extends StatelessWidget {
                         Navigator.of(context).push(
                           MaterialPageRoute<EventDetailScreen>(
                             builder: (context) {
-                              return BlocProvider<EventDetailBloc>(
-                                creator: (__context, _bag) {
+                              return Provider<EventDetailBloc>(
+                                create: (__context) {
                                   return EventDetailBloc(
                                     snapshot.data.elementAt(index).id,
                                     FirestoreItemRepository(),
@@ -90,6 +93,9 @@ class EventListScreen extends StatelessWidget {
                                     FirestoreFavoriteRepository(),
                                     FirebaseAuthenticationRepository(),
                                   );
+                                },
+                                dispose: (context, bloc) {
+                                  bloc.dispose();
                                 },
                                 child: EventDetailScreen(),
                               );

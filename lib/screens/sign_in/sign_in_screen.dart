@@ -1,20 +1,32 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/sign_in/sign_in_bloc.dart';
-import 'package:bloc_provider/bloc_provider.dart';
+import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:provider/provider.dart';
 
 class SignInScreen extends StatelessWidget {
+  StreamSubscription<int> newRegisterSubscription;
+
   @override
   Widget build(BuildContext context) {
-    final signInBloc = BlocProvider.of<SignInBloc>(context);
+    final signInBloc = Provider.of<SignInBloc>(context);
+    final tabBloc = Provider.of<TabBloc>(context);
 
     signInBloc.currentUserController.listen(
       (CurrentUser currentUser) {
         if (currentUser != null) {
           Navigator.of(context).pop();
         }
+      },
+    );
+
+    newRegisterSubscription?.cancel();
+    newRegisterSubscription = tabBloc.newRegisterController.stream.listen(
+      (int index) {
+        Navigator.of(context).pop();
       },
     );
 

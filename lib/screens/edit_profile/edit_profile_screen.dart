@@ -2,14 +2,14 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/edit_profile/edit_profile_bloc.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:provider/provider.dart';
 
 class EditProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final editProfileBloc = BlocProvider.of<EditProfileBloc>(context);
+    final editProfileBloc = Provider.of<EditProfileBloc>(context);
 
     return Scaffold(
       appBar: AppBar(

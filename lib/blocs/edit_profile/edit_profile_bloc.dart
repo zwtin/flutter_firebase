@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
-import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_firebase/entities/user.dart';
@@ -11,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rxdart/rxdart.dart';
 
-class EditProfileBloc implements Bloc {
+class EditProfileBloc {
   EditProfileBloc(
     this._userRepository,
     this._authenticationRepository,
@@ -104,7 +103,6 @@ class EditProfileBloc implements Bloc {
     return new String.fromCharCodes(codeUnits);
   }
 
-  @override
   Future<void> dispose() async {
     await loadingController.close();
     await imageController.close();

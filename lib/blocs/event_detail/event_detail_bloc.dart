@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:flutter_firebase/entities/item.dart';
@@ -9,7 +8,7 @@ import 'package:flutter_firebase/repositories/item_repository.dart';
 import 'package:flutter_firebase/repositories/like_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
-class EventDetailBloc implements Bloc {
+class EventDetailBloc {
   EventDetailBloc(
     this.id,
     this._itemRepository,
@@ -91,7 +90,6 @@ class EventDetailBloc implements Bloc {
     }
   }
 
-  @override
   Future<void> dispose() async {
     await itemController.close();
     await likeController.close();

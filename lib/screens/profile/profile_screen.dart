@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/new_register/new_register_bloc.dart';
 import 'package:flutter_firebase/blocs/sign_in/sign_in_bloc.dart';
-import 'package:bloc_provider/bloc_provider.dart';
 import 'package:flutter_firebase/blocs/profile/profile_bloc.dart';
 import 'package:flutter_firebase/blocs/sign_up/sign_up_bloc.dart';
 import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
@@ -23,6 +22,7 @@ import 'package:flutter_firebase/screens/sign_in/sign_in_screen.dart';
 import 'package:flutter_firebase/screens/sign_up/sign_up_screen.dart';
 import 'package:flutter_firebase/models/firestore_like_repository.dart';
 import 'package:flutter_firebase/models/firestore_favorite_repository.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   StreamSubscription<int> rootTransitionSubscription;
@@ -30,8 +30,8 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profileBloc = BlocProvider.of<ProfileBloc>(context);
-    final tabBloc = BlocProvider.of<TabBloc>(context);
+    final profileBloc = Provider.of<ProfileBloc>(context);
+    final tabBloc = Provider.of<TabBloc>(context);
 
     rootTransitionSubscription?.cancel();
     rootTransitionSubscription = tabBloc.rootTransitionController.stream.listen(
@@ -49,11 +49,14 @@ class ProfileScreen extends StatelessWidget {
           Navigator.of(context, rootNavigator: true).push(
             MaterialPageRoute<NewRegisterScreen>(
               builder: (BuildContext context) {
-                return BlocProvider<NewRegisterBloc>(
-                  creator: (BuildContext context, BlocCreatorBag bag) {
+                return Provider<NewRegisterBloc>(
+                  create: (BuildContext context) {
                     return NewRegisterBloc(
                       FirebaseAuthenticationRepository(),
                     );
+                  },
+                  dispose: (BuildContext context, NewRegisterBloc bloc) {
+                    bloc.dispose();
                   },
                   child: NewRegisterScreen(),
                 );
@@ -96,12 +99,15 @@ class ProfileScreen extends StatelessWidget {
                               Navigator.of(context).push(
                                 MaterialPageRoute<EditProfileScreen>(
                                   builder: (context) {
-                                    return BlocProvider<EditProfileBloc>(
-                                      creator: (__context, _bag) {
+                                    return Provider<EditProfileBloc>(
+                                      create: (__context) {
                                         return EditProfileBloc(
                                           FirestoreUserRepository(),
                                           FirebaseAuthenticationRepository(),
                                         );
+                                      },
+                                      dispose: (context, bloc) {
+                                        bloc.dispose();
                                       },
                                       child: EditProfileScreen(),
                                     );
@@ -208,9 +214,8 @@ class ProfileScreen extends StatelessWidget {
                                         Navigator.of(context).push(
                                           MaterialPageRoute<EventDetailScreen>(
                                             builder: (context) {
-                                              return BlocProvider<
-                                                  EventDetailBloc>(
-                                                creator: (__context, _bag) {
+                                              return Provider<EventDetailBloc>(
+                                                create: (__context) {
                                                   return EventDetailBloc(
                                                     snapshot.data
                                                         .elementAt(index)
@@ -220,6 +225,9 @@ class ProfileScreen extends StatelessWidget {
                                                     FirestoreFavoriteRepository(),
                                                     FirebaseAuthenticationRepository(),
                                                   );
+                                                },
+                                                dispose: (context, bloc) {
+                                                  bloc.dispose();
                                                 },
                                                 child: EventDetailScreen(),
                                               );
@@ -254,9 +262,8 @@ class ProfileScreen extends StatelessWidget {
                                         Navigator.of(context).push(
                                           MaterialPageRoute<EventDetailScreen>(
                                             builder: (context) {
-                                              return BlocProvider<
-                                                  EventDetailBloc>(
-                                                creator: (__context, _bag) {
+                                              return Provider<EventDetailBloc>(
+                                                create: (__context) {
                                                   return EventDetailBloc(
                                                     snapshot.data
                                                         .elementAt(index)
@@ -266,6 +273,9 @@ class ProfileScreen extends StatelessWidget {
                                                     FirestoreFavoriteRepository(),
                                                     FirebaseAuthenticationRepository(),
                                                   );
+                                                },
+                                                dispose: (context, bloc) {
+                                                  bloc.dispose();
                                                 },
                                                 child: EventDetailScreen(),
                                               );
@@ -320,11 +330,14 @@ class ProfileScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute<SignInScreen>(
-                        builder: (context) => BlocProvider<SignInBloc>(
-                          creator: (_context, _bag) {
+                        builder: (context) => Provider<SignInBloc>(
+                          create: (context) {
                             return SignInBloc(
                               FirebaseAuthenticationRepository(),
                             );
+                          },
+                          dispose: (context, bloc) {
+                            bloc.dispose();
                           },
                           child: SignInScreen(),
                         ),
@@ -340,11 +353,14 @@ class ProfileScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute<SignUpScreen>(
-                        builder: (context) => BlocProvider<SignUpBloc>(
-                          creator: (_context, _bag) {
+                        builder: (context) => Provider<SignUpBloc>(
+                          create: (context) {
                             return SignUpBloc(
                               FirebaseAuthenticationRepository(),
                             );
+                          },
+                          dispose: (context, bloc) {
+                            bloc.dispose();
                           },
                           child: SignUpScreen(),
                         ),
