@@ -40,15 +40,20 @@ class EventListScreen extends StatelessWidget {
           Navigator.of(context, rootNavigator: true).push(
             MaterialPageRoute<NewRegisterScreen>(
               builder: (BuildContext context) {
-                return Provider<NewRegisterBloc>(
-                  create: (BuildContext context) {
-                    return NewRegisterBloc(
-                      FirebaseAuthenticationRepository(),
-                    );
-                  },
-                  dispose: (BuildContext context, NewRegisterBloc bloc) {
-                    bloc.dispose();
-                  },
+                return MultiProvider(
+                  providers: [
+                    Provider<NewRegisterBloc>(
+                      create: (BuildContext context) {
+                        return NewRegisterBloc(
+                          FirebaseAuthenticationRepository(),
+                        );
+                      },
+                      dispose: (BuildContext context, NewRegisterBloc bloc) {
+                        bloc.dispose();
+                      },
+                    ),
+                    Provider<TabBloc>.value(value: tabBloc),
+                  ],
                   child: NewRegisterScreen(),
                 );
               },

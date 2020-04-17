@@ -49,15 +49,20 @@ class ProfileScreen extends StatelessWidget {
           Navigator.of(context, rootNavigator: true).push(
             MaterialPageRoute<NewRegisterScreen>(
               builder: (BuildContext context) {
-                return Provider<NewRegisterBloc>(
-                  create: (BuildContext context) {
-                    return NewRegisterBloc(
-                      FirebaseAuthenticationRepository(),
-                    );
-                  },
-                  dispose: (BuildContext context, NewRegisterBloc bloc) {
-                    bloc.dispose();
-                  },
+                return MultiProvider(
+                  providers: [
+                    Provider<NewRegisterBloc>(
+                      create: (BuildContext context) {
+                        return NewRegisterBloc(
+                          FirebaseAuthenticationRepository(),
+                        );
+                      },
+                      dispose: (BuildContext context, NewRegisterBloc bloc) {
+                        bloc.dispose();
+                      },
+                    ),
+                    Provider<TabBloc>.value(value: tabBloc),
+                  ],
                   child: NewRegisterScreen(),
                 );
               },
@@ -334,15 +339,21 @@ class ProfileScreen extends StatelessWidget {
                     Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute<SignInScreen>(
                         builder: (BuildContext context) {
-                          return Provider<SignInBloc>(
-                            create: (BuildContext context) {
-                              return SignInBloc(
-                                FirebaseAuthenticationRepository(),
-                              );
-                            },
-                            dispose: (BuildContext context, SignInBloc bloc) {
-                              bloc.dispose();
-                            },
+                          return MultiProvider(
+                            providers: [
+                              Provider<SignInBloc>(
+                                create: (BuildContext context) {
+                                  return SignInBloc(
+                                    FirebaseAuthenticationRepository(),
+                                  );
+                                },
+                                dispose:
+                                    (BuildContext context, SignInBloc bloc) {
+                                  bloc.dispose();
+                                },
+                              ),
+                              Provider<TabBloc>.value(value: tabBloc),
+                            ],
                             child: SignInScreen(),
                           );
                         },
@@ -359,15 +370,21 @@ class ProfileScreen extends StatelessWidget {
                     Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute<SignUpScreen>(
                         builder: (BuildContext context) {
-                          return Provider<SignUpBloc>(
-                            create: (context) {
-                              return SignUpBloc(
-                                FirebaseAuthenticationRepository(),
-                              );
-                            },
-                            dispose: (context, bloc) {
-                              bloc.dispose();
-                            },
+                          return MultiProvider(
+                            providers: [
+                              Provider<SignUpBloc>(
+                                create: (BuildContext context) {
+                                  return SignUpBloc(
+                                    FirebaseAuthenticationRepository(),
+                                  );
+                                },
+                                dispose:
+                                    (BuildContext context, SignUpBloc bloc) {
+                                  bloc.dispose();
+                                },
+                              ),
+                              Provider<TabBloc>.value(value: tabBloc),
+                            ],
                             child: SignUpScreen(),
                           );
                         },
