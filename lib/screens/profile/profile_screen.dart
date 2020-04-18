@@ -55,6 +55,7 @@ class ProfileScreen extends StatelessWidget {
                       create: (BuildContext context) {
                         return NewRegisterBloc(
                           FirebaseAuthenticationRepository(),
+                          FirestoreUserRepository(),
                         );
                       },
                       dispose: (BuildContext context, NewRegisterBloc bloc) {

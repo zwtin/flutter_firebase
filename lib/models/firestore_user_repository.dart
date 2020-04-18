@@ -37,6 +37,18 @@ class FirestoreUserRepository implements UserRepository {
   }
 
   @override
+  Future<void> createUser({@required String userId}) async {
+    await _firestore.collection('users').document(userId).setData(
+      <String, dynamic>{
+        'id': userId,
+        'introduction': 'よろしくお願いします。',
+        'name': '名無し',
+        'image_url': 'TsHfWXZ2p1uOtRTP',
+      },
+    );
+  }
+
+  @override
   Future<void> updateUser(
       {@required String userId, @required User newUser}) async {
     await _firestore.collection('users').document(userId).updateData(

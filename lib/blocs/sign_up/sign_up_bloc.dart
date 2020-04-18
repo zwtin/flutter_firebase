@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpBloc {
   SignUpBloc(this._authenticationRepository)
@@ -21,6 +22,8 @@ class SignUpBloc {
     }
     loadingController.sink.add(true);
     try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('register_email', emailController.text);
       await _authenticationRepository.sendSignInWithEmailLink(
         email: emailController.text,
       );

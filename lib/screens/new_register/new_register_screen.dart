@@ -54,6 +54,7 @@ class NewRegisterScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(16),
                     child: TextField(
                       controller: newRegisterBloc.emailController,
+                      readOnly: true,
                     ),
                   ),
                   const Text('パスワード'),
@@ -64,35 +65,10 @@ class NewRegisterScreen extends StatelessWidget {
                     ),
                   ),
                   RaisedButton(
-                    child: const Text('ログイン'),
+                    child: const Text('アカウント登録'),
                     color: Colors.orange,
                     textColor: Colors.white,
-                    onPressed: newRegisterBloc.loginWithEmailAndPassword,
-                  ),
-                  Platform.isAndroid
-                      ? RaisedButton(
-                          child: const Text('Google'),
-                          color: Colors.orange,
-                          textColor: Colors.white,
-                          onPressed: () {},
-                        )
-                      : RaisedButton(
-                          child: const Text('Apple'),
-                          color: Colors.orange,
-                          textColor: Colors.white,
-                          onPressed: () {},
-                        ),
-                  RaisedButton(
-                    child: const Text('Twitter'),
-                    color: Colors.orange,
-                    textColor: Colors.white,
-                    onPressed: () {},
-                  ),
-                  RaisedButton(
-                    child: const Text('Facebook'),
-                    color: Colors.orange,
-                    textColor: Colors.white,
-                    onPressed: () {},
+                    onPressed: newRegisterBloc.createUserWithEmailAndPassword,
                   ),
                 ],
               ),
