@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_bloc.dart';
 import 'package:flutter_firebase/blocs/new_register/new_register_bloc.dart';
+import 'package:flutter_firebase/blocs/post_event_bloc/post_event_bloc.dart';
 import 'package:flutter_firebase/entities/item.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/models/firestore_favorite_repository.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_firebase/blocs/event_detail/event_detail_bloc.dart';
 import 'package:flutter_firebase/models/firestore_item_repository.dart';
 import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 import 'package:flutter_firebase/screens/new_register/new_register_screen.dart';
+import 'package:flutter_firebase/screens/post_event_screen/post_event_screen.dart';
 import 'package:provider/provider.dart';
 
 class EventListScreen extends StatelessWidget {
@@ -128,7 +130,32 @@ class EventListScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context, rootNavigator: true).push(
+            MaterialPageRoute<PostEventScreen>(
+              builder: (BuildContext context) {
+                return MultiProvider(
+                  providers: [
+                    Provider<PostEventBloc>(
+                      create: (BuildContext context) {
+                        return PostEventBloc(
+                          FirestoreUserRepository(),
+                          FirebaseAuthenticationRepository(),
+                        );
+                      },
+                      dispose: (BuildContext context, PostEventBloc bloc) {
+                        bloc.dispose();
+                      },
+                    ),
+                    Provider<TabBloc>.value(value: tabBloc),
+                  ],
+                  child: PostEventScreen(),
+                );
+              },
+              fullscreenDialog: true,
+            ),
+          );
+        },
         child: Icon(Icons.add),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
