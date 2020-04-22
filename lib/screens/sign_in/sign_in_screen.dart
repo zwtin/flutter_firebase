@@ -69,19 +69,18 @@ class SignInScreen extends StatelessWidget {
                     textColor: Colors.white,
                     onPressed: signInBloc.loginWithEmailAndPassword,
                   ),
-                  Platform.isAndroid
-                      ? RaisedButton(
-                          child: const Text('Google'),
-                          color: Colors.orange,
-                          textColor: Colors.white,
-                          onPressed: signInBloc.loginWithGoogle,
-                        )
-                      : RaisedButton(
-                          child: const Text('Apple'),
-                          color: Colors.orange,
-                          textColor: Colors.white,
-                          onPressed: () {},
-                        ),
+                  RaisedButton(
+                    child: const Text('Google'),
+                    color: Colors.orange,
+                    textColor: Colors.white,
+                    onPressed: signInBloc.loginWithGoogle,
+                  ),
+                  RaisedButton(
+                    child: const Text('Apple'),
+                    color: Colors.orange,
+                    textColor: Colors.white,
+                    onPressed: () {},
+                  ),
                   RaisedButton(
                     child: const Text('Twitter'),
                     color: Colors.orange,

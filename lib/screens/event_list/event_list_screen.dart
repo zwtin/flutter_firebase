@@ -127,6 +127,12 @@ class EventListScreen extends StatelessWidget {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(Icons.add),
+        backgroundColor: Colors.orange,
+        foregroundColor: Colors.white,
+      ),
     );
   }
 }
