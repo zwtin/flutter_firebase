@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class FirebaseAuthenticationRepository implements AuthenticationRepository {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -74,5 +75,21 @@ class FirebaseAuthenticationRepository implements AuthenticationRepository {
       email: email,
       password: password,
     );
+  }
+
+  @override
+  Future<void> signInWithGoogle() async {
+    final _googleSignIn = GoogleSignIn();
+    var currentUser = _googleSignIn.currentUser;
+    try {
+      currentUser ??= await _googleSignIn.signInSilently();
+      currentUser ??= await _googleSignIn.signIn();
+      var googleAuth = await currentUser.authentication;
+      final credential = GoogleAuthProvider.getCredential(
+        idToken: googleAuth.idToken,
+        accessToken: googleAuth.accessToken,
+      );
+      await _firebaseAuth.signInWithCredential(credential);
+    } on Exception catch (error) {}
   }
 }

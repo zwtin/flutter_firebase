@@ -74,7 +74,7 @@ class SignInScreen extends StatelessWidget {
                           child: const Text('Google'),
                           color: Colors.orange,
                           textColor: Colors.white,
-                          onPressed: () {},
+                          onPressed: signInBloc.loginWithGoogle,
                         )
                       : RaisedButton(
                           child: const Text('Apple'),
