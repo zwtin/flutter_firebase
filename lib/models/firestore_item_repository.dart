@@ -86,4 +86,34 @@ class FirestoreItemRepository implements ItemRepository {
       },
     );
   }
+
+  @override
+  Future<void> postItem({@required String userId, @required Item item}) async {
+    await _firestore.runTransaction(
+      (transaction) {
+        final ref = _firestore.collection('items').document();
+        final itemMap = {
+          'id': ref.documentID,
+          'title': item.title,
+          'description': item.description,
+          'image_url': item.imageUrl,
+          'created_user': userId,
+          'date': item.date,
+        };
+        transaction.set(
+          ref,
+          itemMap,
+        );
+        final userMap = {'id': ref.documentID};
+        transaction.set(
+            _firestore
+                .collection('users')
+                .document(userId)
+                .collection('create_items')
+                .document(ref.documentID),
+            userMap);
+        return null;
+      },
+    );
+  }
 }

@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_firebase/blocs/edit_profile/edit_profile_bloc.dart';
 import 'package:flutter_firebase/blocs/post_event_bloc/post_event_bloc.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
@@ -62,25 +61,25 @@ class PostEventScreen extends StatelessWidget {
                       onTap: postEventBloc.getImage,
                     ),
                   ),
-                  const Text('ユーザー名'),
+                  const Text('タイトル'),
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: TextField(
-                      controller: postEventBloc.nameController,
+                      controller: postEventBloc.titleController,
                     ),
                   ),
-                  const Text('一言'),
+                  const Text('詳細'),
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: TextField(
-                      controller: postEventBloc.introductionController,
+                      controller: postEventBloc.descriptionController,
                     ),
                   ),
                   RaisedButton(
-                    child: const Text('確定'),
+                    child: const Text('投稿'),
                     color: Colors.orange,
                     textColor: Colors.white,
-                    onPressed: postEventBloc.updateProfile,
+                    onPressed: postEventBloc.postItem,
                   ),
                 ],
               ),

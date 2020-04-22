@@ -3,27 +3,25 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_firebase/entities/user.dart';
+import 'package:flutter_firebase/entities/item.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
-import 'package:flutter_firebase/repositories/user_repository.dart';
+import 'package:flutter_firebase/repositories/item_repository.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rxdart/rxdart.dart';
 
 class PostEventBloc {
   PostEventBloc(
-    this._userRepository,
     this._authenticationRepository,
-  )   : assert(_userRepository != null),
-        assert(_authenticationRepository != null) {
-    start();
-  }
+    this._itemRepository,
+  )   : assert(_authenticationRepository != null),
+        assert(_itemRepository != null);
 
-  final UserRepository _userRepository;
   final AuthenticationRepository _authenticationRepository;
+  final ItemRepository _itemRepository;
 
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController introductionController = TextEditingController();
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
 
   final BehaviorSubject<bool> loadingController =
       BehaviorSubject<bool>.seeded(false);
@@ -33,53 +31,46 @@ class PostEventBloc {
   final BehaviorSubject<String> imageController =
       BehaviorSubject<String>.seeded('');
 
-  Future<void> start() async {
+  Future<void> postItem() async {
+    loadingController.sink.add(true);
     try {
       final currentUser = await _authenticationRepository.getCurrentUser();
-      final user = await _userRepository.getUser(userId: currentUser.id);
-      nameController.text = user.name;
-      introductionController.text = user.introduction;
-      final imageUrl = await FirebaseStorage.instance
-          .ref()
-          .child(user.imageUrl)
-          .getDownloadURL() as String;
-      imageController.sink.add(imageUrl);
-    } on Exception catch (error) {}
-  }
 
-  Future<void> updateProfile() async {
-    loadingController.sink.add(true);
-    final currentUser = await _authenticationRepository.getCurrentUser();
-    final user = await _userRepository.getUser(userId: currentUser.id);
-
-    if (imageFileController.value == null) {
-      await _userRepository.updateUser(
-        userId: currentUser.id,
-        newUser: User(
-          id: user.id,
-          name: nameController.text,
-          introduction: introductionController.text,
-          imageUrl: user.imageUrl,
-        ),
-      );
-    } else {
-      final imageName = randomString(16);
-      final uploadTask = FirebaseStorage.instance
-          .ref()
-          .child(imageName)
-          .putFile(imageFileController.value);
-      await uploadTask.onComplete;
-      await _userRepository.updateUser(
-        userId: currentUser.id,
-        newUser: User(
-          id: user.id,
-          name: nameController.text,
-          introduction: introductionController.text,
-          imageUrl: imageName,
-        ),
-      );
+      if (imageFileController.value == null) {
+        await _itemRepository.postItem(
+          userId: currentUser.id,
+          item: Item(
+            id: 'a',
+            title: titleController.text,
+            description: descriptionController.text,
+            date: DateTime.now(),
+            imageUrl: 'zwtin.jpg',
+            createdUser: currentUser.id,
+          ),
+        );
+      } else {
+        final imageName = randomString(16);
+        final uploadTask = FirebaseStorage.instance
+            .ref()
+            .child(imageName)
+            .putFile(imageFileController.value);
+        await uploadTask.onComplete;
+        await _itemRepository.postItem(
+          userId: currentUser.id,
+          item: Item(
+            id: 'a',
+            title: titleController.text,
+            description: descriptionController.text,
+            date: DateTime.now(),
+            imageUrl: imageName,
+            createdUser: currentUser.id,
+          ),
+        );
+      }
+      loadingController.sink.add(false);
+    } on Exception catch (error) {
+      loadingController.sink.add(false);
     }
-    loadingController.sink.add(false);
   }
 
   Future<void> getImage() async {

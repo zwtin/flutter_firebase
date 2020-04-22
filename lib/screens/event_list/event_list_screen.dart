@@ -139,8 +139,8 @@ class EventListScreen extends StatelessWidget {
                     Provider<PostEventBloc>(
                       create: (BuildContext context) {
                         return PostEventBloc(
-                          FirestoreUserRepository(),
                           FirebaseAuthenticationRepository(),
+                          FirestoreItemRepository(),
                         );
                       },
                       dispose: (BuildContext context, PostEventBloc bloc) {
