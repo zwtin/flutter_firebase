@@ -63,7 +63,7 @@ class SignUpScreen extends StatelessWidget {
                     child: const Text('Apple'),
                     color: Colors.orange,
                     textColor: Colors.white,
-                    onPressed: () {},
+                    onPressed: signUpBloc.signUpWithApple,
                   ),
                   RaisedButton(
                     child: const Text('Twitter'),

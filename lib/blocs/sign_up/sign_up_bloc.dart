@@ -47,6 +47,18 @@ class SignUpBloc {
     }
   }
 
+  Future<void> signUpWithApple() async {
+    loadingController.sink.add(true);
+    try {
+      await _authenticationRepository.signInWithApple();
+      final currentUser = await _authenticationRepository.getCurrentUser();
+      await _userRepository.createUser(userId: currentUser.id);
+      loadingController.sink.add(false);
+    } on Exception catch (error) {
+      loadingController.sink.add(false);
+    }
+  }
+
   Future<void> dispose() async {
     await loadingController.close();
   }

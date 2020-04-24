@@ -163,6 +163,8 @@ PODS:
     - AppAuth/ExternalUserAgent (= 1.3.0)
   - AppAuth/Core (1.3.0)
   - AppAuth/ExternalUserAgent (1.3.0)
+  - apple_sign_in (0.0.1):
+    - Flutter
   - BoringSSL-GRPC (0.0.3):
     - BoringSSL-GRPC/Implementation (= 0.0.3)
     - BoringSSL-GRPC/Interface (= 0.0.3)
@@ -386,6 +388,7 @@ PODS:
     - FMDB (~> 2.7.2)
 
 DEPENDENCIES:
+  - apple_sign_in (from `.symlinks/plugins/apple_sign_in/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - cloud_firestore_web (from `.symlinks/plugins/cloud_firestore_web/ios`)
   - firebase_admob (from `.symlinks/plugins/firebase_admob/ios`)
@@ -445,6 +448,8 @@ SPEC REPOS:
     - Protobuf
 
 EXTERNAL SOURCES:
+  apple_sign_in:
+    :path: ".symlinks/plugins/apple_sign_in/ios"
   cloud_firestore:
     :path: ".symlinks/plugins/cloud_firestore/ios"
   cloud_firestore_web:
@@ -493,6 +498,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   abseil: 18063d773f5366ff8736a050fe035a28f635fd27
   AppAuth: 73574f3013a1e65b9601a3ddc8b3158cce68c09d
+  apple_sign_in: 7716c7ddfa195aeab7dec0dc374ef4ff45d1adb4
   BoringSSL-GRPC: db8764df3204ccea016e1c8dd15d9a9ad63ff318
   cloud_firestore: 31454d48df21f3e1a900015e36143c0d46a304b7
   cloud_firestore_web: 9ec3dc7f5f98de5129339802d491c1204462bfec

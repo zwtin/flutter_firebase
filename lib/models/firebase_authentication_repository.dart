@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:apple_sign_in/apple_sign_in.dart';
 
 class FirebaseAuthenticationRepository implements AuthenticationRepository {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -91,5 +92,34 @@ class FirebaseAuthenticationRepository implements AuthenticationRepository {
       );
       await _firebaseAuth.signInWithCredential(credential);
     } on Exception catch (error) {}
+  }
+
+  @override
+  Future<void> signInWithApple() async {
+    final result = await AppleSignIn.performRequests([
+      AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
+    ]);
+
+    switch (result.status) {
+      case AuthorizationStatus.authorized:
+        print('Sign in succeeded: ${result.credential.user}');
+        final appleIdCredential = result.credential;
+        final oAuthProvider = OAuthProvider(providerId: 'apple.com');
+        final credential = oAuthProvider.getCredential(
+          idToken: String.fromCharCodes(appleIdCredential.identityToken),
+          accessToken:
+              String.fromCharCodes(appleIdCredential.authorizationCode),
+        );
+        await _firebaseAuth.signInWithCredential(credential);
+        break;
+
+      case AuthorizationStatus.error:
+        print('Sign in failed: ${result.error.localizedDescription}');
+        break;
+
+      case AuthorizationStatus.cancelled:
+        print('User cancelled');
+        break;
+    }
   }
 }

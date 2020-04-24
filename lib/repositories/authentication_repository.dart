@@ -25,4 +25,6 @@ abstract class AuthenticationRepository {
   });
 
   Future<void> signInWithGoogle();
+
+  Future<void> signInWithApple();
 }
