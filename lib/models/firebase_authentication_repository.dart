@@ -82,42 +82,40 @@ class FirebaseAuthenticationRepository implements AuthenticationRepository {
   Future<void> signInWithGoogle() async {
     final _googleSignIn = GoogleSignIn();
     var currentUser = _googleSignIn.currentUser;
-    try {
-      currentUser ??= await _googleSignIn.signInSilently();
-      currentUser ??= await _googleSignIn.signIn();
-      final googleAuth = await currentUser.authentication;
-      final credential = GoogleAuthProvider.getCredential(
-        idToken: googleAuth.idToken,
-        accessToken: googleAuth.accessToken,
-      );
-      await _firebaseAuth.signInWithCredential(credential);
-    } on Exception catch (error) {}
+    currentUser ??= await _googleSignIn.signInSilently();
+    currentUser ??= await _googleSignIn.signIn();
+    final googleAuth = await currentUser.authentication;
+    final credential = GoogleAuthProvider.getCredential(
+      idToken: googleAuth.idToken,
+      accessToken: googleAuth.accessToken,
+    );
+    await _firebaseAuth.signInWithCredential(credential);
   }
 
   @override
   Future<void> signInWithApple() async {
-    try {
-      final result = await AppleSignIn.performRequests([
-        AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
-      ]);
-      switch (result.status) {
-        case AuthorizationStatus.authorized:
-          final appleIdCredential = result.credential;
-          const oAuthProvider = OAuthProvider(providerId: 'apple.com');
-          final credential = oAuthProvider.getCredential(
-            idToken: String.fromCharCodes(appleIdCredential.identityToken),
-            accessToken:
-                String.fromCharCodes(appleIdCredential.authorizationCode),
-          );
-          await _firebaseAuth.signInWithCredential(credential);
-          break;
+    final result = await AppleSignIn.performRequests([
+      AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
+    ]);
+    switch (result.status) {
+      case AuthorizationStatus.authorized:
+        final appleIdCredential = result.credential;
+        const oAuthProvider = OAuthProvider(providerId: 'apple.com');
+        final credential = oAuthProvider.getCredential(
+          idToken: String.fromCharCodes(appleIdCredential.identityToken),
+          accessToken:
+              String.fromCharCodes(appleIdCredential.authorizationCode),
+        );
+        await _firebaseAuth.signInWithCredential(credential);
+        break;
 
-        case AuthorizationStatus.error:
-          break;
+      case AuthorizationStatus.error:
+        throw Exception();
+        break;
 
-        case AuthorizationStatus.cancelled:
-          break;
-      }
-    } on Exception catch (error) {}
+      case AuthorizationStatus.cancelled:
+        throw Exception();
+        break;
+    }
   }
 }

@@ -76,7 +76,7 @@ class SignInBloc {
       final isExistUser =
           await _userRepository.isExistUser(userId: currentUser.id);
       if (isExistUser) {
-        loadingController.sink.add(false);
+        popController.sink.add(null);
         return;
       } else {
         await _authenticationRepository.signOut();
@@ -93,6 +93,14 @@ class SignInBloc {
       }
     } on Exception catch (error) {
       loadingController.sink.add(false);
+      final errorAlert = Alert(
+        title: 'エラー',
+        subtitle: error.toString(),
+        style: null,
+        showCancelButton: false,
+        onPress: null,
+      );
+      alertController.sink.add(errorAlert);
     }
   }
 
@@ -104,7 +112,7 @@ class SignInBloc {
       final isExistUser =
           await _userRepository.isExistUser(userId: currentUser.id);
       if (isExistUser) {
-        loadingController.sink.add(false);
+        popController.sink.add(null);
         return;
       } else {
         await _authenticationRepository.signOut();
@@ -121,6 +129,14 @@ class SignInBloc {
       }
     } on Exception catch (error) {
       loadingController.sink.add(false);
+      final errorAlert = Alert(
+        title: 'エラー',
+        subtitle: error.toString(),
+        style: null,
+        showCancelButton: false,
+        onPress: null,
+      );
+      alertController.sink.add(errorAlert);
     }
   }
 
