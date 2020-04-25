@@ -5,6 +5,7 @@ import 'package:flutter_firebase/repositories/authentication_repository.dart';
 import 'package:flutter_firebase/repositories/user_repository.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_firebase/entities/alert.dart';
 
 class SignUpBloc {
   SignUpBloc(
@@ -18,6 +19,7 @@ class SignUpBloc {
 
   final TextEditingController emailController = TextEditingController();
 
+  final PublishSubject<Alert> alertController = PublishSubject<Alert>();
   final PublishSubject<CurrentUser> sentRegisterEmailController =
       PublishSubject<CurrentUser>();
   final PublishSubject<CurrentUser> currentUserController =
@@ -27,6 +29,14 @@ class SignUpBloc {
 
   Future<void> sendSignInWithEmailLink() async {
     if (emailController.text.isEmpty) {
+      const errorAlert = Alert(
+        title: 'エラー',
+        subtitle: 'メールアドレスを入力してください',
+        style: null,
+        showCancelButton: false,
+        onPress: null,
+      );
+      alertController.sink.add(errorAlert);
       return;
     }
     loadingController.sink.add(true);
@@ -66,6 +76,7 @@ class SignUpBloc {
   }
 
   Future<void> dispose() async {
+    await alertController.close();
     await sentRegisterEmailController.close();
     await currentUserController.close();
     await loadingController.close();
