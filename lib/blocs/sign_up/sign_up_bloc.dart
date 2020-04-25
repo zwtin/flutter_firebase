@@ -20,8 +20,8 @@ class SignUpBloc {
   final TextEditingController emailController = TextEditingController();
 
   final PublishSubject<Alert> alertController = PublishSubject<Alert>();
-  final PublishSubject<CurrentUser> sentRegisterEmailController =
-      PublishSubject<CurrentUser>();
+  final PublishSubject<void> sentRegisterEmailController =
+      PublishSubject<void>();
   final PublishSubject<CurrentUser> currentUserController =
       PublishSubject<CurrentUser>();
   final BehaviorSubject<bool> loadingController =
@@ -46,8 +46,17 @@ class SignUpBloc {
       await _authenticationRepository.sendSignInWithEmailLink(
         email: emailController.text,
       );
+      sentRegisterEmailController.sink.add(null);
     } on Exception catch (error) {
       loadingController.sink.add(false);
+      final errorAlert = Alert(
+        title: 'エラー',
+        subtitle: error.toString(),
+        style: null,
+        showCancelButton: false,
+        onPress: null,
+      );
+      alertController.sink.add(errorAlert);
     }
   }
 
@@ -60,6 +69,14 @@ class SignUpBloc {
       loadingController.sink.add(false);
     } on Exception catch (error) {
       loadingController.sink.add(false);
+      final errorAlert = Alert(
+        title: 'エラー',
+        subtitle: error.toString(),
+        style: null,
+        showCancelButton: false,
+        onPress: null,
+      );
+      alertController.sink.add(errorAlert);
     }
   }
 
@@ -72,6 +89,14 @@ class SignUpBloc {
       loadingController.sink.add(false);
     } on Exception catch (error) {
       loadingController.sink.add(false);
+      final errorAlert = Alert(
+        title: 'エラー',
+        subtitle: error.toString(),
+        style: null,
+        showCancelButton: false,
+        onPress: null,
+      );
+      alertController.sink.add(errorAlert);
     }
   }
 

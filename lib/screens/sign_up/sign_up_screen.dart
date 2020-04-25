@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase/blocs/sent_register_email_bloc/sent_register_email_bloc.dart';
 import 'package:flutter_firebase/blocs/sign_up/sign_up_bloc.dart';
 import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
+import 'package:flutter_firebase/screens/sent_register_email_screen/sent_register_email_screen.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_firebase/entities/alert.dart';
@@ -20,6 +22,26 @@ class SignUpScreen extends StatelessWidget {
     newRegisterSubscription = tabBloc.newRegisterController.stream.listen(
       (int index) {
         Navigator.of(context).pop();
+      },
+    );
+
+    signUpBloc.sentRegisterEmailController.listen(
+      (_) {
+        Navigator.of(context).push(
+          MaterialPageRoute<SentRegisterEmailScreen>(
+            builder: (BuildContext context) {
+              return Provider<SentRegisterEmailBloc>(
+                create: (BuildContext context) {
+                  return SentRegisterEmailBloc();
+                },
+                dispose: (BuildContext context, SentRegisterEmailBloc bloc) {
+                  bloc.dispose();
+                },
+                child: SentRegisterEmailScreen(),
+              );
+            },
+          ),
+        );
       },
     );
 
