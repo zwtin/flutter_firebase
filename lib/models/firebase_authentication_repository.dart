@@ -85,7 +85,7 @@ class FirebaseAuthenticationRepository implements AuthenticationRepository {
     try {
       currentUser ??= await _googleSignIn.signInSilently();
       currentUser ??= await _googleSignIn.signIn();
-      var googleAuth = await currentUser.authentication;
+      final googleAuth = await currentUser.authentication;
       final credential = GoogleAuthProvider.getCredential(
         idToken: googleAuth.idToken,
         accessToken: googleAuth.accessToken,
@@ -96,30 +96,28 @@ class FirebaseAuthenticationRepository implements AuthenticationRepository {
 
   @override
   Future<void> signInWithApple() async {
-    final result = await AppleSignIn.performRequests([
-      AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
-    ]);
+    try {
+      final result = await AppleSignIn.performRequests([
+        AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
+      ]);
+      switch (result.status) {
+        case AuthorizationStatus.authorized:
+          final appleIdCredential = result.credential;
+          const oAuthProvider = OAuthProvider(providerId: 'apple.com');
+          final credential = oAuthProvider.getCredential(
+            idToken: String.fromCharCodes(appleIdCredential.identityToken),
+            accessToken:
+                String.fromCharCodes(appleIdCredential.authorizationCode),
+          );
+          await _firebaseAuth.signInWithCredential(credential);
+          break;
 
-    switch (result.status) {
-      case AuthorizationStatus.authorized:
-        print('Sign in succeeded: ${result.credential.user}');
-        final appleIdCredential = result.credential;
-        final oAuthProvider = OAuthProvider(providerId: 'apple.com');
-        final credential = oAuthProvider.getCredential(
-          idToken: String.fromCharCodes(appleIdCredential.identityToken),
-          accessToken:
-              String.fromCharCodes(appleIdCredential.authorizationCode),
-        );
-        await _firebaseAuth.signInWithCredential(credential);
-        break;
+        case AuthorizationStatus.error:
+          break;
 
-      case AuthorizationStatus.error:
-        print('Sign in failed: ${result.error.localizedDescription}');
-        break;
-
-      case AuthorizationStatus.cancelled:
-        print('User cancelled');
-        break;
-    }
+        case AuthorizationStatus.cancelled:
+          break;
+      }
+    } on Exception catch (error) {}
   }
 }

@@ -6,6 +6,8 @@ import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_firebase/entities/alert.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 class SignInScreen extends StatelessWidget {
   StreamSubscription<int> newRegisterSubscription;
@@ -15,11 +17,9 @@ class SignInScreen extends StatelessWidget {
     final signInBloc = Provider.of<SignInBloc>(context);
     final tabBloc = Provider.of<TabBloc>(context);
 
-    signInBloc.currentUserController.listen(
-      (CurrentUser currentUser) {
-        if (currentUser != null) {
-          Navigator.of(context).pop();
-        }
+    signInBloc.popController.listen(
+      (_) {
+        Navigator.of(context).pop();
       },
     );
 
@@ -27,6 +27,19 @@ class SignInScreen extends StatelessWidget {
     newRegisterSubscription = tabBloc.newRegisterController.stream.listen(
       (int index) {
         Navigator.of(context).pop();
+      },
+    );
+
+    signInBloc.alertController.stream.listen(
+      (Alert alert) {
+        SweetAlert.show(
+          context,
+          title: alert.title,
+          subtitle: alert.subtitle,
+          style: alert.style,
+          showCancelButton: alert.showCancelButton,
+          onPress: alert.onPress,
+        );
       },
     );
 

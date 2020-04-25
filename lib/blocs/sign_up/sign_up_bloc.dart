@@ -22,8 +22,7 @@ class SignUpBloc {
   final PublishSubject<Alert> alertController = PublishSubject<Alert>();
   final PublishSubject<void> sentRegisterEmailController =
       PublishSubject<void>();
-  final PublishSubject<CurrentUser> currentUserController =
-      PublishSubject<CurrentUser>();
+  final PublishSubject<void> popController = PublishSubject<void>();
   final BehaviorSubject<bool> loadingController =
       BehaviorSubject<bool>.seeded(false);
 
@@ -65,8 +64,24 @@ class SignUpBloc {
     try {
       await _authenticationRepository.signInWithGoogle();
       final currentUser = await _authenticationRepository.getCurrentUser();
-      await _userRepository.createUser(userId: currentUser.id);
-      loadingController.sink.add(false);
+      final isExistUser =
+          await _userRepository.isExistUser(userId: currentUser.id);
+      if (isExistUser) {
+        await _authenticationRepository.signOut();
+        loadingController.sink.add(false);
+        const errorAlert = Alert(
+          title: 'エラー',
+          subtitle: 'このアカウントはすでに存在しています',
+          style: null,
+          showCancelButton: false,
+          onPress: null,
+        );
+        alertController.sink.add(errorAlert);
+        return;
+      } else {
+        await _userRepository.createUser(userId: currentUser.id);
+        loadingController.sink.add(false);
+      }
     } on Exception catch (error) {
       loadingController.sink.add(false);
       final errorAlert = Alert(
@@ -85,8 +100,24 @@ class SignUpBloc {
     try {
       await _authenticationRepository.signInWithApple();
       final currentUser = await _authenticationRepository.getCurrentUser();
-      await _userRepository.createUser(userId: currentUser.id);
-      loadingController.sink.add(false);
+      final isExistUser =
+          await _userRepository.isExistUser(userId: currentUser.id);
+      if (isExistUser) {
+        await _authenticationRepository.signOut();
+        loadingController.sink.add(false);
+        const errorAlert = Alert(
+          title: 'エラー',
+          subtitle: 'このアカウントはすでに存在しています',
+          style: null,
+          showCancelButton: false,
+          onPress: null,
+        );
+        alertController.sink.add(errorAlert);
+        return;
+      } else {
+        await _userRepository.createUser(userId: currentUser.id);
+        loadingController.sink.add(false);
+      }
     } on Exception catch (error) {
       loadingController.sink.add(false);
       final errorAlert = Alert(
@@ -103,7 +134,7 @@ class SignUpBloc {
   Future<void> dispose() async {
     await alertController.close();
     await sentRegisterEmailController.close();
-    await currentUserController.close();
+    await popController.close();
     await loadingController.close();
   }
 }

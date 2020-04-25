@@ -37,6 +37,12 @@ class FirestoreUserRepository implements UserRepository {
   }
 
   @override
+  Future<bool> isExistUser({@required String userId}) async {
+    final data = await _firestore.collection('users').document(userId).get();
+    return data.exists;
+  }
+
+  @override
   Future<void> createUser({@required String userId}) async {
     await _firestore.collection('users').document(userId).setData(
       <String, dynamic>{

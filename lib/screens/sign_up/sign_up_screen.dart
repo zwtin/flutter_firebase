@@ -9,6 +9,7 @@ import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_firebase/entities/alert.dart';
 import 'package:sweetalert/sweetalert.dart';
+import 'package:flutter_firebase/entities/current_user.dart';
 
 class SignUpScreen extends StatelessWidget {
   StreamSubscription<int> newRegisterSubscription;
@@ -21,6 +22,12 @@ class SignUpScreen extends StatelessWidget {
     newRegisterSubscription?.cancel();
     newRegisterSubscription = tabBloc.newRegisterController.stream.listen(
       (int index) {
+        Navigator.of(context).pop();
+      },
+    );
+
+    signUpBloc.popController.listen(
+      (_) {
         Navigator.of(context).pop();
       },
     );
