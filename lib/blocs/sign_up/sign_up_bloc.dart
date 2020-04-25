@@ -7,8 +7,10 @@ import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpBloc {
-  SignUpBloc(this._authenticationRepository, this._userRepository)
-      : assert(_authenticationRepository != null),
+  SignUpBloc(
+    this._authenticationRepository,
+    this._userRepository,
+  )   : assert(_authenticationRepository != null),
         assert(_userRepository != null);
 
   final AuthenticationRepository _authenticationRepository;
@@ -16,6 +18,10 @@ class SignUpBloc {
 
   final TextEditingController emailController = TextEditingController();
 
+  final PublishSubject<CurrentUser> sentRegisterEmailController =
+      PublishSubject<CurrentUser>();
+  final PublishSubject<CurrentUser> currentUserController =
+      PublishSubject<CurrentUser>();
   final BehaviorSubject<bool> loadingController =
       BehaviorSubject<bool>.seeded(false);
 
@@ -60,6 +66,8 @@ class SignUpBloc {
   }
 
   Future<void> dispose() async {
+    await sentRegisterEmailController.close();
+    await currentUserController.close();
     await loadingController.close();
   }
 }
