@@ -53,18 +53,19 @@ class SignUpScreen extends StatelessWidget {
                     textColor: Colors.white,
                     onPressed: signUpBloc.sendSignInWithEmailLink,
                   ),
-                  RaisedButton(
-                    child: const Text('Google'),
-                    color: Colors.orange,
-                    textColor: Colors.white,
-                    onPressed: signUpBloc.signUpWithGoogle,
-                  ),
-                  RaisedButton(
-                    child: const Text('Apple'),
-                    color: Colors.orange,
-                    textColor: Colors.white,
-                    onPressed: signUpBloc.signUpWithApple,
-                  ),
+                  Platform.isAndroid
+                      ? RaisedButton(
+                          child: const Text('Google'),
+                          color: Colors.orange,
+                          textColor: Colors.white,
+                          onPressed: signUpBloc.signUpWithGoogle,
+                        )
+                      : RaisedButton(
+                          child: const Text('Apple'),
+                          color: Colors.orange,
+                          textColor: Colors.white,
+                          onPressed: signUpBloc.signUpWithApple,
+                        ),
                   RaisedButton(
                     child: const Text('Twitter'),
                     color: Colors.orange,
