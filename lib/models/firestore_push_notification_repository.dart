@@ -11,16 +11,23 @@ class FirestorePushNotificationRepository
     @required String userId,
     @required String deviceToken,
   }) async {
-    await _firestore
-        .collection('users')
-        .document(userId)
-        .collection('device_token')
-        .document()
-        .setData(
-      <String, dynamic>{
-        'id': FieldPath.documentId,
-        'token': deviceToken,
-        'register_date': DateTime.now(),
+    await _firestore.runTransaction(
+      (transaction) {
+        final ref = _firestore
+            .collection('users')
+            .document(userId)
+            .collection('device_token')
+            .document();
+        final itemMap = {
+          'id': ref.documentID,
+          'token': deviceToken,
+          'register_date': DateTime.now(),
+        };
+        transaction.set(
+          ref,
+          itemMap,
+        );
+        return null;
       },
     );
   }
