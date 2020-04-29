@@ -1,0 +1,111 @@
+name: distribution
+
+on:
+  push:
+    branches: 
+     - release-ios
+
+jobs:
+  job_1:
+    name: preparation
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: checkout
+      uses: actions/checkout@v2
+
+    - name: make directory
+      run: mkdir google
+
+    - name: wget GoogleService-Info.plist
+      uses: wei/wget@v1
+      with:
+        args: ${{ secrets.FIREBASE_IOS }} -O ./google/GoogleService-Info.plist
+
+    - name: upload-artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: google
+        path: google
+
+  job_2:
+    name: flutter build
+    needs: job_1
+    runs-on: macos-latest
+
+    steps:
+
+    - name: checkout
+      uses: actions/checkout@v2
+
+    - name: download-artifact
+      uses: actions/download-artifact@v1
+      with:
+        name: google
+
+    - name: move script
+      run: |
+        mv google/GoogleService-Info.plist ./ios/Runner/GoogleService-Info.plist
+
+    - name: make directory
+      run: mkdir distribution
+
+    - name: install flutter
+      uses: subosito/flutter-action@v1.1.1
+      with:
+        channel: 'stable'
+          
+    - name: install flutter library
+      run: flutter pub get
+
+    - name: make icon and splash
+      run: |
+        flutter pub run flutter_launcher_icons:main
+        flutter pub pub run flutter_native_splash:create
+
+    - name: flutter build ios
+      run: flutter build ios --release --no-codesign
+
+    - name: ios archive
+      env:
+        PERSONAL_ACCESS_TOKEN_GITHUB: ${{ secrets.PERSONAL_ACCESS_TOKEN_GITHUB }}
+        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      run: |
+        cd ios
+        fastlane archive
+        cd ..
+
+    - name: move application files
+      run: |
+        mv ios/fastlane/generated/Runner.ipa ./distribution/app-release.ipa
+
+    - name: upload-artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: distribution
+        path: distribution
+
+  job_3:
+    name: distribution
+    needs: job_2
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: checkout
+      uses: actions/checkout@v2
+
+    - name: download-artifact
+      uses: actions/download-artifact@v1
+      with:
+        name: distribution
+
+    - name: ios distribution
+      uses: wzieba/Firebase-Distribution-Github-Action@v1.1.1
+      with:
+        appId: ${{secrets.FIREBASE_IOS_APPID}}
+        token: ${{secrets.FIREBASE_TOKEN}}
+        groups: zwtin
+        file: ./distribution/app-release.ipa
+

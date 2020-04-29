@@ -1,0 +1,102 @@
+name: distribution
+
+on:
+  push:
+    branches: 
+     - release-android
+
+jobs:
+  job_1:
+    name: preparation
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: checkout
+      uses: actions/checkout@v2
+
+    - name: make directory
+      run: mkdir google
+
+    - name: wget google-services.json
+      uses: wei/wget@v1
+      with:
+        args: ${{ secrets.FIREBASE_ANDROID }} -O ./google/google-services.json
+
+    - name: upload-artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: google
+        path: google
+
+  job_2:
+    name: flutter build
+    needs: job_1
+    runs-on: macos-latest
+
+    steps:
+
+    - name: checkout
+      uses: actions/checkout@v2
+
+    - name: download-artifact
+      uses: actions/download-artifact@v1
+      with:
+        name: google
+
+    - name: move script
+      run: |
+        mv google/google-services.json ./android/app/google-services.json
+
+    - name: make directory
+      run: mkdir distribution
+
+    - name: install flutter
+      uses: subosito/flutter-action@v1.1.1
+      with:
+        channel: 'stable'
+          
+    - name: install flutter library
+      run: flutter pub get
+
+    - name: make icon and splash
+      run: |
+        flutter pub run flutter_launcher_icons:main
+        flutter pub pub run flutter_native_splash:create
+
+    - name: flutter build android
+      run: flutter build apk --release
+
+    - name: move application files
+      run: |
+        mv build/app/outputs/apk/release/app-release.apk ./distribution/app-release.apk
+
+    - name: upload-artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: distribution
+        path: distribution
+
+  job_3:
+    name: distribution
+    needs: job_2
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: checkout
+      uses: actions/checkout@v2
+
+    - name: download-artifact
+      uses: actions/download-artifact@v1
+      with:
+        name: distribution
+
+    - name: android distribution
+      uses: wzieba/Firebase-Distribution-Github-Action@v1.1.1
+      with:
+        appId: ${{secrets.FIREBASE_ANDROID_APPID}}
+        token: ${{secrets.FIREBASE_TOKEN}}
+        groups: zwtin
+        file: ./distribution/app-release.apk
+
