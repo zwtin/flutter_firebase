@@ -25,6 +25,8 @@ class SignUpBloc {
   final PublishSubject<void> popController = PublishSubject<void>();
   final BehaviorSubject<bool> loadingController =
       BehaviorSubject<bool>.seeded(false);
+  final PublishSubject<void> registerDeviceTokenController =
+      PublishSubject<void>();
 
   Future<void> sendSignInWithEmailLink() async {
     if (emailController.text.isEmpty) {
@@ -80,6 +82,7 @@ class SignUpBloc {
         return;
       } else {
         await _userRepository.createUser(userId: currentUser.id);
+        registerDeviceTokenController.sink.add(null);
         loadingController.sink.add(false);
       }
     } on Exception catch (error) {
@@ -116,6 +119,7 @@ class SignUpBloc {
         return;
       } else {
         await _userRepository.createUser(userId: currentUser.id);
+        registerDeviceTokenController.sink.add(null);
         loadingController.sink.add(false);
       }
     } on Exception catch (error) {
@@ -136,5 +140,6 @@ class SignUpBloc {
     await sentRegisterEmailController.close();
     await popController.close();
     await loadingController.close();
+    await registerDeviceTokenController.close();
   }
 }

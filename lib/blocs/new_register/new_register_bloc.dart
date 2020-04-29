@@ -25,6 +25,8 @@ class NewRegisterBloc {
       PublishSubject<CurrentUser>();
   final BehaviorSubject<bool> loadingController =
       BehaviorSubject<bool>.seeded(false);
+  final PublishSubject<void> registerDeviceTokenController =
+      PublishSubject<void>();
 
   Future<void> setupEmail() async {
     try {
@@ -49,6 +51,7 @@ class NewRegisterBloc {
       );
       final currentUser = await _authenticationRepository.getCurrentUser();
       await _userRepository.createUser(userId: currentUser.id);
+      registerDeviceTokenController.sink.add(null);
       currentUserController.sink.add(currentUser);
     } on Exception catch (error) {
       loadingController.sink.add(false);
@@ -58,5 +61,6 @@ class NewRegisterBloc {
   Future<void> dispose() async {
     await currentUserController.close();
     await loadingController.close();
+    await registerDeviceTokenController.close();
   }
 }

@@ -23,6 +23,8 @@ class SignInBloc {
   final PublishSubject<Alert> alertController = PublishSubject<Alert>();
   final BehaviorSubject<bool> loadingController =
       BehaviorSubject<bool>.seeded(false);
+  final PublishSubject<void> registerDeviceTokenController =
+      PublishSubject<void>();
 
   Future<void> loginWithEmailAndPassword() async {
     if (emailController.text.isEmpty) {
@@ -54,6 +56,7 @@ class SignInBloc {
         password: passwordController.text,
       );
       final currentUser = await _authenticationRepository.getCurrentUser();
+      registerDeviceTokenController.sink.add(null);
       popController.sink.add(null);
     } on Exception catch (error) {
       loadingController.sink.add(false);
@@ -76,6 +79,7 @@ class SignInBloc {
       final isExistUser =
           await _userRepository.isExistUser(userId: currentUser.id);
       if (isExistUser) {
+        registerDeviceTokenController.sink.add(null);
         popController.sink.add(null);
         return;
       } else {
@@ -112,6 +116,7 @@ class SignInBloc {
       final isExistUser =
           await _userRepository.isExistUser(userId: currentUser.id);
       if (isExistUser) {
+        registerDeviceTokenController.sink.add(null);
         popController.sink.add(null);
         return;
       } else {
@@ -144,5 +149,6 @@ class SignInBloc {
     await popController.close();
     await alertController.close();
     await loadingController.close();
+    await registerDeviceTokenController.close();
   }
 }
