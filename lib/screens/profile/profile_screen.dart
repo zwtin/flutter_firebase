@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/new_register/new_register_bloc.dart';
 import 'package:flutter_firebase/blocs/sign_in/sign_in_bloc.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_firebase/blocs/sign_up/sign_up_bloc.dart';
 import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
+import 'package:flutter_firebase/models/firestore_push_notification_repository.dart';
 import 'package:flutter_firebase/models/firestore_user_repository.dart';
 import 'package:flutter_firebase/screens/edit_profile/edit_profile_screen.dart';
 import 'package:flutter_firebase/entities/user.dart';
@@ -56,6 +58,7 @@ class ProfileScreen extends StatelessWidget {
                         return NewRegisterBloc(
                           FirebaseAuthenticationRepository(),
                           FirestoreUserRepository(),
+                          FirestorePushNotificationRepository(),
                         );
                       },
                       dispose: (BuildContext context, NewRegisterBloc bloc) {
@@ -347,6 +350,7 @@ class ProfileScreen extends StatelessWidget {
                                   return SignInBloc(
                                     FirebaseAuthenticationRepository(),
                                     FirestoreUserRepository(),
+                                    FirestorePushNotificationRepository(),
                                   );
                                 },
                                 dispose:
@@ -379,6 +383,7 @@ class ProfileScreen extends StatelessWidget {
                                   return SignUpBloc(
                                     FirebaseAuthenticationRepository(),
                                     FirestoreUserRepository(),
+                                    FirestorePushNotificationRepository(),
                                   );
                                 },
                                 dispose:

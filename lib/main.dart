@@ -32,10 +32,7 @@ class MyApp extends StatelessWidget {
       ),
       home: Provider<TabBloc>(
         create: (BuildContext context) {
-          return TabBloc(
-            FirebaseAuthenticationRepository(),
-            FirestorePushNotificationRepository(),
-          );
+          return TabBloc();
         },
         dispose: (BuildContext context, TabBloc bloc) {
           bloc.dispose();

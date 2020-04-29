@@ -9,6 +9,7 @@ import 'package:flutter_firebase/entities/item.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/models/firestore_favorite_repository.dart';
 import 'package:flutter_firebase/models/firestore_like_repository.dart';
+import 'package:flutter_firebase/models/firestore_push_notification_repository.dart';
 import 'package:flutter_firebase/models/firestore_user_repository.dart';
 import 'package:flutter_firebase/screens/event_detail/event_detail_screen.dart';
 import 'package:flutter_firebase/blocs/event_detail/event_detail_bloc.dart';
@@ -50,6 +51,7 @@ class EventListScreen extends StatelessWidget {
                         return NewRegisterBloc(
                           FirebaseAuthenticationRepository(),
                           FirestoreUserRepository(),
+                          FirestorePushNotificationRepository(),
                         );
                       },
                       dispose: (BuildContext context, NewRegisterBloc bloc) {

@@ -30,12 +30,6 @@ class NewRegisterScreen extends StatelessWidget {
       },
     );
 
-    newRegisterBloc.registerDeviceTokenController.stream.listen(
-      (_) {
-        tabBloc.registerDeviceTokenController.sink.add(null);
-      },
-    );
-
     return Scaffold(
       appBar: AppBar(
         title: Text(

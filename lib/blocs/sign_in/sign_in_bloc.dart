@@ -2,19 +2,26 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
+import 'package:flutter_firebase/repositories/push_notification_repository.dart';
 import 'package:flutter_firebase/repositories/user_repository.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_firebase/entities/alert.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class SignInBloc {
   SignInBloc(
     this._authenticationRepository,
     this._userRepository,
+    this._pushNotificationRepository,
   )   : assert(_authenticationRepository != null),
-        assert(_userRepository != null);
+        assert(_userRepository != null),
+        assert(_pushNotificationRepository != null);
 
   final AuthenticationRepository _authenticationRepository;
   final UserRepository _userRepository;
+  final PushNotificationRepository _pushNotificationRepository;
+
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -23,8 +30,6 @@ class SignInBloc {
   final PublishSubject<Alert> alertController = PublishSubject<Alert>();
   final BehaviorSubject<bool> loadingController =
       BehaviorSubject<bool>.seeded(false);
-  final PublishSubject<void> registerDeviceTokenController =
-      PublishSubject<void>();
 
   Future<void> loginWithEmailAndPassword() async {
     if (emailController.text.isEmpty) {
@@ -56,7 +61,7 @@ class SignInBloc {
         password: passwordController.text,
       );
       final currentUser = await _authenticationRepository.getCurrentUser();
-      registerDeviceTokenController.sink.add(null);
+      await registerDeviceToken();
       popController.sink.add(null);
     } on Exception catch (error) {
       loadingController.sink.add(false);
@@ -79,7 +84,7 @@ class SignInBloc {
       final isExistUser =
           await _userRepository.isExistUser(userId: currentUser.id);
       if (isExistUser) {
-        registerDeviceTokenController.sink.add(null);
+        await registerDeviceToken();
         popController.sink.add(null);
         return;
       } else {
@@ -116,7 +121,7 @@ class SignInBloc {
       final isExistUser =
           await _userRepository.isExistUser(userId: currentUser.id);
       if (isExistUser) {
-        registerDeviceTokenController.sink.add(null);
+        await registerDeviceToken();
         popController.sink.add(null);
         return;
       } else {
@@ -145,10 +150,21 @@ class SignInBloc {
     }
   }
 
+  Future<void> registerDeviceToken() async {
+    try {
+      _firebaseMessaging.requestNotificationPermissions();
+      final token = await _firebaseMessaging.getToken();
+      final currentUser = await _authenticationRepository.getCurrentUser();
+      await _pushNotificationRepository.registerDeviceToken(
+        userId: currentUser.id,
+        deviceToken: token,
+      );
+    } on Exception catch (error) {}
+  }
+
   Future<void> dispose() async {
     await popController.close();
     await alertController.close();
     await loadingController.close();
-    await registerDeviceTokenController.close();
   }
 }
