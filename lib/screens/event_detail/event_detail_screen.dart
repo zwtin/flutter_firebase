@@ -58,25 +58,30 @@ class EventDetailScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.all(16),
-                          child: FutureBuilder<dynamic>(
-                            future: FirebaseStorage.instance
-                                .ref()
-                                .child(snapshot.data.imageUrl)
-                                .getDownloadURL(),
-                            builder: (context, snap) {
-                              return CachedNetworkImage(
-                                placeholder: (context, url) => const Center(
-                                  child: CircularProgressIndicator(),
+                        snapshot.data.imageUrl.isNotEmpty
+                            ? Padding(
+                                padding: EdgeInsets.all(16),
+                                child: FutureBuilder<dynamic>(
+                                  future: FirebaseStorage.instance
+                                      .ref()
+                                      .child(snapshot.data.imageUrl)
+                                      .getDownloadURL(),
+                                  builder: (context, snap) {
+                                    return CachedNetworkImage(
+                                      placeholder: (context, url) =>
+                                          const Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                      imageUrl: snap.data.toString(),
+                                      errorWidget:
+                                          (context, url, dynamic error) =>
+                                              Image.asset(
+                                                  'assets/icon/no_image.jpg'),
+                                    );
+                                  },
                                 ),
-                                imageUrl: snap.data.toString(),
-                                errorWidget: (context, url, dynamic error) =>
-                                    Image.asset('assets/icon/no_image.jpg'),
-                              );
-                            },
-                          ),
-                        ),
+                              )
+                            : Container(),
                       ],
                     ),
                   ),

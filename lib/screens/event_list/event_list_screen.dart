@@ -97,76 +97,72 @@ class EventListScreen extends StatelessWidget {
                       color: Colors.green,
                       child: ListView.builder(
                         itemBuilder: (BuildContext context, int index) {
-                          return Padding(
-                            padding: index == 0
-                                ? EdgeInsets.fromLTRB(0, 0, 0, 0)
-                                : EdgeInsets.fromLTRB(0, 5, 0, 0),
-                            child: Card(
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute<EventDetailScreen>(
-                                      builder: (BuildContext context) {
-                                        return Provider<EventDetailBloc>(
-                                          create: (BuildContext context) {
-                                            return EventDetailBloc(
-                                              snapshot.data.elementAt(index).id,
-                                              FirestoreItemRepository(),
-                                              FirestoreLikeRepository(),
-                                              FirestoreFavoriteRepository(),
-                                              FirebaseAuthenticationRepository(),
-                                            );
-                                          },
-                                          dispose: (BuildContext context,
-                                              EventDetailBloc bloc) {
-                                            bloc.dispose();
-                                          },
-                                          child: EventDetailScreen(),
-                                        );
-                                      },
-                                    ),
-                                  );
-                                },
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    Row(
-                                      children: <Widget>[
-                                        ClipOval(
-                                          child: SizedBox(
-                                            width: 44,
-                                            height: 44,
-                                            child: Image.asset(
-                                                'assets/icon/no_user.jpg'),
-                                          ),
+                          return Card(
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute<EventDetailScreen>(
+                                    builder: (BuildContext context) {
+                                      return Provider<EventDetailBloc>(
+                                        create: (BuildContext context) {
+                                          return EventDetailBloc(
+                                            snapshot.data.elementAt(index).id,
+                                            FirestoreItemRepository(),
+                                            FirestoreLikeRepository(),
+                                            FirestoreFavoriteRepository(),
+                                            FirebaseAuthenticationRepository(),
+                                          );
+                                        },
+                                        dispose: (BuildContext context,
+                                            EventDetailBloc bloc) {
+                                          bloc.dispose();
+                                        },
+                                        child: EventDetailScreen(),
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      ClipOval(
+                                        child: SizedBox(
+                                          width: 44,
+                                          height: 44,
+                                          child: Image.asset(
+                                              'assets/icon/no_user.jpg'),
                                         ),
-                                        Text('〇〇さんからのお題：'),
-                                      ],
-                                    ),
-                                    Container(
-                                      padding: EdgeInsets.all(16),
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          snapshot.data.elementAt(index).title,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 22,
-                                          ),
+                                      ),
+                                      Text('〇〇さんからのお題：'),
+                                    ],
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.all(16),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        snapshot.data.elementAt(index).title,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 22,
                                         ),
                                       ),
                                     ),
-                                    if (snapshot.data
-                                        .elementAt(index)
-                                        .imageUrl
-                                        .isNotEmpty)
-                                      Padding(
-                                        padding: EdgeInsets.all(16),
-                                        child: Image.asset(
-                                            'assets/icon/no_image.jpg'),
-                                      ),
-                                  ],
-                                ),
+                                  ),
+                                  snapshot.data
+                                          .elementAt(index)
+                                          .imageUrl
+                                          .isEmpty
+                                      ? Container()
+                                      : Padding(
+                                          padding: EdgeInsets.all(16),
+                                          child: Image.asset(
+                                              'assets/icon/no_image.jpg'),
+                                        ),
+                                ],
                               ),
                             ),
                           );
