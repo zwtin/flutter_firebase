@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_bloc.dart';
 import 'package:flutter_firebase/blocs/new_register/new_register_bloc.dart';
+import 'package:flutter_firebase/blocs/post_category_select/post_category_select_bloc.dart';
 import 'package:flutter_firebase/blocs/post_event_bloc/post_event_bloc.dart';
 import 'package:flutter_firebase/entities/item.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
@@ -16,6 +17,7 @@ import 'package:flutter_firebase/blocs/event_detail/event_detail_bloc.dart';
 import 'package:flutter_firebase/models/firestore_item_repository.dart';
 import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 import 'package:flutter_firebase/screens/new_register/new_register_screen.dart';
+import 'package:flutter_firebase/screens/post_category_select/post_category_select_screen.dart';
 import 'package:flutter_firebase/screens/post_event_screen/post_event_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:loading_overlay/loading_overlay.dart';
@@ -186,20 +188,18 @@ class EventListScreen extends StatelessWidget {
               builder: (BuildContext context) {
                 return MultiProvider(
                   providers: [
-                    Provider<PostEventBloc>(
+                    Provider<PostCategorySelectBloc>(
                       create: (BuildContext context) {
-                        return PostEventBloc(
-                          FirebaseAuthenticationRepository(),
-                          FirestoreItemRepository(),
-                        );
+                        return PostCategorySelectBloc();
                       },
-                      dispose: (BuildContext context, PostEventBloc bloc) {
+                      dispose:
+                          (BuildContext context, PostCategorySelectBloc bloc) {
                         bloc.dispose();
                       },
                     ),
                     Provider<TabBloc>.value(value: tabBloc),
                   ],
-                  child: PostEventScreen(),
+                  child: PostCategorySelectScreen(),
                 );
               },
               fullscreenDialog: true,

@@ -26,7 +26,7 @@ class NewRegisterScreen extends StatelessWidget {
     newRegisterSubscription?.cancel();
     newRegisterSubscription = tabBloc.newRegisterController.stream.listen(
       (int index) {
-        Navigator.of(context).pop();
+        Navigator.of(context).popUntil((route) => route.isFirst);
       },
     );
 

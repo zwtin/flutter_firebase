@@ -44,7 +44,7 @@ class PostEventBloc {
             title: titleController.text,
             description: descriptionController.text,
             date: DateTime.now(),
-            imageUrl: 'zwtin.jpg',
+            imageUrl: '',
             createdUser: currentUser.id,
           ),
         );
