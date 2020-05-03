@@ -49,7 +49,6 @@ class FirestoreUserRepository implements UserRepository {
         'id': userId,
         'introduction': 'よろしくお願いします。',
         'name': '名無し',
-        'image_url': 'TsHfWXZ2p1uOtRTP',
       },
     );
   }

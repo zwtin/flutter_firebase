@@ -33,7 +33,7 @@ class PostEventScreen extends StatelessWidget {
                   Center(
                     child: GestureDetector(
                       child: Container(
-                        color: Colors.grey,
+                        color: Color.fromRGBO(210, 210, 210, 1),
                         height: 200,
                         width: 200,
                         child: StreamBuilder(
@@ -52,6 +52,8 @@ class PostEventScreen extends StatelessWidget {
                                     child: CircularProgressIndicator(),
                                   ),
                                   imageUrl: snap.data.toString(),
+                                  errorWidget: (context, url, dynamic error) =>
+                                      Image.asset('assets/icon/no_image.jpg'),
                                 );
                               },
                             );

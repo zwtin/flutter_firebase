@@ -52,6 +52,8 @@ class EditProfileScreen extends StatelessWidget {
                                     child: CircularProgressIndicator(),
                                   ),
                                   imageUrl: snap.data.toString(),
+                                  errorWidget: (context, url, dynamic error) =>
+                                      Image.asset('assets/icon/no_user.jpg'),
                                 );
                               },
                             );
