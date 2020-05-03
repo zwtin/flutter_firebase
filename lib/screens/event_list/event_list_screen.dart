@@ -18,6 +18,7 @@ import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
 import 'package:flutter_firebase/screens/new_register/new_register_screen.dart';
 import 'package:flutter_firebase/screens/post_event_screen/post_event_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 class EventListScreen extends StatelessWidget {
   StreamSubscription<int> rootTransitionSubscription;
@@ -80,56 +81,65 @@ class EventListScreen extends StatelessWidget {
         ),
         backgroundColor: Colors.orange,
       ),
-      body: RefreshIndicator(
-        onRefresh: eventListBloc.start,
-        child: Scrollbar(
-          child: StreamBuilder(
-            stream: eventListBloc.itemController.stream,
-            builder:
-                (BuildContext context, AsyncSnapshot<List<Item>> snapshot) {
-              return ListView.builder(
-                itemBuilder: (BuildContext context, int index) {
-                  return Card(
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute<EventDetailScreen>(
-                            builder: (BuildContext context) {
-                              return Provider<EventDetailBloc>(
-                                create: (BuildContext context) {
-                                  return EventDetailBloc(
-                                    snapshot.data.elementAt(index).id,
-                                    FirestoreItemRepository(),
-                                    FirestoreLikeRepository(),
-                                    FirestoreFavoriteRepository(),
-                                    FirebaseAuthenticationRepository(),
-                                  );
-                                },
-                                dispose: (BuildContext context,
-                                    EventDetailBloc bloc) {
-                                  bloc.dispose();
-                                },
-                                child: EventDetailScreen(),
+      body: StreamBuilder(
+        stream: eventListBloc.loadingController.stream,
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          return LoadingOverlay(
+            child: RefreshIndicator(
+              onRefresh: eventListBloc.start,
+              child: Scrollbar(
+                child: StreamBuilder(
+                  stream: eventListBloc.itemController.stream,
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<Item>> snapshot) {
+                    return ListView.builder(
+                      itemBuilder: (BuildContext context, int index) {
+                        return Card(
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute<EventDetailScreen>(
+                                  builder: (BuildContext context) {
+                                    return Provider<EventDetailBloc>(
+                                      create: (BuildContext context) {
+                                        return EventDetailBloc(
+                                          snapshot.data.elementAt(index).id,
+                                          FirestoreItemRepository(),
+                                          FirestoreLikeRepository(),
+                                          FirestoreFavoriteRepository(),
+                                          FirebaseAuthenticationRepository(),
+                                        );
+                                      },
+                                      dispose: (BuildContext context,
+                                          EventDetailBloc bloc) {
+                                        bloc.dispose();
+                                      },
+                                      child: EventDetailScreen(),
+                                    );
+                                  },
+                                ),
                               );
                             },
+                            child: Padding(
+                              child: Text(
+                                '${snapshot.data.elementAt(index).id}',
+                                style: const TextStyle(fontSize: 22),
+                              ),
+                              padding: const EdgeInsets.all(20),
+                            ),
                           ),
                         );
                       },
-                      child: Padding(
-                        child: Text(
-                          '${snapshot.data.elementAt(index).id}',
-                          style: const TextStyle(fontSize: 22),
-                        ),
-                        padding: const EdgeInsets.all(20),
-                      ),
-                    ),
-                  );
-                },
-                itemCount: snapshot.hasData ? snapshot.data.length : 0,
-              );
-            },
-          ),
-        ),
+                      itemCount: snapshot.hasData ? snapshot.data.length : 0,
+                    );
+                  },
+                ),
+              ),
+            ),
+            isLoading: snapshot.data ?? false,
+            color: Colors.grey,
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
