@@ -37,7 +37,7 @@ class FirestoreItemRepository implements ItemRepository {
               title: docs.data['title'] as String,
               description: docs.data['description'] as String,
               date: docs.data['date']?.toDate() as DateTime,
-              imageUrl: docs.data['image_url'] as String,
+              imageUrl: docs.data['image_url'] as String ?? '',
               createdUser: docs.data['created_user'] as String,
             );
           },

@@ -19,6 +19,7 @@ import 'package:flutter_firebase/screens/new_register/new_register_screen.dart';
 import 'package:flutter_firebase/screens/post_event_screen/post_event_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class EventListScreen extends StatelessWidget {
   StreamSubscription<int> rootTransitionSubscription;
@@ -92,45 +93,86 @@ class EventListScreen extends StatelessWidget {
                   stream: eventListBloc.itemController.stream,
                   builder: (BuildContext context,
                       AsyncSnapshot<List<Item>> snapshot) {
-                    return ListView.builder(
-                      itemBuilder: (BuildContext context, int index) {
-                        return Card(
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute<EventDetailScreen>(
-                                  builder: (BuildContext context) {
-                                    return Provider<EventDetailBloc>(
-                                      create: (BuildContext context) {
-                                        return EventDetailBloc(
-                                          snapshot.data.elementAt(index).id,
-                                          FirestoreItemRepository(),
-                                          FirestoreLikeRepository(),
-                                          FirestoreFavoriteRepository(),
-                                          FirebaseAuthenticationRepository(),
+                    return Container(
+                      color: Colors.green,
+                      child: ListView.builder(
+                        itemBuilder: (BuildContext context, int index) {
+                          return Padding(
+                            padding: index == 0
+                                ? EdgeInsets.fromLTRB(0, 0, 0, 0)
+                                : EdgeInsets.fromLTRB(0, 5, 0, 0),
+                            child: Card(
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute<EventDetailScreen>(
+                                      builder: (BuildContext context) {
+                                        return Provider<EventDetailBloc>(
+                                          create: (BuildContext context) {
+                                            return EventDetailBloc(
+                                              snapshot.data.elementAt(index).id,
+                                              FirestoreItemRepository(),
+                                              FirestoreLikeRepository(),
+                                              FirestoreFavoriteRepository(),
+                                              FirebaseAuthenticationRepository(),
+                                            );
+                                          },
+                                          dispose: (BuildContext context,
+                                              EventDetailBloc bloc) {
+                                            bloc.dispose();
+                                          },
+                                          child: EventDetailScreen(),
                                         );
                                       },
-                                      dispose: (BuildContext context,
-                                          EventDetailBloc bloc) {
-                                        bloc.dispose();
-                                      },
-                                      child: EventDetailScreen(),
-                                    );
-                                  },
+                                    ),
+                                  );
+                                },
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Row(
+                                      children: <Widget>[
+                                        ClipOval(
+                                          child: SizedBox(
+                                            width: 44,
+                                            height: 44,
+                                            child: Image.asset(
+                                                'assets/icon/no_user.jpg'),
+                                          ),
+                                        ),
+                                        Text('〇〇さんからのお題：'),
+                                      ],
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.all(16),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          snapshot.data.elementAt(index).title,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 22,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    if (snapshot.data
+                                        .elementAt(index)
+                                        .imageUrl
+                                        .isNotEmpty)
+                                      Padding(
+                                        padding: EdgeInsets.all(16),
+                                        child: Image.asset(
+                                            'assets/icon/no_image.jpg'),
+                                      ),
+                                  ],
                                 ),
-                              );
-                            },
-                            child: Padding(
-                              child: Text(
-                                '${snapshot.data.elementAt(index).id}',
-                                style: const TextStyle(fontSize: 22),
                               ),
-                              padding: const EdgeInsets.all(20),
                             ),
-                          ),
-                        );
-                      },
-                      itemCount: snapshot.hasData ? snapshot.data.length : 0,
+                          );
+                        },
+                        itemCount: snapshot.hasData ? snapshot.data.length : 0,
+                      ),
                     );
                   },
                 ),
