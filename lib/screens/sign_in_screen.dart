@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase/blocs/sign_in/sign_in_bloc.dart';
-import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
+import 'package:flutter_firebase/blocs/sign_in_bloc.dart';
+import 'package:flutter_firebase/blocs/tab_bloc.dart';
 import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_firebase/blocs/post_event_bloc/post_event_bloc.dart';
+import 'package:flutter_firebase/blocs/post_event_bloc.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
 

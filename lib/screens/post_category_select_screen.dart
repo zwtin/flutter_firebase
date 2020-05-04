@@ -1,18 +1,28 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_firebase/blocs/tab/tab_bloc.dart';
-import 'package:flutter_firebase/blocs/new_register/new_register_bloc.dart';
-import 'package:flutter_firebase/screens/new_register/new_register_screen.dart';
+import 'package:flutter_firebase/blocs/tab_bloc.dart';
+import 'package:flutter_firebase/blocs/new_register_bloc.dart';
+import 'package:flutter_firebase/screens/new_register_screen.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/models/firestore_user_repository.dart';
 import 'package:flutter_firebase/models/firestore_push_notification_repository.dart';
-import 'package:flutter_firebase/blocs/post_theme_select/post_theme_select_bloc.dart';
+import 'package:flutter_firebase/blocs/post_category_select_bloc.dart';
 
-class PostThemeSelectScreen extends StatelessWidget {
+class PostCategorySelectScreen extends StatelessWidget {
+  StreamSubscription<int> newRegisterSubscription;
+
   @override
   Widget build(BuildContext context) {
-    final postThemeSelectBloc = Provider.of<PostThemeSelectBloc>(context);
+    final postCategorySelectBloc = Provider.of<PostCategorySelectBloc>(context);
+    final tabBloc = Provider.of<TabBloc>(context);
+
+    newRegisterSubscription?.cancel();
+    newRegisterSubscription = tabBloc.newRegisterController.stream.listen(
+      (int index) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      },
+    );
 
     return Scaffold(
       appBar: AppBar(
