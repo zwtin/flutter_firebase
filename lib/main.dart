@@ -26,10 +26,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-      ),
       home: Provider<TabBloc>(
         create: (BuildContext context) {
           return TabBloc();

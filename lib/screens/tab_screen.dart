@@ -27,10 +27,11 @@ class TabScreen extends StatelessWidget {
         return Scaffold(
           bottomNavigationBar: FFNavigationBar(
             theme: FFNavigationBarTheme(
-              barBackgroundColor: Colors.white,
-              selectedItemBackgroundColor: Colors.orange,
-              selectedItemIconColor: Colors.white,
-              selectedItemLabelColor: Colors.black,
+              barBackgroundColor: Colors.black87,
+              selectedItemBackgroundColor: const Color(0xFFFFCC00),
+              selectedItemLabelColor: Colors.white,
+              selectedItemBorderColor: Colors.yellow,
+              unselectedItemIconColor: Colors.grey,
               showSelectedItemShadow: false,
             ),
             selectedIndex: indexSnapshot.data ?? 0,

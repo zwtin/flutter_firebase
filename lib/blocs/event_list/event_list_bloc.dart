@@ -13,23 +13,16 @@ class EventListBloc {
 
   final BehaviorSubject<List<Item>> itemController =
       BehaviorSubject<List<Item>>.seeded([]);
-  final BehaviorSubject<bool> loadingController =
-      BehaviorSubject<bool>.seeded(false);
 
   Future<void> start() async {
-    loadingController.sink.add(true);
     try {
       final items = await _itemRepository.getItemList();
       items.sort((a, b) => b.date.compareTo(a.date));
-      loadingController.sink.add(false);
       itemController.sink.add(items);
-    } on Exception catch (error) {
-      loadingController.sink.add(false);
-    }
+    } on Exception catch (error) {}
   }
 
   Future<void> dispose() async {
     await itemController.close();
-    await loadingController.close();
   }
 }

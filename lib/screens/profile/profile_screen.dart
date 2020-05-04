@@ -88,7 +88,17 @@ class ProfileScreen extends StatelessWidget {
                 'マイページ',
                 style: TextStyle(
                   color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
+              ),
+              backgroundColor: const Color(0xFFFFCC00),
+              elevation: 0,
+              bottom: PreferredSize(
+                child: Container(
+                  color: Colors.white24,
+                  height: 1,
+                ),
+                preferredSize: const Size.fromHeight(1),
               ),
               actions: <Widget>[
                 IconButton(
@@ -146,7 +156,6 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
               ],
-              backgroundColor: Colors.orange,
             ),
             body: StreamBuilder(
               stream: profileBloc.userController.stream,

@@ -5,7 +5,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_firebase/blocs/event_list/event_list_bloc.dart';
 import 'package:flutter_firebase/blocs/new_register/new_register_bloc.dart';
 import 'package:flutter_firebase/blocs/post_category_select/post_category_select_bloc.dart';
-import 'package:flutter_firebase/blocs/post_event_bloc/post_event_bloc.dart';
 import 'package:flutter_firebase/entities/item.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/models/firestore_favorite_repository.dart';
@@ -20,7 +19,6 @@ import 'package:flutter_firebase/screens/new_register/new_register_screen.dart';
 import 'package:flutter_firebase/screens/post_category_select/post_category_select_screen.dart';
 import 'package:flutter_firebase/screens/post_event_screen/post_event_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:loading_overlay/loading_overlay.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class EventListScreen extends StatelessWidget {
@@ -80,106 +78,104 @@ class EventListScreen extends StatelessWidget {
           'ホーム',
           style: TextStyle(
             color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFFFFCC00),
+        elevation: 0,
+        bottom: PreferredSize(
+          child: Container(
+            color: Colors.white24,
+            height: 1,
+          ),
+          preferredSize: const Size.fromHeight(1),
+        ),
       ),
-      body: StreamBuilder(
-        stream: eventListBloc.loadingController.stream,
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          return LoadingOverlay(
-            child: RefreshIndicator(
-              onRefresh: eventListBloc.start,
-              child: Scrollbar(
-                child: StreamBuilder(
-                  stream: eventListBloc.itemController.stream,
-                  builder: (BuildContext context,
-                      AsyncSnapshot<List<Item>> snapshot) {
-                    return Container(
-                      color: Colors.green,
-                      child: ListView.builder(
-                        itemBuilder: (BuildContext context, int index) {
-                          return Card(
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute<EventDetailScreen>(
-                                    builder: (BuildContext context) {
-                                      return Provider<EventDetailBloc>(
-                                        create: (BuildContext context) {
-                                          return EventDetailBloc(
-                                            snapshot.data.elementAt(index).id,
-                                            FirestoreItemRepository(),
-                                            FirestoreLikeRepository(),
-                                            FirestoreFavoriteRepository(),
-                                            FirebaseAuthenticationRepository(),
-                                          );
-                                        },
-                                        dispose: (BuildContext context,
-                                            EventDetailBloc bloc) {
-                                          bloc.dispose();
-                                        },
-                                        child: EventDetailScreen(),
-                                      );
-                                    },
-                                  ),
+      body: RefreshIndicator(
+        color: const Color(0xFFFFCC00),
+        onRefresh: eventListBloc.start,
+        child: Scrollbar(
+          child: StreamBuilder(
+            stream: eventListBloc.itemController.stream,
+            builder:
+                (BuildContext context, AsyncSnapshot<List<Item>> snapshot) {
+              return Container(
+                color: const Color(0xFFFFCC00),
+                child: ListView.builder(
+                  itemBuilder: (BuildContext context, int index) {
+                    return Card(
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute<EventDetailScreen>(
+                              builder: (BuildContext context) {
+                                return Provider<EventDetailBloc>(
+                                  create: (BuildContext context) {
+                                    return EventDetailBloc(
+                                      snapshot.data.elementAt(index).id,
+                                      FirestoreItemRepository(),
+                                      FirestoreLikeRepository(),
+                                      FirestoreFavoriteRepository(),
+                                      FirebaseAuthenticationRepository(),
+                                    );
+                                  },
+                                  dispose: (BuildContext context,
+                                      EventDetailBloc bloc) {
+                                    bloc.dispose();
+                                  },
+                                  child: EventDetailScreen(),
                                 );
                               },
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                      ClipOval(
-                                        child: SizedBox(
-                                          width: 44,
-                                          height: 44,
-                                          child: Image.asset(
-                                              'assets/icon/no_user.jpg'),
-                                        ),
-                                      ),
-                                      Text('〇〇さんからのお題：'),
-                                    ],
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.all(16),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        snapshot.data.elementAt(index).title,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 22,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  snapshot.data
-                                          .elementAt(index)
-                                          .imageUrl
-                                          .isEmpty
-                                      ? Container()
-                                      : Padding(
-                                          padding: EdgeInsets.all(16),
-                                          child: Image.asset(
-                                              'assets/icon/no_image.jpg'),
-                                        ),
-                                ],
-                              ),
                             ),
                           );
                         },
-                        itemCount: snapshot.hasData ? snapshot.data.length : 0,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                ClipOval(
+                                  child: SizedBox(
+                                    width: 44,
+                                    height: 44,
+                                    child:
+                                        Image.asset('assets/icon/no_user.jpg'),
+                                  ),
+                                ),
+                                Text('〇〇さんからのお題：'),
+                              ],
+                            ),
+                            Container(
+                              padding: EdgeInsets.all(16),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  snapshot.data.elementAt(index).title,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 22,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            snapshot.data.elementAt(index).imageUrl.isEmpty
+                                ? Container()
+                                : Padding(
+                                    padding: EdgeInsets.all(16),
+                                    child:
+                                        Image.asset('assets/icon/no_image.jpg'),
+                                  ),
+                          ],
+                        ),
                       ),
                     );
                   },
+                  itemCount: snapshot.hasData ? snapshot.data.length : 0,
                 ),
-              ),
-            ),
-            isLoading: snapshot.data ?? false,
-            color: Colors.grey,
-          );
-        },
+              );
+            },
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -207,7 +203,7 @@ class EventListScreen extends StatelessWidget {
           );
         },
         child: Icon(Icons.add),
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFFFFCC00),
         foregroundColor: Colors.white,
       ),
     );
