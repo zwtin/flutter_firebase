@@ -30,35 +30,51 @@ class PostCategorySelectScreen extends StatelessWidget {
           'カテゴリー選択',
           style: TextStyle(
             color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFFFFCC00),
+        elevation: 0,
+        bottom: PreferredSize(
+          child: Container(
+            color: Colors.white24,
+            height: 1,
+          ),
+          preferredSize: const Size.fromHeight(1),
+        ),
       ),
-      body: ListView.builder(
-        itemBuilder: (BuildContext context, int index) {
-          return Card(
-            child: InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: index == 0
-                    ? const Text(
-                        'お題を投稿する',
-                        style: TextStyle(
-                          fontSize: 20,
-                        ),
-                      )
-                    : const Text(
-                        'ボケを投稿する',
-                        style: TextStyle(
-                          fontSize: 20,
-                        ),
-                      ),
-              ),
-            ),
-          );
-        },
-        itemCount: 2,
+      body: Stack(
+        children: <Widget>[
+          Container(
+            color: const Color(0xFFFFCC00),
+          ),
+          ListView.builder(
+            itemBuilder: (BuildContext context, int index) {
+              return Card(
+                child: InkWell(
+                  onTap: () {},
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: index == 0
+                        ? const Text(
+                            'お題を投稿する',
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                          )
+                        : const Text(
+                            'ボケを投稿する',
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
+                  ),
+                ),
+              );
+            },
+            itemCount: 2,
+          ),
+        ],
       ),
     );
   }

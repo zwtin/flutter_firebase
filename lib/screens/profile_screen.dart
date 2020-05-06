@@ -28,6 +28,7 @@ import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   StreamSubscription<int> rootTransitionSubscription;
+  StreamSubscription<int> popTransitionSubscription;
   StreamSubscription<int> newRegisterSubscription;
 
   @override
@@ -40,6 +41,19 @@ class ProfileScreen extends StatelessWidget {
       (int index) {
         if (index == 1) {
           Navigator.of(context).popUntil((route) => route.isFirst);
+        }
+      },
+    );
+
+    popTransitionSubscription?.cancel();
+    popTransitionSubscription = tabBloc.popTransitionController.stream.listen(
+      (int index) {
+        if (index == 1) {
+          if (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          } else {
+            tabBloc.indexController.sink.add(0);
+          }
         }
       },
     );
@@ -341,16 +355,25 @@ class ProfileScreen extends StatelessWidget {
               'マイページ',
               style: TextStyle(
                 color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            backgroundColor: Colors.orange,
+            backgroundColor: const Color(0xFFFFCC00),
+            elevation: 0,
+            bottom: PreferredSize(
+              child: Container(
+                color: Colors.white24,
+                height: 1,
+              ),
+              preferredSize: const Size.fromHeight(1),
+            ),
           ),
           body: Center(
             child: Column(
               children: <Widget>[
                 RaisedButton(
                   child: const Text('ログイン'),
-                  color: Colors.orange,
+                  color: const Color(0xFFFFCC00),
                   textColor: Colors.white,
                   onPressed: () {
                     Navigator.of(context, rootNavigator: true).push(
@@ -383,7 +406,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 RaisedButton(
                   child: const Text('新規会員登録'),
-                  color: Colors.orange,
+                  color: const Color(0xFFFFCC00),
                   textColor: Colors.white,
                   onPressed: () {
                     Navigator.of(context, rootNavigator: true).push(

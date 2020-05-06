@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_firebase/blocs/event_list_bloc.dart';
+import 'package:flutter_firebase/blocs/profile_bloc.dart';
+import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
+import 'package:flutter_firebase/models/firestore_item_repository.dart';
+import 'package:flutter_firebase/models/firestore_user_repository.dart';
+import 'package:flutter_firebase/screens/profile_screen.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_firebase/screens/event_list_screen.dart';
 
 class TabBloc {
   TabBloc() {
@@ -9,10 +17,61 @@ class TabBloc {
     setupPushNotification();
   }
 
+  final Navigator tab0 = Navigator(
+    onGenerateRoute: (RouteSettings settings) {
+      return PageRouteBuilder<Widget>(
+        pageBuilder: (
+          BuildContext context,
+          Animation<double> animation1,
+          Animation<double> animation2,
+        ) {
+          return Provider<EventListBloc>(
+            create: (BuildContext context) {
+              return EventListBloc(
+                FirestoreItemRepository(),
+              );
+            },
+            dispose: (BuildContext context, EventListBloc bloc) {
+              bloc.dispose();
+            },
+            child: EventListScreen(),
+          );
+        },
+      );
+    },
+  );
+
+  final Navigator tab1 = Navigator(
+    onGenerateRoute: (RouteSettings settings) {
+      return PageRouteBuilder<Widget>(
+        pageBuilder: (
+          BuildContext context,
+          Animation<double> animation1,
+          Animation<double> animation2,
+        ) {
+          return Provider<ProfileBloc>(
+            create: (BuildContext context) {
+              return ProfileBloc(
+                FirestoreUserRepository(),
+                FirestoreItemRepository(),
+                FirebaseAuthenticationRepository(),
+              );
+            },
+            dispose: (BuildContext context, ProfileBloc bloc) {
+              bloc.dispose();
+            },
+            child: ProfileScreen(),
+          );
+        },
+      );
+    },
+  );
+
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   final BehaviorSubject<int> indexController = BehaviorSubject<int>.seeded(0);
   final PublishSubject<int> rootTransitionController = PublishSubject<int>();
+  final PublishSubject<int> popTransitionController = PublishSubject<int>();
   final PublishSubject<int> newRegisterController = PublishSubject<int>();
 
   Future<void> initDynamicLinks() async {
@@ -73,9 +132,18 @@ class TabBloc {
     }
   }
 
+  Future<void> pop() async {
+    if (indexController.value == 0) {
+      popTransitionController.sink.add(0);
+    } else if (indexController.value == 1) {
+      popTransitionController.sink.add(1);
+    }
+  }
+
   Future<void> dispose() async {
     await indexController.close();
     await rootTransitionController.close();
+    await popTransitionController.close();
     await newRegisterController.close();
   }
 }

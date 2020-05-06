@@ -21,83 +21,47 @@ class TabScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final tabBloc = Provider.of<TabBloc>(context);
 
-    return StreamBuilder(
-      stream: tabBloc.indexController.stream,
-      builder: (BuildContext context, AsyncSnapshot<int> indexSnapshot) {
-        return Scaffold(
-          bottomNavigationBar: FFNavigationBar(
-            theme: FFNavigationBarTheme(
-              barBackgroundColor: Colors.black87,
-              selectedItemBackgroundColor: const Color(0xFFFFCC00),
-              selectedItemLabelColor: Colors.white,
-              selectedItemBorderColor: Colors.yellow,
-              unselectedItemIconColor: Colors.grey,
-              showSelectedItemShadow: false,
-            ),
-            selectedIndex: indexSnapshot.data ?? 0,
-            onSelectTab: tabBloc.tabTappedAction,
-            items: [
-              FFNavigationBarItem(
-                iconData: Icons.home,
-                label: 'ホーム',
-              ),
-              FFNavigationBarItem(
-                iconData: Icons.person,
-                label: 'マイページ',
-              ),
-            ],
-          ),
-          body: IndexedStack(
-            index: indexSnapshot.data ?? 0,
-            children: <Widget>[
-              Navigator(
-                onGenerateRoute: (RouteSettings settings) {
-                  return PageRouteBuilder<Widget>(
-                    pageBuilder: (BuildContext context,
-                        Animation<double> animation1,
-                        Animation<double> animation2) {
-                      return Provider<EventListBloc>(
-                        create: (BuildContext context) {
-                          return EventListBloc(
-                            FirestoreItemRepository(),
-                          );
-                        },
-                        dispose: (BuildContext context, EventListBloc bloc) {
-                          bloc.dispose();
-                        },
-                        child: _eventListScreen,
-                      );
-                    },
-                  );
-                },
-              ),
-              Navigator(
-                onGenerateRoute: (RouteSettings settings) {
-                  return PageRouteBuilder<Widget>(
-                    pageBuilder: (BuildContext context,
-                        Animation<double> animation1,
-                        Animation<double> animation2) {
-                      return Provider<ProfileBloc>(
-                        create: (BuildContext context) {
-                          return ProfileBloc(
-                            FirestoreUserRepository(),
-                            FirestoreItemRepository(),
-                            FirebaseAuthenticationRepository(),
-                          );
-                        },
-                        dispose: (BuildContext context, ProfileBloc bloc) {
-                          bloc.dispose();
-                        },
-                        child: _profileScreen,
-                      );
-                    },
-                  );
-                },
-              ),
-            ],
-          ),
-        );
+    return WillPopScope(
+      onWillPop: () {
+        tabBloc.pop();
+        return Future.value(false);
       },
+      child: StreamBuilder(
+        stream: tabBloc.indexController.stream,
+        builder: (BuildContext context, AsyncSnapshot<int> indexSnapshot) {
+          return Scaffold(
+            bottomNavigationBar: FFNavigationBar(
+              theme: FFNavigationBarTheme(
+                barBackgroundColor: Colors.black87,
+                selectedItemBackgroundColor: const Color(0xFFFFCC00),
+                selectedItemLabelColor: Colors.white,
+                selectedItemBorderColor: Colors.yellow,
+                unselectedItemIconColor: Colors.grey,
+                showSelectedItemShadow: false,
+              ),
+              selectedIndex: indexSnapshot.data ?? 0,
+              onSelectTab: tabBloc.tabTappedAction,
+              items: [
+                FFNavigationBarItem(
+                  iconData: Icons.home,
+                  label: 'ホーム',
+                ),
+                FFNavigationBarItem(
+                  iconData: Icons.person,
+                  label: 'マイページ',
+                ),
+              ],
+            ),
+            body: IndexedStack(
+              index: indexSnapshot.data ?? 0,
+              children: <Widget>[
+                tabBloc.tab0,
+                tabBloc.tab1,
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

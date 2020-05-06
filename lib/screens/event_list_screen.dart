@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_firebase/blocs/event_list_bloc.dart';
 import 'package:flutter_firebase/blocs/new_register_bloc.dart';
 import 'package:flutter_firebase/blocs/post_category_select_bloc.dart';
@@ -23,6 +24,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 class EventListScreen extends StatelessWidget {
   StreamSubscription<int> rootTransitionSubscription;
+  StreamSubscription<int> popTransitionSubscription;
   StreamSubscription<int> newRegisterSubscription;
 
   @override
@@ -35,6 +37,19 @@ class EventListScreen extends StatelessWidget {
       (int index) {
         if (index == 0) {
           Navigator.of(context).popUntil((route) => route.isFirst);
+        }
+      },
+    );
+
+    popTransitionSubscription?.cancel();
+    popTransitionSubscription = tabBloc.popTransitionController.stream.listen(
+      (int index) {
+        if (index == 0) {
+          if (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          } else {
+            SystemNavigator.pop();
+          }
         }
       },
     );
