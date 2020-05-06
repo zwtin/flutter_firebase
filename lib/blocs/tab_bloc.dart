@@ -5,6 +5,7 @@ import 'package:flutter_firebase/blocs/event_list_bloc.dart';
 import 'package:flutter_firebase/blocs/profile_bloc.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/models/firestore_item_repository.dart';
+import 'package:flutter_firebase/models/firestore_push_notification_repository.dart';
 import 'package:flutter_firebase/models/firestore_user_repository.dart';
 import 'package:flutter_firebase/screens/profile_screen.dart';
 import 'package:rxdart/rxdart.dart';
@@ -54,6 +55,7 @@ class TabBloc {
               return ProfileBloc(
                 FirestoreUserRepository(),
                 FirestoreItemRepository(),
+                FirestorePushNotificationRepository(),
                 FirebaseAuthenticationRepository(),
               );
             },

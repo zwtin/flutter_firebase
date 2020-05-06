@@ -159,7 +159,9 @@ class SignInBloc {
         userId: currentUser.id,
         deviceToken: token,
       );
-    } on Exception catch (error) {}
+    } on Exception catch (error) {
+      return;
+    }
   }
 
   Future<void> dispose() async {

@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:flutter_firebase/entities/item.dart';
 import 'package:flutter_firebase/entities/user.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
 import 'package:flutter_firebase/repositories/item_repository.dart';
+import 'package:flutter_firebase/repositories/push_notification_repository.dart';
 import 'package:flutter_firebase/repositories/user_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -12,20 +14,25 @@ class ProfileBloc {
   ProfileBloc(
     this._userRepository,
     this._itemRepository,
+    this._pushNotificationRepository,
     this._authenticationRepository,
   )   : assert(_userRepository != null),
         assert(_itemRepository != null),
+        assert(_pushNotificationRepository != null),
         assert(_authenticationRepository != null) {
     start();
   }
 
   final UserRepository _userRepository;
   final ItemRepository _itemRepository;
+  final PushNotificationRepository _pushNotificationRepository;
   final AuthenticationRepository _authenticationRepository;
 
   StreamSubscription<int> rootTransitionSubscription;
   StreamSubscription<int> popTransitionSubscription;
   StreamSubscription<int> newRegisterSubscription;
+
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   final BehaviorSubject<CurrentUser> currentUserController =
       BehaviorSubject<CurrentUser>.seeded(null);
@@ -91,7 +98,21 @@ class ProfileBloc {
     );
   }
 
+  Future<void> unregisterDeviceToken() async {
+    try {
+      final token = await _firebaseMessaging.getToken();
+      final currentUser = await _authenticationRepository.getCurrentUser();
+      await _pushNotificationRepository.unregisterDeviceToken(
+        userId: currentUser.id,
+        deviceToken: token,
+      );
+    } on Exception catch (error) {
+      return;
+    }
+  }
+
   Future<void> signOut() async {
+    await unregisterDeviceToken();
     await _authenticationRepository.signOut();
   }
 

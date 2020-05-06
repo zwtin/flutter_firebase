@@ -37,17 +37,17 @@ class FirestorePushNotificationRepository
     @required String userId,
     @required String deviceToken,
   }) async {
-    await _firestore
-        .collection('users')
-        .document(userId)
-        .collection('device_token')
-        .where('token', isEqualTo: deviceToken)
-        .getDocuments()
-        .then(
-      (QuerySnapshot querySnapshot) {
-        for (final doc in querySnapshot.documents) {
-          doc.reference.delete();
-        }
+    await _firestore.runTransaction(
+      (transaction) async {
+        final querySnapshot = await _firestore
+            .collection('users')
+            .document(userId)
+            .collection('device_token')
+            .where('token', isEqualTo: deviceToken)
+            .getDocuments();
+        final doc = querySnapshot.documents.first.reference;
+        await transaction.delete(doc);
+        return null;
       },
     );
   }
