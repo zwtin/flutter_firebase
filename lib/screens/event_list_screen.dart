@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -23,17 +22,14 @@ import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class EventListScreen extends StatelessWidget {
-  StreamSubscription<int> rootTransitionSubscription;
-  StreamSubscription<int> popTransitionSubscription;
-  StreamSubscription<int> newRegisterSubscription;
-
   @override
   Widget build(BuildContext context) {
     final eventListBloc = Provider.of<EventListBloc>(context);
     final tabBloc = Provider.of<TabBloc>(context);
 
-    rootTransitionSubscription?.cancel();
-    rootTransitionSubscription = tabBloc.rootTransitionController.stream.listen(
+    eventListBloc.rootTransitionSubscription?.cancel();
+    eventListBloc.rootTransitionSubscription =
+        tabBloc.rootTransitionController.stream.listen(
       (int index) {
         if (index == 0) {
           Navigator.of(context).popUntil((route) => route.isFirst);
@@ -41,8 +37,9 @@ class EventListScreen extends StatelessWidget {
       },
     );
 
-    popTransitionSubscription?.cancel();
-    popTransitionSubscription = tabBloc.popTransitionController.stream.listen(
+    eventListBloc.popTransitionSubscription?.cancel();
+    eventListBloc.popTransitionSubscription =
+        tabBloc.popTransitionController.stream.listen(
       (int index) {
         if (index == 0) {
           if (Navigator.of(context).canPop()) {
@@ -54,8 +51,9 @@ class EventListScreen extends StatelessWidget {
       },
     );
 
-    newRegisterSubscription?.cancel();
-    newRegisterSubscription = tabBloc.newRegisterController.stream.listen(
+    eventListBloc.newRegisterSubscription?.cancel();
+    eventListBloc.newRegisterSubscription =
+        tabBloc.newRegisterController.stream.listen(
       (int index) {
         if (index == 0) {
           Navigator.of(context, rootNavigator: true).push(
@@ -157,11 +155,11 @@ class EventListScreen extends StatelessWidget {
                                         Image.asset('assets/icon/no_user.jpg'),
                                   ),
                                 ),
-                                Text('〇〇さんからのお題：'),
+                                const Text('〇〇さんからのお題：'),
                               ],
                             ),
                             Container(
-                              padding: EdgeInsets.all(16),
+                              padding: const EdgeInsets.all(16),
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
@@ -176,7 +174,7 @@ class EventListScreen extends StatelessWidget {
                             snapshot.data.elementAt(index).imageUrl.isEmpty
                                 ? Container()
                                 : Padding(
-                                    padding: EdgeInsets.all(16),
+                                    padding: const EdgeInsets.all(16),
                                     child:
                                         Image.asset('assets/icon/no_image.jpg'),
                                   ),

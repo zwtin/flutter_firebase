@@ -1,9 +1,6 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
-import 'package:flutter_firebase/models/firestore_push_notification_repository.dart';
 import 'package:flutter_firebase/screens/tab_screen.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_firebase/blocs/tab_bloc.dart';

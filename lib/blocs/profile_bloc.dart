@@ -23,6 +23,10 @@ class ProfileBloc {
   final ItemRepository _itemRepository;
   final AuthenticationRepository _authenticationRepository;
 
+  StreamSubscription<int> rootTransitionSubscription;
+  StreamSubscription<int> popTransitionSubscription;
+  StreamSubscription<int> newRegisterSubscription;
+
   final BehaviorSubject<CurrentUser> currentUserController =
       BehaviorSubject<CurrentUser>.seeded(null);
   final BehaviorSubject<User> userController =
@@ -92,6 +96,9 @@ class ProfileBloc {
   }
 
   Future<void> dispose() async {
+    await rootTransitionSubscription.cancel();
+    await popTransitionSubscription.cancel();
+    await newRegisterSubscription.cancel();
     await currentUserController.close();
     await userController.close();
     await createItemsController.close();

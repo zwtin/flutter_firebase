@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/new_register_bloc.dart';
 import 'package:flutter_firebase/blocs/sign_in_bloc.dart';
@@ -27,17 +25,14 @@ import 'package:flutter_firebase/models/firestore_favorite_repository.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
-  StreamSubscription<int> rootTransitionSubscription;
-  StreamSubscription<int> popTransitionSubscription;
-  StreamSubscription<int> newRegisterSubscription;
-
   @override
   Widget build(BuildContext context) {
     final profileBloc = Provider.of<ProfileBloc>(context);
     final tabBloc = Provider.of<TabBloc>(context);
 
-    rootTransitionSubscription?.cancel();
-    rootTransitionSubscription = tabBloc.rootTransitionController.stream.listen(
+    profileBloc.rootTransitionSubscription?.cancel();
+    profileBloc.rootTransitionSubscription =
+        tabBloc.rootTransitionController.stream.listen(
       (int index) {
         if (index == 1) {
           Navigator.of(context).popUntil((route) => route.isFirst);
@@ -45,8 +40,9 @@ class ProfileScreen extends StatelessWidget {
       },
     );
 
-    popTransitionSubscription?.cancel();
-    popTransitionSubscription = tabBloc.popTransitionController.stream.listen(
+    profileBloc.popTransitionSubscription?.cancel();
+    profileBloc.popTransitionSubscription =
+        tabBloc.popTransitionController.stream.listen(
       (int index) {
         if (index == 1) {
           if (Navigator.of(context).canPop()) {
@@ -58,8 +54,9 @@ class ProfileScreen extends StatelessWidget {
       },
     );
 
-    newRegisterSubscription?.cancel();
-    newRegisterSubscription = tabBloc.newRegisterController.stream.listen(
+    profileBloc.newRegisterSubscription?.cancel();
+    profileBloc.newRegisterSubscription =
+        tabBloc.newRegisterController.stream.listen(
       (int index) {
         if (index == 1) {
           Navigator.of(context, rootNavigator: true).push(
@@ -461,7 +458,7 @@ class SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      color: Color(0xFFFAFAFA),
+      color: const Color(0xFFFAFAFA),
       child: tabBar,
     );
   }

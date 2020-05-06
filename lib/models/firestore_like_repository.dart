@@ -47,25 +47,25 @@ class FirestoreLikeRepository implements LikeRepository {
     @required String userId,
     @required String itemId,
   }) async {
-    final batch = _firestore.batch();
     final itemMap = {'id': itemId};
-    batch.setData(
-      _firestore
-          .collection('users')
-          .document(userId)
-          .collection('like_items')
-          .document(itemId),
-      itemMap,
-    );
     final userMap = {'id': userId};
-    batch.setData(
-      _firestore
-          .collection('items')
-          .document(itemId)
-          .collection('liked_users')
-          .document(userId),
-      userMap,
-    );
+    final batch = _firestore.batch()
+      ..setData(
+        _firestore
+            .collection('users')
+            .document(userId)
+            .collection('like_items')
+            .document(itemId),
+        itemMap,
+      )
+      ..setData(
+        _firestore
+            .collection('items')
+            .document(itemId)
+            .collection('liked_users')
+            .document(userId),
+        userMap,
+      );
     await batch.commit();
   }
 
@@ -74,21 +74,21 @@ class FirestoreLikeRepository implements LikeRepository {
     @required String userId,
     @required String itemId,
   }) async {
-    final batch = _firestore.batch();
-    batch.delete(
-      _firestore
-          .collection('users')
-          .document(userId)
-          .collection('like_items')
-          .document(itemId),
-    );
-    batch.delete(
-      _firestore
-          .collection('items')
-          .document(itemId)
-          .collection('liked_users')
-          .document(userId),
-    );
+    final batch = _firestore.batch()
+      ..delete(
+        _firestore
+            .collection('users')
+            .document(userId)
+            .collection('like_items')
+            .document(itemId),
+      )
+      ..delete(
+        _firestore
+            .collection('items')
+            .document(itemId)
+            .collection('liked_users')
+            .document(userId),
+      );
     await batch.commit();
   }
 }

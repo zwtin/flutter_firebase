@@ -11,6 +11,10 @@ class EventListBloc {
 
   final ItemRepository _itemRepository;
 
+  StreamSubscription<int> rootTransitionSubscription;
+  StreamSubscription<int> popTransitionSubscription;
+  StreamSubscription<int> newRegisterSubscription;
+
   final BehaviorSubject<List<Item>> itemController =
       BehaviorSubject<List<Item>>.seeded([]);
 
@@ -19,10 +23,15 @@ class EventListBloc {
       final items = await _itemRepository.getItemList();
       items.sort((a, b) => b.date.compareTo(a.date));
       itemController.sink.add(items);
-    } on Exception catch (error) {}
+    } on Exception catch (error) {
+      return;
+    }
   }
 
   Future<void> dispose() async {
+    await rootTransitionSubscription.cancel();
+    await popTransitionSubscription.cancel();
+    await newRegisterSubscription.cancel();
     await itemController.close();
   }
 }

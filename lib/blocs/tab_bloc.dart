@@ -113,13 +113,13 @@ class TabBloc {
   Future<void> setupPushNotification() async {
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
-        print("onMessage: $message");
+        print('onMessage: $message');
       },
       onLaunch: (Map<String, dynamic> message) async {
-        print("onLaunch: $message");
+        print('onLaunch: $message');
       },
       onResume: (Map<String, dynamic> message) async {
-        print("onResume: $message");
+        print('onResume: $message');
       },
     );
   }
@@ -132,7 +132,7 @@ class TabBloc {
     }
   }
 
-  Future<void> pop() async {
+  Future<void> popAction() async {
     if (indexController.value == 0) {
       popTransitionController.sink.add(0);
     } else if (indexController.value == 1) {
