@@ -1,5 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase/blocs/post_theme_bloc.dart';
+import 'package:flutter_firebase/models/firestore_item_repository.dart';
+import 'package:flutter_firebase/models/firestore_topic_repository.dart';
+import 'package:flutter_firebase/screens/post_theme_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_firebase/blocs/tab_bloc.dart';
 import 'package:flutter_firebase/blocs/new_register_bloc.dart';
@@ -50,27 +54,63 @@ class PostCategorySelectScreen extends StatelessWidget {
           ),
           ListView.builder(
             itemBuilder: (BuildContext context, int index) {
-              return Card(
-                child: InkWell(
-                  onTap: () {},
-                  child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: index == 0
-                        ? const Text(
-                            'お題を投稿する',
-                            style: TextStyle(
-                              fontSize: 20,
-                            ),
-                          )
-                        : const Text(
-                            'ボケを投稿する',
-                            style: TextStyle(
-                              fontSize: 20,
-                            ),
+              switch (index) {
+                case 0:
+                  return Card(
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<PostTopicScreen>(
+                            builder: (BuildContext context) {
+                              return Provider<PostTopicBloc>(
+                                create: (BuildContext context) {
+                                  return PostTopicBloc(
+                                    FirebaseAuthenticationRepository(),
+                                    FirestoreTopicRepository(),
+                                  );
+                                },
+                                dispose:
+                                    (BuildContext context, PostTopicBloc bloc) {
+                                  bloc.dispose();
+                                },
+                                child: PostTopicScreen(),
+                              );
+                            },
                           ),
-                  ),
-                ),
-              );
+                        );
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          'お題を投稿する',
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                  break;
+                case 1:
+                  return Card(
+                    child: InkWell(
+                      onTap: () {},
+                      child: const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          'ボケを投稿する',
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                  break;
+                default:
+                  break;
+              }
+              return Container();
             },
             itemCount: 2,
           ),

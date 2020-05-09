@@ -1,25 +1,22 @@
 import 'package:meta/meta.dart';
 
 @immutable
-class Theme {
-  const Theme({
+class Topic {
+  const Topic({
     @required this.id,
-    @required this.title,
-    @required this.description,
-    @required this.date,
+    @required this.text,
     @required this.imageUrl,
+    @required this.createdAt,
     @required this.createdUser,
   })  : assert(id != null),
-        assert(title != null),
-        assert(description != null),
-        assert(date != null),
+        assert(text != null),
         assert(imageUrl != null),
+        assert(createdAt != null),
         assert(createdUser != null);
 
   final String id;
-  final String title;
-  final String description;
-  final DateTime date;
+  final String text;
   final String imageUrl;
+  final DateTime createdAt;
   final String createdUser;
 }
