@@ -14,12 +14,21 @@ class EditProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'ホーム',
+          'プロフィール編集',
           style: TextStyle(
             color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFFFFCC00),
+        elevation: 0,
+        bottom: PreferredSize(
+          child: Container(
+            color: Colors.white24,
+            height: 1,
+          ),
+          preferredSize: const Size.fromHeight(1),
+        ),
       ),
       body: StreamBuilder(
         stream: editProfileBloc.loadingController.stream,

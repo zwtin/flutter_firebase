@@ -3,7 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_firebase/repositories/storage_repository.dart';
 import 'package:flutter_firebase/common/string_extension.dart';
 
-class FirebaseStorageRepository extends StorageRepository {
+class FirebaseStorageRepository implements StorageRepository {
   FirebaseStorageRepository({FirebaseStorage storage})
       : _storage = storage ?? FirebaseStorage.instance;
 
@@ -16,13 +16,15 @@ class FirebaseStorageRepository extends StorageRepository {
     return url.toString();
   }
 
-  Future<String> imageUpload(File imageFile) async {
+  @override
+  Future<String> upload(File imageFile) async {
     final imageName = StringExtension.randomString(16);
     final imageData = imageFile.readAsBytesSync();
-    final imageSize = imageData.elementSizeInBytes;
-    final uploadTask =
-        _storage.ref().child('image/$imageName').putData(imageData);
+    final ref = _storage.ref().child('image/$imageName');
+
+    final uploadTask = ref.putData(imageData);
     await uploadTask.onComplete;
-    return imageName;
+    final url = (await ref.getDownloadURL()).toString();
+    return url;
   }
 }

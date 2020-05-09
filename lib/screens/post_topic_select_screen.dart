@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/post_event_bloc.dart';
 import 'package:flutter_firebase/entities/topic.dart';
@@ -103,8 +104,16 @@ class PostTopicSelectScreen extends StatelessWidget {
                               ? Container()
                               : Padding(
                                   padding: const EdgeInsets.all(16),
-                                  child:
-                                      Image.asset('assets/icon/no_image.jpg'),
+                                  child: CachedNetworkImage(
+                                    placeholder: (context, url) => const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                    imageUrl:
+                                        snapshot.data.elementAt(index).imageUrl,
+                                    errorWidget: (context, url,
+                                            dynamic error) =>
+                                        Image.asset('assets/icon/no_image.jpg'),
+                                  ),
                                 ),
                         ],
                       ),

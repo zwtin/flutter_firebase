@@ -1,15 +1,29 @@
 import 'dart:io';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_firebase/blocs/post_topic_bloc.dart';
+import 'package:flutter_firebase/entities/alert.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 class PostTopicScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final postThemeBloc = Provider.of<PostTopicBloc>(context);
+    final postTopicBloc = Provider.of<PostTopicBloc>(context);
+
+    postTopicBloc.alertController.stream.listen(
+      (Alert alert) {
+        SweetAlert.show(
+          context,
+          title: alert.title,
+          subtitle: alert.subtitle,
+          style: alert.style,
+          showCancelButton: alert.showCancelButton,
+          onPress: alert.onPress,
+        );
+      },
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -31,8 +45,8 @@ class PostTopicScreen extends StatelessWidget {
         ),
       ),
       body: StreamBuilder(
-        stream: postThemeBloc.loadingController.stream,
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+        stream: postTopicBloc.loadingController.stream,
+        builder: (BuildContext context, AsyncSnapshot<bool> loadingSnapshot) {
           return LoadingOverlay(
             child: Center(
               child: Column(
@@ -40,62 +54,42 @@ class PostTopicScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Center(
-                    child: GestureDetector(
+                    child: InkWell(
                       child: Container(
                         color: Color.fromRGBO(210, 210, 210, 1),
                         height: 200,
                         width: 200,
                         child: StreamBuilder(
-                          stream: postThemeBloc.imageFileController.stream,
+                          stream: postTopicBloc.imageFileController.stream,
                           builder: (BuildContext context,
-                              AsyncSnapshot<File> imageSnapshot) {
-                            if (imageSnapshot.hasData) {
-                              return Image.file(imageSnapshot.data);
+                              AsyncSnapshot<File> imageFileSnapshot) {
+                            if (imageFileSnapshot.hasData) {
+                              return Image.file(imageFileSnapshot.data);
                             }
-                            return StreamBuilder(
-                              stream: postThemeBloc.imageController,
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<String> snap) {
-                                return CachedNetworkImage(
-                                  placeholder: (context, url) => const Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                  imageUrl: snap.data.toString(),
-                                  errorWidget: (context, url, dynamic error) =>
-                                      Image.asset('assets/icon/no_image.jpg'),
-                                );
-                              },
-                            );
+                            return Image.asset('assets/icon/no_image.jpg');
                           },
                         ),
                       ),
-                      onTap: postThemeBloc.getImage,
+                      onTap: postTopicBloc.getImage,
                     ),
                   ),
-                  const Text('タイトル'),
+                  const Text('テキスト'),
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: TextField(
-                      controller: postThemeBloc.titleController,
-                    ),
-                  ),
-                  const Text('詳細'),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: TextField(
-                      controller: postThemeBloc.descriptionController,
+                      controller: postTopicBloc.textController,
                     ),
                   ),
                   RaisedButton(
                     child: const Text('投稿'),
                     color: const Color(0xFFFFCC00),
                     textColor: Colors.white,
-                    onPressed: postThemeBloc.postTopic,
+                    onPressed: postTopicBloc.postTopic,
                   ),
                 ],
               ),
             ),
-            isLoading: snapshot.data ?? false,
+            isLoading: loadingSnapshot.data ?? false,
             color: Colors.grey,
           );
         },

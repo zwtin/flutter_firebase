@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/post_topic_bloc.dart';
 import 'package:flutter_firebase/blocs/post_topic_select_bloc.dart';
+import 'package:flutter_firebase/models/firebase_storage_repository.dart';
 import 'package:flutter_firebase/models/firestore_item_repository.dart';
 import 'package:flutter_firebase/models/firestore_topic_repository.dart';
 import 'package:flutter_firebase/screens/post_topic_screen.dart';
@@ -69,6 +70,7 @@ class PostCategorySelectScreen extends StatelessWidget {
                                   return PostTopicBloc(
                                     FirebaseAuthenticationRepository(),
                                     FirestoreTopicRepository(),
+                                    FirebaseStorageRepository(),
                                   );
                                 },
                                 dispose:

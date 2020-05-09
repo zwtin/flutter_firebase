@@ -1,35 +1,37 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_firebase/entities/alert.dart';
 import 'package:flutter_firebase/entities/topic.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
+import 'package:flutter_firebase/repositories/storage_repository.dart';
 import 'package:flutter_firebase/repositories/topic_repository.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rxdart/rxdart.dart';
 
 class PostTopicBloc {
   PostTopicBloc(
     this._authenticationRepository,
     this._topicRepository,
+    this._storageRepository,
   )   : assert(_authenticationRepository != null),
-        assert(_topicRepository != null);
+        assert(_topicRepository != null),
+        assert(_storageRepository != null);
 
   final AuthenticationRepository _authenticationRepository;
   final TopicRepository _topicRepository;
+  final StorageRepository _storageRepository;
 
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController textController = TextEditingController();
 
   final BehaviorSubject<bool> loadingController =
       BehaviorSubject<bool>.seeded(false);
 
+  final PublishSubject<Alert> alertController = PublishSubject<Alert>();
+
   final BehaviorSubject<File> imageFileController =
       BehaviorSubject<File>.seeded(null);
-  final BehaviorSubject<String> imageController =
-      BehaviorSubject<String>.seeded('');
 
   Future<void> postTopic() async {
     loadingController.sink.add(true);
@@ -40,26 +42,22 @@ class PostTopicBloc {
         await _topicRepository.postTopic(
           userId: currentUser.id,
           topic: Topic(
-            id: 'a',
-            text: titleController.text,
+            id: '',
+            text: textController.text,
             imageUrl: '',
             createdAt: DateTime.now(),
             createdUser: currentUser.id,
           ),
         );
       } else {
-        final imageName = randomString(16);
-        final uploadTask = FirebaseStorage.instance
-            .ref()
-            .child(imageName)
-            .putFile(imageFileController.value);
-        await uploadTask.onComplete;
+        final imageUrl =
+            await _storageRepository.upload(imageFileController.value);
         await _topicRepository.postTopic(
           userId: currentUser.id,
           topic: Topic(
-            id: 'a',
-            text: titleController.text,
-            imageUrl: imageName,
+            id: '',
+            text: textController.text,
+            imageUrl: imageUrl,
             createdAt: DateTime.now(),
             createdUser: currentUser.id,
           ),
@@ -76,25 +74,9 @@ class PostTopicBloc {
     imageFileController.sink.add(imageFile);
   }
 
-  String randomString(int length) {
-    const _randomChars =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const _charsLength = _randomChars.length;
-
-    final rand = Random();
-    final codeUnits = List.generate(
-      length,
-      (index) {
-        final n = rand.nextInt(_charsLength);
-        return _randomChars.codeUnitAt(n);
-      },
-    );
-    return String.fromCharCodes(codeUnits);
-  }
-
   Future<void> dispose() async {
     await loadingController.close();
-    await imageController.close();
     await imageFileController.close();
+    await alertController.close();
   }
 }

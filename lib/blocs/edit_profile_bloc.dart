@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_firebase/entities/user.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
+import 'package:flutter_firebase/repositories/storage_repository.dart';
 import 'package:flutter_firebase/repositories/user_repository.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -14,13 +15,16 @@ class EditProfileBloc {
   EditProfileBloc(
     this._userRepository,
     this._authenticationRepository,
+    this._storageRepository,
   )   : assert(_userRepository != null),
-        assert(_authenticationRepository != null) {
+        assert(_authenticationRepository != null),
+        assert(_storageRepository != null) {
     start();
   }
 
   final UserRepository _userRepository;
   final AuthenticationRepository _authenticationRepository;
+  final StorageRepository _storageRepository;
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController introductionController = TextEditingController();
@@ -65,19 +69,15 @@ class EditProfileBloc {
         ),
       );
     } else {
-      final imageName = randomString(16);
-      final uploadTask = FirebaseStorage.instance
-          .ref()
-          .child(imageName)
-          .putFile(imageFileController.value);
-      await uploadTask.onComplete;
+      final imageUrl =
+          await _storageRepository.upload(imageFileController.value);
       await _userRepository.updateUser(
         userId: currentUser.id,
         newUser: User(
           id: user.id,
           name: nameController.text,
           introduction: introductionController.text,
-          imageUrl: imageName,
+          imageUrl: imageUrl,
         ),
       );
     }
@@ -87,22 +87,6 @@ class EditProfileBloc {
   Future<void> getImage() async {
     final imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
     imageFileController.sink.add(imageFile);
-  }
-
-  String randomString(int length) {
-    const _randomChars =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const _charsLength = _randomChars.length;
-
-    final rand = Random();
-    final codeUnits = List.generate(
-      length,
-      (index) {
-        final n = rand.nextInt(_charsLength);
-        return _randomChars.codeUnitAt(n);
-      },
-    );
-    return String.fromCharCodes(codeUnits);
   }
 
   Future<void> dispose() async {

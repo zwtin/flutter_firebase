@@ -6,6 +6,7 @@ import 'package:flutter_firebase/blocs/sign_up_bloc.dart';
 import 'package:flutter_firebase/blocs/tab_bloc.dart';
 import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
+import 'package:flutter_firebase/models/firebase_storage_repository.dart';
 import 'package:flutter_firebase/models/firestore_push_notification_repository.dart';
 import 'package:flutter_firebase/models/firestore_user_repository.dart';
 import 'package:flutter_firebase/screens/edit_profile_screen.dart';
@@ -134,6 +135,7 @@ class ProfileScreen extends StatelessWidget {
                                         return EditProfileBloc(
                                           FirestoreUserRepository(),
                                           FirebaseAuthenticationRepository(),
+                                          FirebaseStorageRepository(),
                                         );
                                       },
                                       dispose: (BuildContext context,
@@ -182,27 +184,17 @@ class ProfileScreen extends StatelessWidget {
                           SliverList(
                             delegate: SliverChildListDelegate(
                               [
-                                SizedBox(
+                                Container(
                                   width: 128,
                                   height: 128,
-                                  child: FutureBuilder<dynamic>(
-                                    future: FirebaseStorage.instance
-                                        .ref()
-                                        .child(userSnapshot.data.imageUrl)
-                                        .getDownloadURL(),
-                                    builder: (context, snap) {
-                                      return CachedNetworkImage(
-                                        placeholder: (context, url) =>
-                                            const Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                        imageUrl: snap.data.toString(),
-                                        errorWidget:
-                                            (context, url, dynamic error) =>
-                                                Image.asset(
-                                                    'assets/icon/no_user.jpg'),
-                                      );
-                                    },
+                                  child: CachedNetworkImage(
+                                    placeholder: (context, url) => const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                    imageUrl: userSnapshot.data.imageUrl,
+                                    errorWidget: (context, url,
+                                            dynamic error) =>
+                                        Image.asset('assets/icon/no_user.jpg'),
                                   ),
                                 ),
                                 Center(
