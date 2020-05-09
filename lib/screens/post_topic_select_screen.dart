@@ -1,5 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase/blocs/post_event_bloc.dart';
+import 'package:flutter_firebase/entities/topic.dart';
+import 'package:flutter_firebase/models/firestore_item_repository.dart';
+import 'package:flutter_firebase/screens/post_event_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_firebase/blocs/tab_bloc.dart';
 import 'package:flutter_firebase/blocs/new_register_bloc.dart';
@@ -38,9 +42,77 @@ class PostTopicSelectScreen extends StatelessWidget {
           Container(
             color: const Color(0xFFFFCC00),
           ),
-          ListView.builder(
-            itemBuilder: (context, index) {
-              return Text('$index');
+          StreamBuilder(
+            stream: postTopicSelectBloc.topicController.stream,
+            builder:
+                (BuildContext context, AsyncSnapshot<List<Topic>> snapshot) {
+              return ListView.builder(
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<PostEventScreen>(
+                            builder: (BuildContext context) {
+                              return Provider<PostEventBloc>(
+                                create: (BuildContext context) {
+                                  return PostEventBloc(
+                                    FirebaseAuthenticationRepository(),
+                                    FirestoreItemRepository(),
+                                  );
+                                },
+                                dispose:
+                                    (BuildContext context, PostEventBloc bloc) {
+                                  bloc.dispose();
+                                },
+                                child: PostEventScreen(),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              ClipOval(
+                                child: SizedBox(
+                                  width: 44,
+                                  height: 44,
+                                  child: Image.asset('assets/icon/no_user.jpg'),
+                                ),
+                              ),
+                              const Text('〇〇さんからのお題：'),
+                            ],
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                snapshot.data.elementAt(index).text,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 22,
+                                ),
+                              ),
+                            ),
+                          ),
+                          snapshot.data.elementAt(index).imageUrl.isEmpty
+                              ? Container()
+                              : Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child:
+                                      Image.asset('assets/icon/no_image.jpg'),
+                                ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+                itemCount: snapshot.hasData ? snapshot.data.length : 0,
+              );
             },
           ),
         ],
