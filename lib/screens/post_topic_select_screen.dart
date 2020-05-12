@@ -79,30 +79,45 @@ class PostTopicSelectScreen extends StatelessWidget {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  ClipOval(
-                                    child: SizedBox(
-                                      width: 44,
-                                      height: 44,
-                                      child: CachedNetworkImage(
-                                        placeholder: (context, url) =>
-                                            const Center(
-                                          child: CircularProgressIndicator(),
+                              Container(
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                                child: Row(
+                                  children: <Widget>[
+                                    ClipOval(
+                                      child: SizedBox(
+                                        width: 44,
+                                        height: 44,
+                                        child: CachedNetworkImage(
+                                          placeholder: (context, url) =>
+                                              const Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                          imageUrl: snapshot.data
+                                              .elementAt(index)
+                                              .createdUserImageUrl,
+                                          errorWidget: (context, url,
+                                                  dynamic error) =>
+                                              Image.asset(
+                                                  'assets/icon/no_image.jpg'),
                                         ),
-                                        imageUrl: snapshot.data
-                                            .elementAt(index)
-                                            .createdUserImageUrl,
-                                        errorWidget:
-                                            (context, url, dynamic error) =>
-                                                Image.asset(
-                                                    'assets/icon/no_image.jpg'),
                                       ),
                                     ),
-                                  ),
-                                  Text(
-                                      '${snapshot.data.elementAt(index).createdUserName} さんからのお題：'),
-                                ],
+                                    Container(
+                                      width: 10,
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                            '${postTopicSelectBloc.getJPStringFromDateTime(snapshot.data.elementAt(index).createdAt)}'),
+                                        Text(
+                                            '${snapshot.data.elementAt(index).createdUserName} さんからのお題：'),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                               Container(
                                 padding: const EdgeInsets.all(16),
@@ -120,7 +135,8 @@ class PostTopicSelectScreen extends StatelessWidget {
                               snapshot.data.elementAt(index).imageUrl.isEmpty
                                   ? Container()
                                   : Padding(
-                                      padding: const EdgeInsets.all(16),
+                                      padding: const EdgeInsets.fromLTRB(
+                                          16, 0, 16, 16),
                                       child: CachedNetworkImage(
                                         placeholder: (context, url) =>
                                             const Center(

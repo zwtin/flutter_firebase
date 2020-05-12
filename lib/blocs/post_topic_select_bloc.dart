@@ -3,6 +3,8 @@ import 'package:flutter_firebase/entities/topic_entity.dart';
 import 'package:flutter_firebase/repositories/topic_repository.dart';
 import 'package:flutter_firebase/repositories/user_repository.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class PostTopicSelectBloc {
   PostTopicSelectBloc(
@@ -43,6 +45,13 @@ class PostTopicSelectBloc {
     } on Exception catch (error) {
       return;
     }
+  }
+
+  String getJPStringFromDateTime(DateTime dateTime) {
+    initializeDateFormatting('ja_JP');
+    final formatter = DateFormat('yyyy/MM/dd(E) HH:mm', 'ja_JP');
+    final formatted = formatter.format(dateTime); // DateからString
+    return formatted;
   }
 
   Future<void> dispose() async {
