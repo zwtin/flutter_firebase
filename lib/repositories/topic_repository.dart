@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase/entities/topic.dart';
+import 'package:flutter_firebase/entities/topic_entity.dart';
 
 abstract class TopicRepository {
-  Stream<List<Topic>> getTopicListStream();
-  Future<List<Topic>> getTopicList();
-  Stream<Topic> getTopic({@required String id});
-  Future<void> postTopic({@required String userId, @required Topic topic});
+  Stream<List<TopicEntity>> getTopicListStream();
+  Future<List<TopicEntity>> getTopicList();
+  Stream<TopicEntity> getTopic({@required String id});
+  Future<void> postTopic(
+      {@required String userId, @required TopicEntity topic});
 }

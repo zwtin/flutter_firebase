@@ -106,6 +106,7 @@ class PostCategorySelectScreen extends StatelessWidget {
                                 create: (BuildContext context) {
                                   return PostTopicSelectBloc(
                                     FirestoreTopicRepository(),
+                                    FirestoreUserRepository(),
                                   );
                                 },
                                 dispose: (BuildContext context,

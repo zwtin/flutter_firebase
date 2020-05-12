@@ -1,28 +1,22 @@
 import 'package:meta/meta.dart';
 
 @immutable
-class Topic {
-  const Topic({
+class TopicEntity {
+  const TopicEntity({
     @required this.id,
     @required this.text,
     @required this.imageUrl,
     @required this.createdAt,
-    @required this.createdUserId,
-    @required this.createdUserName,
-    @required this.createdUserImageUrl,
+    @required this.createdUser,
   })  : assert(id != null),
         assert(text != null),
         assert(imageUrl != null),
         assert(createdAt != null),
-        assert(createdUserId != null),
-        assert(createdUserName != null),
-        assert(createdUserImageUrl != null);
+        assert(createdUser != null);
 
   final String id;
   final String text;
   final String imageUrl;
   final DateTime createdAt;
-  final String createdUserId;
-  final String createdUserName;
-  final String createdUserImageUrl;
+  final String createdUser;
 }

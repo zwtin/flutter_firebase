@@ -10,13 +10,6 @@ class FirebaseStorageRepository implements StorageRepository {
   final FirebaseStorage _storage;
 
   @override
-  Future<String> url(String contentName) async {
-    final dynamic url =
-        await _storage.ref().child(contentName).getDownloadURL();
-    return url.toString();
-  }
-
-  @override
   Future<String> upload(File imageFile) async {
     final imageName = StringExtension.randomString(16);
     final imageData = imageFile.readAsBytesSync();

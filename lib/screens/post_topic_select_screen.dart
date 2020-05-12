@@ -85,11 +85,23 @@ class PostTopicSelectScreen extends StatelessWidget {
                                     child: SizedBox(
                                       width: 44,
                                       height: 44,
-                                      child: Image.asset(
-                                          'assets/icon/no_user.jpg'),
+                                      child: CachedNetworkImage(
+                                        placeholder: (context, url) =>
+                                            const Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                        imageUrl: snapshot.data
+                                            .elementAt(index)
+                                            .createdUserImageUrl,
+                                        errorWidget:
+                                            (context, url, dynamic error) =>
+                                                Image.asset(
+                                                    'assets/icon/no_image.jpg'),
+                                      ),
                                     ),
                                   ),
-                                  const Text('〇〇さんからのお題：'),
+                                  Text(
+                                      '${snapshot.data.elementAt(index).createdUserName} さんからのお題：'),
                                 ],
                               ),
                               Container(

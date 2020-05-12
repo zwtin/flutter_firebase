@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_firebase/entities/topic.dart';
+import 'package:flutter_firebase/entities/topic_entity.dart';
 import 'package:flutter_firebase/repositories/topic_repository.dart';
 
 class FirestoreTopicRepository implements TopicRepository {
   final _firestore = Firestore.instance;
 
   @override
-  Stream<List<Topic>> getTopicListStream() {
+  Stream<List<TopicEntity>> getTopicListStream() {
     return _firestore.collection('topics').snapshots().map(
       (QuerySnapshot snapshot) {
         return snapshot.documents.map(
           (DocumentSnapshot docs) {
-            return Topic(
+            return TopicEntity(
               id: docs.data['id'] as String,
               text: docs.data['text'] as String,
               imageUrl: docs.data['image_url'] as String,
@@ -26,12 +26,12 @@ class FirestoreTopicRepository implements TopicRepository {
   }
 
   @override
-  Future<List<Topic>> getTopicList() async {
+  Future<List<TopicEntity>> getTopicList() async {
     final list = await _firestore.collection('topics').getDocuments().then(
       (QuerySnapshot querySnapshot) {
         return querySnapshot.documents.map(
           (DocumentSnapshot docs) {
-            return Topic(
+            return TopicEntity(
               id: docs.data['id'] as String,
               text: docs.data['text'] as String,
               imageUrl: docs.data['image_url'] as String,
@@ -46,10 +46,10 @@ class FirestoreTopicRepository implements TopicRepository {
   }
 
   @override
-  Stream<Topic> getTopic({@required String id}) {
+  Stream<TopicEntity> getTopic({@required String id}) {
     return _firestore.collection('topics').document(id).snapshots().map(
       (DocumentSnapshot snapshot) {
-        return Topic(
+        return TopicEntity(
           id: snapshot.data['id'] as String,
           text: snapshot.data['text'] as String,
           imageUrl: snapshot.data['image_url'] as String,
@@ -62,7 +62,7 @@ class FirestoreTopicRepository implements TopicRepository {
 
   @override
   Future<void> postTopic(
-      {@required String userId, @required Topic topic}) async {
+      {@required String userId, @required TopicEntity topic}) async {
     await _firestore.runTransaction(
       (transaction) {
         final ref = _firestore.collection('topics').document();

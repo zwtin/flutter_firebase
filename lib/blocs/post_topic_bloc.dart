@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_firebase/entities/alert.dart';
-import 'package:flutter_firebase/entities/topic.dart';
+import 'package:flutter_firebase/entities/topic_entity.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
 import 'package:flutter_firebase/repositories/storage_repository.dart';
 import 'package:flutter_firebase/repositories/topic_repository.dart';
@@ -41,7 +41,7 @@ class PostTopicBloc {
       if (imageFileController.value == null) {
         await _topicRepository.postTopic(
           userId: currentUser.id,
-          topic: Topic(
+          topic: TopicEntity(
             id: '',
             text: textController.text,
             imageUrl: '',
@@ -54,7 +54,7 @@ class PostTopicBloc {
             await _storageRepository.upload(imageFileController.value);
         await _topicRepository.postTopic(
           userId: currentUser.id,
-          topic: Topic(
+          topic: TopicEntity(
             id: '',
             text: textController.text,
             imageUrl: imageUrl,
