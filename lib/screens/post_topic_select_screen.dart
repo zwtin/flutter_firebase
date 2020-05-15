@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/post_event_bloc.dart';
+import 'package:flutter_firebase/common/string_extension.dart';
 import 'package:flutter_firebase/entities/topic.dart';
 import 'package:flutter_firebase/models/firestore_item_repository.dart';
 import 'package:flutter_firebase/screens/post_event_screen.dart';
@@ -62,6 +63,7 @@ class PostTopicSelectScreen extends StatelessWidget {
                                   return Provider<PostEventBloc>(
                                     create: (BuildContext context) {
                                       return PostEventBloc(
+                                        snapshot.data.elementAt(index),
                                         FirebaseAuthenticationRepository(),
                                         FirestoreItemRepository(),
                                       );
@@ -111,7 +113,7 @@ class PostTopicSelectScreen extends StatelessWidget {
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Text(
-                                            '${postTopicSelectBloc.getJPStringFromDateTime(snapshot.data.elementAt(index).createdAt)}'),
+                                            '${StringExtension.getJPStringFromDateTime(snapshot.data.elementAt(index).createdAt)}'),
                                         Text(
                                             '${snapshot.data.elementAt(index).createdUserName} さんからのお題：'),
                                       ],
