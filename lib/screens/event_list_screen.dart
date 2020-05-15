@@ -85,139 +85,241 @@ class EventListScreen extends StatelessWidget {
       },
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'ホーム',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'ホーム',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          backgroundColor: const Color(0xFFFFCC00),
+          elevation: 0,
+          bottom: const TabBar(
+            tabs: <Widget>[
+              Tab(
+                text: '新着順',
+              ),
+              Tab(
+                text: '人気順',
+              )
+            ],
           ),
         ),
-        backgroundColor: const Color(0xFFFFCC00),
-        elevation: 0,
-        bottom: PreferredSize(
-          child: Container(
-            color: Colors.white24,
-            height: 1,
-          ),
-          preferredSize: const Size.fromHeight(1),
-        ),
-      ),
-      body: RefreshIndicator(
-        color: const Color(0xFFFFCC00),
-        onRefresh: eventListBloc.start,
-        child: Scrollbar(
-          child: StreamBuilder(
-            stream: eventListBloc.itemController.stream,
-            builder:
-                (BuildContext context, AsyncSnapshot<List<Item>> snapshot) {
-              return Container(
-                color: const Color(0xFFFFCC00),
-                child: ListView.builder(
-                  itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute<EventDetailScreen>(
-                              builder: (BuildContext context) {
-                                return Provider<EventDetailBloc>(
-                                  create: (BuildContext context) {
-                                    return EventDetailBloc(
-                                      snapshot.data.elementAt(index).id,
-                                      FirestoreItemRepository(),
-                                      FirestoreLikeRepository(),
-                                      FirestoreFavoriteRepository(),
-                                      FirebaseAuthenticationRepository(),
-                                    );
-                                  },
-                                  dispose: (BuildContext context,
-                                      EventDetailBloc bloc) {
-                                    bloc.dispose();
-                                  },
-                                  child: EventDetailScreen(),
+        body: TabBarView(
+          children: <Widget>[
+            RefreshIndicator(
+              color: const Color(0xFFFFCC00),
+              onRefresh: eventListBloc.start,
+              child: Scrollbar(
+                child: StreamBuilder(
+                  stream: eventListBloc.itemController.stream,
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<Item>> snapshot) {
+                    return Container(
+                      color: const Color(0xFFFFCC00),
+                      child: ListView.builder(
+                        itemBuilder: (BuildContext context, int index) {
+                          return Card(
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute<EventDetailScreen>(
+                                    builder: (BuildContext context) {
+                                      return Provider<EventDetailBloc>(
+                                        create: (BuildContext context) {
+                                          return EventDetailBloc(
+                                            snapshot.data.elementAt(index).id,
+                                            FirestoreItemRepository(),
+                                            FirestoreLikeRepository(),
+                                            FirestoreFavoriteRepository(),
+                                            FirebaseAuthenticationRepository(),
+                                          );
+                                        },
+                                        dispose: (BuildContext context,
+                                            EventDetailBloc bloc) {
+                                          bloc.dispose();
+                                        },
+                                        child: EventDetailScreen(),
+                                      );
+                                    },
+                                  ),
                                 );
                               },
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      ClipOval(
+                                        child: SizedBox(
+                                          width: 44,
+                                          height: 44,
+                                          child: Image.asset(
+                                              'assets/icon/no_user.jpg'),
+                                        ),
+                                      ),
+                                      const Text('〇〇さんからのお題：'),
+                                    ],
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        snapshot.data.elementAt(index).title,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 22,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  snapshot.data
+                                          .elementAt(index)
+                                          .imageUrl
+                                          .isEmpty
+                                      ? Container()
+                                      : Padding(
+                                          padding: const EdgeInsets.all(16),
+                                          child: Image.asset(
+                                              'assets/icon/no_image.jpg'),
+                                        ),
+                                ],
+                              ),
                             ),
                           );
                         },
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Row(
-                              children: <Widget>[
-                                ClipOval(
-                                  child: SizedBox(
-                                    width: 44,
-                                    height: 44,
-                                    child:
-                                        Image.asset('assets/icon/no_user.jpg'),
-                                  ),
-                                ),
-                                const Text('〇〇さんからのお題：'),
-                              ],
-                            ),
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  snapshot.data.elementAt(index).title,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 22,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            snapshot.data.elementAt(index).imageUrl.isEmpty
-                                ? Container()
-                                : Padding(
-                                    padding: const EdgeInsets.all(16),
-                                    child:
-                                        Image.asset('assets/icon/no_image.jpg'),
-                                  ),
-                          ],
-                        ),
+                        itemCount: snapshot.hasData ? snapshot.data.length : 0,
                       ),
                     );
                   },
-                  itemCount: snapshot.hasData ? snapshot.data.length : 0,
                 ),
-              );
-            },
-          ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context, rootNavigator: true).push(
-            MaterialPageRoute<PostEventScreen>(
-              builder: (BuildContext context) {
-                return MultiProvider(
-                  providers: [
-                    Provider<PostCategorySelectBloc>(
-                      create: (BuildContext context) {
-                        return PostCategorySelectBloc();
-                      },
-                      dispose:
-                          (BuildContext context, PostCategorySelectBloc bloc) {
-                        bloc.dispose();
-                      },
-                    ),
-                    Provider<TabBloc>.value(value: tabBloc),
-                  ],
-                  child: PostCategorySelectScreen(),
-                );
-              },
-              fullscreenDialog: true,
+              ),
             ),
-          );
-        },
-        child: Icon(Icons.add),
-        backgroundColor: const Color(0xFFFFCC00),
-        foregroundColor: Colors.white,
+            RefreshIndicator(
+              color: const Color(0xFFFFCC00),
+              onRefresh: eventListBloc.start,
+              child: Scrollbar(
+                child: StreamBuilder(
+                  stream: eventListBloc.itemController.stream,
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<Item>> snapshot) {
+                    return Container(
+                      color: const Color(0xFFFFCC00),
+                      child: ListView.builder(
+                        itemBuilder: (BuildContext context, int index) {
+                          return Card(
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute<EventDetailScreen>(
+                                    builder: (BuildContext context) {
+                                      return Provider<EventDetailBloc>(
+                                        create: (BuildContext context) {
+                                          return EventDetailBloc(
+                                            snapshot.data.elementAt(index).id,
+                                            FirestoreItemRepository(),
+                                            FirestoreLikeRepository(),
+                                            FirestoreFavoriteRepository(),
+                                            FirebaseAuthenticationRepository(),
+                                          );
+                                        },
+                                        dispose: (BuildContext context,
+                                            EventDetailBloc bloc) {
+                                          bloc.dispose();
+                                        },
+                                        child: EventDetailScreen(),
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      ClipOval(
+                                        child: SizedBox(
+                                          width: 44,
+                                          height: 44,
+                                          child: Image.asset(
+                                              'assets/icon/no_user.jpg'),
+                                        ),
+                                      ),
+                                      const Text('〇〇さんからのお題：'),
+                                    ],
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        snapshot.data.elementAt(index).title,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 22,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  snapshot.data
+                                          .elementAt(index)
+                                          .imageUrl
+                                          .isEmpty
+                                      ? Container()
+                                      : Padding(
+                                          padding: const EdgeInsets.all(16),
+                                          child: Image.asset(
+                                              'assets/icon/no_image.jpg'),
+                                        ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                        itemCount: snapshot.hasData ? snapshot.data.length : 0,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context, rootNavigator: true).push(
+              MaterialPageRoute<PostEventScreen>(
+                builder: (BuildContext context) {
+                  return MultiProvider(
+                    providers: [
+                      Provider<PostCategorySelectBloc>(
+                        create: (BuildContext context) {
+                          return PostCategorySelectBloc();
+                        },
+                        dispose: (BuildContext context,
+                            PostCategorySelectBloc bloc) {
+                          bloc.dispose();
+                        },
+                      ),
+                      Provider<TabBloc>.value(value: tabBloc),
+                    ],
+                    child: PostCategorySelectScreen(),
+                  );
+                },
+                fullscreenDialog: true,
+              ),
+            );
+          },
+          child: Icon(Icons.add),
+          backgroundColor: const Color(0xFFFFCC00),
+          foregroundColor: Colors.white,
+        ),
       ),
     );
   }
