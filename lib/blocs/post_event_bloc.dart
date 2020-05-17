@@ -3,8 +3,10 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_firebase/entities/answer_entity.dart';
 import 'package:flutter_firebase/entities/item.dart';
 import 'package:flutter_firebase/entities/topic.dart';
+import 'package:flutter_firebase/repositories/answer_repository.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
 import 'package:flutter_firebase/repositories/item_repository.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,13 +17,13 @@ class PostEventBloc {
   PostEventBloc(
     this.topic,
     this._authenticationRepository,
-    this._itemRepository,
+    this._answerRepository,
   )   : assert(topic != null),
         assert(_authenticationRepository != null),
-        assert(_itemRepository != null);
+        assert(_answerRepository != null);
 
   final AuthenticationRepository _authenticationRepository;
-  final ItemRepository _itemRepository;
+  final AnswerRepository _answerRepository;
   final Topic topic;
 
   final TextEditingController answerController = TextEditingController();
@@ -33,14 +35,13 @@ class PostEventBloc {
     loadingController.sink.add(true);
     try {
       final currentUser = await _authenticationRepository.getCurrentUser();
-      await _itemRepository.postItem(
+      await _answerRepository.postAnswer(
         userId: currentUser.id,
-        item: Item(
+        answerEntity: AnswerEntity(
           id: 'a',
-          title: answerController.text,
-          description: answerController.text,
-          date: DateTime.now(),
-          imageUrl: '',
+          text: answerController.text,
+          topicId: topic.id,
+          createdAt: DateTime.now(),
           createdUser: currentUser.id,
         ),
       );

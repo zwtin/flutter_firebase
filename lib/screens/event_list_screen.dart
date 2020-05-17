@@ -5,7 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_firebase/blocs/event_list_bloc.dart';
 import 'package:flutter_firebase/blocs/new_register_bloc.dart';
 import 'package:flutter_firebase/blocs/post_category_select_bloc.dart';
-import 'package:flutter_firebase/entities/item.dart';
+import 'package:flutter_firebase/common/string_extension.dart';
+import 'package:flutter_firebase/entities/answer.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/models/firestore_favorite_repository.dart';
 import 'package:flutter_firebase/models/firestore_like_repository.dart';
@@ -116,9 +117,9 @@ class EventListScreen extends StatelessWidget {
               onRefresh: eventListBloc.start,
               child: Scrollbar(
                 child: StreamBuilder(
-                  stream: eventListBloc.itemController.stream,
+                  stream: eventListBloc.newAnswerController.stream,
                   builder: (BuildContext context,
-                      AsyncSnapshot<List<Item>> snapshot) {
+                      AsyncSnapshot<List<Answer>> snapshot) {
                     return Container(
                       color: const Color(0xFFFFCC00),
                       child: ListView.builder(
@@ -152,25 +153,53 @@ class EventListScreen extends StatelessWidget {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                      ClipOval(
-                                        child: SizedBox(
-                                          width: 44,
-                                          height: 44,
-                                          child: Image.asset(
-                                              'assets/icon/no_user.jpg'),
+                                  Container(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        16, 16, 16, 0),
+                                    child: Row(
+                                      children: <Widget>[
+                                        ClipOval(
+                                          child: SizedBox(
+                                            width: 44,
+                                            height: 44,
+                                            child: CachedNetworkImage(
+                                              placeholder: (context, url) =>
+                                                  const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
+                                              imageUrl: snapshot.data
+                                                  .elementAt(index)
+                                                  .topicCreatedUserImageUrl,
+                                              errorWidget: (context, url,
+                                                      dynamic error) =>
+                                                  Image.asset(
+                                                      'assets/icon/no_image.jpg'),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                      const Text('〇〇さんからのお題：'),
-                                    ],
+                                        Container(
+                                          width: 10,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                                '${StringExtension.getJPStringFromDateTime(snapshot.data.elementAt(index).createdAt)}'),
+                                            Text(
+                                                '${snapshot.data.elementAt(index).topicCreatedUserName} さんからのお題：'),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   Container(
                                     padding: const EdgeInsets.all(16),
                                     child: Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                        snapshot.data.elementAt(index).title,
+                                        snapshot.data.elementAt(index).text,
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 22,
@@ -180,13 +209,26 @@ class EventListScreen extends StatelessWidget {
                                   ),
                                   snapshot.data
                                           .elementAt(index)
-                                          .imageUrl
+                                          .topicImageUrl
                                           .isEmpty
                                       ? Container()
                                       : Padding(
-                                          padding: const EdgeInsets.all(16),
-                                          child: Image.asset(
-                                              'assets/icon/no_image.jpg'),
+                                          padding: const EdgeInsets.fromLTRB(
+                                              16, 0, 16, 16),
+                                          child: CachedNetworkImage(
+                                            placeholder: (context, url) =>
+                                                const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                            imageUrl: snapshot.data
+                                                .elementAt(index)
+                                                .topicImageUrl,
+                                            errorWidget: (context, url,
+                                                    dynamic error) =>
+                                                Image.asset(
+                                                    'assets/icon/no_image.jpg'),
+                                          ),
                                         ),
                                 ],
                               ),
@@ -194,6 +236,7 @@ class EventListScreen extends StatelessWidget {
                           );
                         },
                         itemCount: snapshot.hasData ? snapshot.data.length : 0,
+                        controller: eventListBloc.newAnswerScrollController,
                       ),
                     );
                   },
@@ -205,9 +248,9 @@ class EventListScreen extends StatelessWidget {
               onRefresh: eventListBloc.start,
               child: Scrollbar(
                 child: StreamBuilder(
-                  stream: eventListBloc.itemController.stream,
+                  stream: eventListBloc.popularAnswerController.stream,
                   builder: (BuildContext context,
-                      AsyncSnapshot<List<Item>> snapshot) {
+                      AsyncSnapshot<List<Answer>> snapshot) {
                     return Container(
                       color: const Color(0xFFFFCC00),
                       child: ListView.builder(
@@ -241,25 +284,53 @@ class EventListScreen extends StatelessWidget {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                      ClipOval(
-                                        child: SizedBox(
-                                          width: 44,
-                                          height: 44,
-                                          child: Image.asset(
-                                              'assets/icon/no_user.jpg'),
+                                  Container(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        16, 16, 16, 0),
+                                    child: Row(
+                                      children: <Widget>[
+                                        ClipOval(
+                                          child: SizedBox(
+                                            width: 44,
+                                            height: 44,
+                                            child: CachedNetworkImage(
+                                              placeholder: (context, url) =>
+                                                  const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
+                                              imageUrl: snapshot.data
+                                                  .elementAt(index)
+                                                  .topicCreatedUserImageUrl,
+                                              errorWidget: (context, url,
+                                                      dynamic error) =>
+                                                  Image.asset(
+                                                      'assets/icon/no_image.jpg'),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                      const Text('〇〇さんからのお題：'),
-                                    ],
+                                        Container(
+                                          width: 10,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                                '${StringExtension.getJPStringFromDateTime(snapshot.data.elementAt(index).createdAt)}'),
+                                            Text(
+                                                '${snapshot.data.elementAt(index).topicCreatedUserName} さんからのお題：'),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   Container(
                                     padding: const EdgeInsets.all(16),
                                     child: Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                        snapshot.data.elementAt(index).title,
+                                        snapshot.data.elementAt(index).text,
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 22,
@@ -269,13 +340,26 @@ class EventListScreen extends StatelessWidget {
                                   ),
                                   snapshot.data
                                           .elementAt(index)
-                                          .imageUrl
+                                          .topicImageUrl
                                           .isEmpty
                                       ? Container()
                                       : Padding(
-                                          padding: const EdgeInsets.all(16),
-                                          child: Image.asset(
-                                              'assets/icon/no_image.jpg'),
+                                          padding: const EdgeInsets.fromLTRB(
+                                              16, 0, 16, 16),
+                                          child: CachedNetworkImage(
+                                            placeholder: (context, url) =>
+                                                const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                            imageUrl: snapshot.data
+                                                .elementAt(index)
+                                                .topicImageUrl,
+                                            errorWidget: (context, url,
+                                                    dynamic error) =>
+                                                Image.asset(
+                                                    'assets/icon/no_image.jpg'),
+                                          ),
                                         ),
                                 ],
                               ),
@@ -283,6 +367,7 @@ class EventListScreen extends StatelessWidget {
                           );
                         },
                         itemCount: snapshot.hasData ? snapshot.data.length : 0,
+                        controller: eventListBloc.popularAnswerScrollController,
                       ),
                     );
                   },

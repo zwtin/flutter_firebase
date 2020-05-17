@@ -46,8 +46,23 @@ class FirestoreTopicRepository implements TopicRepository {
   }
 
   @override
-  Stream<TopicEntity> getTopic({@required String id}) {
+  Stream<TopicEntity> getTopicStream({@required String id}) {
     return _firestore.collection('topics').document(id).snapshots().map(
+      (DocumentSnapshot snapshot) {
+        return TopicEntity(
+          id: snapshot.data['id'] as String,
+          text: snapshot.data['text'] as String,
+          imageUrl: snapshot.data['image_url'] as String,
+          createdAt: snapshot.data['created_at'].toDate() as DateTime,
+          createdUser: snapshot.data['created_user'] as String,
+        );
+      },
+    );
+  }
+
+  @override
+  Future<TopicEntity> getTopic({@required String id}) {
+    return _firestore.collection('topics').document(id).get().then(
       (DocumentSnapshot snapshot) {
         return TopicEntity(
           id: snapshot.data['id'] as String,
@@ -70,7 +85,7 @@ class FirestoreTopicRepository implements TopicRepository {
           'id': ref.documentID,
           'text': topic.text,
           'image_url': topic.imageUrl,
-          'created_at': topic.createdAt,
+          'created_at': FieldValue.serverTimestamp(),
           'created_user': topic.createdUser,
         };
         transaction.set(
