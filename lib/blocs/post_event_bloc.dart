@@ -31,7 +31,7 @@ class PostEventBloc {
   final BehaviorSubject<bool> loadingController =
       BehaviorSubject<bool>.seeded(false);
 
-  Future<void> postItem() async {
+  Future<void> postAnswer() async {
     loadingController.sink.add(true);
     try {
       final currentUser = await _authenticationRepository.getCurrentUser();
@@ -40,8 +40,9 @@ class PostEventBloc {
         answerEntity: AnswerEntity(
           id: 'a',
           text: answerController.text,
-          topicId: topic.id,
           createdAt: DateTime.now(),
+          rank: 0,
+          topicId: topic.id,
           createdUser: currentUser.id,
         ),
       );

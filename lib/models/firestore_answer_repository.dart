@@ -210,39 +210,87 @@ class FirestoreAnswerRepository implements AnswerRepository {
   @override
   Future<void> postAnswer(
       {@required String userId, @required AnswerEntity answerEntity}) async {
-    await _firestore.runTransaction(
-      (transaction) {
-        final ref = _firestore.collection('answers').document();
-        final itemMap = {
-          'id': ref.documentID,
-          'text': answerEntity.text,
-          'topicId': answerEntity.topicId,
-          'created_at': FieldValue.serverTimestamp(),
-          'created_user': answerEntity.createdUser,
-        };
-        transaction.set(
-          ref,
-          itemMap,
-        );
-        final timeMap = {
-          'id': answerEntity.topicId,
-          'time': FieldValue.increment(1),
-        };
-        transaction.update(
-            _firestore
-                .collection('topic_answered_time')
-                .document(answerEntity.topicId),
-            timeMap);
-        final userMap = {'id': ref.documentID};
-        transaction.set(
-            _firestore
-                .collection('users')
-                .document(userId)
-                .collection('create_answers')
-                .document(ref.documentID),
-            userMap);
-        return null;
+    final exist = await _firestore
+        .collection('topic_answered_time')
+        .document(answerEntity.topicId)
+        .get()
+        .then(
+      (DocumentSnapshot snapshot) {
+        return snapshot.exists;
       },
     );
+    if (exist) {
+      await _firestore.runTransaction(
+        (transaction) {
+          final ref = _firestore.collection('answers').document();
+          final itemMap = {
+            'id': ref.documentID,
+            'text': answerEntity.text,
+            'topicId': answerEntity.topicId,
+            'rank': answerEntity.rank,
+            'created_at': FieldValue.serverTimestamp(),
+            'created_user': answerEntity.createdUser,
+          };
+          transaction.set(
+            ref,
+            itemMap,
+          );
+          final timeMap = {
+            'id': answerEntity.topicId,
+            'time': FieldValue.increment(1),
+          };
+          transaction.update(
+              _firestore
+                  .collection('topic_answered_time')
+                  .document(answerEntity.topicId),
+              timeMap);
+          final userMap = {'id': ref.documentID};
+          transaction.set(
+              _firestore
+                  .collection('users')
+                  .document(userId)
+                  .collection('create_answers')
+                  .document(ref.documentID),
+              userMap);
+          return null;
+        },
+      );
+    } else {
+      await _firestore.runTransaction(
+        (transaction) {
+          final ref = _firestore.collection('answers').document();
+          final itemMap = {
+            'id': ref.documentID,
+            'text': answerEntity.text,
+            'topicId': answerEntity.topicId,
+            'rank': answerEntity.rank,
+            'created_at': FieldValue.serverTimestamp(),
+            'created_user': answerEntity.createdUser,
+          };
+          transaction.set(
+            ref,
+            itemMap,
+          );
+          final timeMap = {
+            'id': answerEntity.topicId,
+            'time': FieldValue.increment(1),
+          };
+          transaction.set(
+              _firestore
+                  .collection('topic_answered_time')
+                  .document(answerEntity.topicId),
+              timeMap);
+          final userMap = {'id': ref.documentID};
+          transaction.set(
+              _firestore
+                  .collection('users')
+                  .document(userId)
+                  .collection('create_answers')
+                  .document(ref.documentID),
+              userMap);
+          return null;
+        },
+      );
+    }
   }
 }

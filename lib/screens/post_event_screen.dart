@@ -123,7 +123,7 @@ class PostEventScreen extends StatelessWidget {
                     child: const Text('投稿'),
                     color: const Color(0xFFFFCC00),
                     textColor: Colors.white,
-                    onPressed: postEventBloc.postItem,
+                    onPressed: postEventBloc.postAnswer,
                   ),
                 ],
               ),
