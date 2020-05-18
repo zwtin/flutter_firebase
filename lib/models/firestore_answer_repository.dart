@@ -52,7 +52,30 @@ class FirestoreAnswerRepository implements AnswerRepository {
     if (answerEntity != null) {
       final list = await _firestore
           .collection('answers')
-          .where('created_at', isGreaterThan: answerEntity.createdAt)
+          .where('created_at', isLessThan: answerEntity.createdAt)
+          .orderBy('created_at', descending: true)
+          .limit(20)
+          .getDocuments()
+          .then(
+        (QuerySnapshot querySnapshot) {
+          return querySnapshot.documents.map(
+            (DocumentSnapshot docs) {
+              return AnswerEntity(
+                id: docs.data['id'] as String,
+                text: docs.data['text'] as String,
+                createdAt: docs.data['created_at']?.toDate() as DateTime,
+                rank: docs.data['rank'] as int,
+                topicId: docs.data['topicId'] as String,
+                createdUser: docs.data['created_user'] as String,
+              );
+            },
+          ).toList();
+        },
+      );
+      return list;
+    } else {
+      final list = await _firestore
+          .collection('answers')
           .orderBy('created_at', descending: true)
           .limit(20)
           .getDocuments()
@@ -74,28 +97,6 @@ class FirestoreAnswerRepository implements AnswerRepository {
       );
       return list;
     }
-    final list = await _firestore
-        .collection('answers')
-        .orderBy('created_at', descending: true)
-        .limit(20)
-        .getDocuments()
-        .then(
-      (QuerySnapshot querySnapshot) {
-        return querySnapshot.documents.map(
-          (DocumentSnapshot docs) {
-            return AnswerEntity(
-              id: docs.data['id'] as String,
-              text: docs.data['text'] as String,
-              createdAt: docs.data['created_at']?.toDate() as DateTime,
-              rank: docs.data['rank'] as int,
-              topicId: docs.data['topicId'] as String,
-              createdUser: docs.data['created_user'] as String,
-            );
-          },
-        ).toList();
-      },
-    );
-    return list;
   }
 
   @override
@@ -125,29 +126,30 @@ class FirestoreAnswerRepository implements AnswerRepository {
         },
       );
       return list;
+    } else {
+      final list = await _firestore
+          .collection('answers')
+          .orderBy('rank')
+          .limit(20)
+          .getDocuments()
+          .then(
+        (QuerySnapshot querySnapshot) {
+          return querySnapshot.documents.map(
+            (DocumentSnapshot docs) {
+              return AnswerEntity(
+                id: docs.data['id'] as String,
+                text: docs.data['text'] as String,
+                createdAt: docs.data['created_at']?.toDate() as DateTime,
+                rank: docs.data['rank'] as int,
+                topicId: docs.data['topicId'] as String,
+                createdUser: docs.data['created_user'] as String,
+              );
+            },
+          ).toList();
+        },
+      );
+      return list;
     }
-    final list = await _firestore
-        .collection('answers')
-        .orderBy('rank')
-        .limit(20)
-        .getDocuments()
-        .then(
-      (QuerySnapshot querySnapshot) {
-        return querySnapshot.documents.map(
-          (DocumentSnapshot docs) {
-            return AnswerEntity(
-              id: docs.data['id'] as String,
-              text: docs.data['text'] as String,
-              createdAt: docs.data['created_at']?.toDate() as DateTime,
-              rank: docs.data['rank'] as int,
-              topicId: docs.data['topicId'] as String,
-              createdUser: docs.data['created_user'] as String,
-            );
-          },
-        ).toList();
-      },
-    );
-    return list;
   }
 
   @override

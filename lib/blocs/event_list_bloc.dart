@@ -44,7 +44,7 @@ class EventListBloc {
         final currentPosition = newAnswerScrollController.position.pixels;
         if (maxScrollExtent > 0 &&
             (maxScrollExtent - 20.0) <= currentPosition) {
-          getNewAnswer(null);
+          getNewAnswer(newAnswerController.value.last);
         }
       },
     );
@@ -56,94 +56,182 @@ class EventListBloc {
         final currentPosition = popularAnswerScrollController.position.pixels;
         if (maxScrollExtent > 0 &&
             (maxScrollExtent - 20.0) <= currentPosition) {
-          getNewAnswer(null);
+          getPopularAnswer(popularAnswerController.value.last);
         }
       },
     );
 
-    getNewAnswer(null);
-    getPopularAnswer(null);
+    await getNewAnswer(null);
+    await getPopularAnswer(null);
   }
 
-  Future<void> getNewAnswer(AnswerEntity lastAnswer) async {
+  Future<void> getNewAnswer(Answer lastAnswer) async {
     try {
       final answers = newAnswerController.value;
-      final answersEntities =
-          await _answerRepository.getNewAnswerList(lastAnswer);
-      for (final answerEntity in answersEntities) {
-        final topic = await _topicRepository.getTopic(id: answerEntity.topicId);
-        final user =
-            await _userRepository.getUser(userId: answerEntity.createdUser);
-        final topicCreatedUser =
-            await _userRepository.getUser(userId: topic.createdUser);
+      if (lastAnswer == null) {
+        final answersEntities = await _answerRepository.getNewAnswerList(null);
+        for (final answerEntity in answersEntities) {
+          final topic =
+              await _topicRepository.getTopic(id: answerEntity.topicId);
+          final user =
+              await _userRepository.getUser(userId: answerEntity.createdUser);
+          final topicCreatedUser =
+              await _userRepository.getUser(userId: topic.createdUser);
 
-        final answer = Answer(
-          id: answerEntity.id,
-          text: answerEntity.text,
-          createdAt: answerEntity.createdAt,
-          rank: answerEntity.rank,
-          topicId: topic.id,
-          topicText: topic.text,
-          topicImageUrl: topic.imageUrl,
-          topicCreatedAt: topic.createdAt,
-          topicCreatedUserId: topicCreatedUser.id,
-          topicCreatedUserName: topicCreatedUser.name,
-          topicCreatedUserImageUrl: topicCreatedUser.imageUrl,
-          createdUserId: user.id,
-          createdUserName: user.name,
-          createdUserImageUrl: user.imageUrl,
+          final answer = Answer(
+            id: answerEntity.id,
+            text: answerEntity.text,
+            createdAt: answerEntity.createdAt,
+            rank: answerEntity.rank,
+            topicId: topic.id,
+            topicText: topic.text,
+            topicImageUrl: topic.imageUrl,
+            topicCreatedAt: topic.createdAt,
+            topicCreatedUserId: topicCreatedUser.id,
+            topicCreatedUserName: topicCreatedUser.name,
+            topicCreatedUserImageUrl: topicCreatedUser.imageUrl,
+            createdUserId: user.id,
+            createdUserName: user.name,
+            createdUserImageUrl: user.imageUrl,
+          );
+
+          answers.add(answer);
+        }
+        newAnswerController.sink.add(answers);
+      } else {
+        final lastAnswerEntity = AnswerEntity(
+          id: lastAnswer.id,
+          text: lastAnswer.text,
+          createdAt: lastAnswer.createdAt,
+          rank: lastAnswer.rank,
+          topicId: lastAnswer.topicId,
+          createdUser: lastAnswer.createdUserId,
         );
+        final answersEntities =
+            await _answerRepository.getNewAnswerList(lastAnswerEntity);
+        for (final answerEntity in answersEntities) {
+          final topic =
+              await _topicRepository.getTopic(id: answerEntity.topicId);
+          final user =
+              await _userRepository.getUser(userId: answerEntity.createdUser);
+          final topicCreatedUser =
+              await _userRepository.getUser(userId: topic.createdUser);
 
-        answers.add(answer);
+          final answer = Answer(
+            id: answerEntity.id,
+            text: answerEntity.text,
+            createdAt: answerEntity.createdAt,
+            rank: answerEntity.rank,
+            topicId: topic.id,
+            topicText: topic.text,
+            topicImageUrl: topic.imageUrl,
+            topicCreatedAt: topic.createdAt,
+            topicCreatedUserId: topicCreatedUser.id,
+            topicCreatedUserName: topicCreatedUser.name,
+            topicCreatedUserImageUrl: topicCreatedUser.imageUrl,
+            createdUserId: user.id,
+            createdUserName: user.name,
+            createdUserImageUrl: user.imageUrl,
+          );
+
+          answers.add(answer);
+        }
+        newAnswerController.sink.add(answers);
       }
-      newAnswerController.sink.add(answers);
     } on Exception catch (error) {
       print(error.toString());
       return;
     }
   }
 
-  Future<void> getPopularAnswer(AnswerEntity lastAnswer) async {
+  Future<void> getPopularAnswer(Answer lastAnswer) async {
     try {
       final answers = popularAnswerController.value;
-      final answersEntities =
-          await _answerRepository.getPopularAnswerList(lastAnswer);
-      for (final answerEntity in answersEntities) {
-        final topic = await _topicRepository.getTopic(id: answerEntity.topicId);
-        final user =
-            await _userRepository.getUser(userId: answerEntity.createdUser);
-        final topicCreatedUser =
-            await _userRepository.getUser(userId: topic.createdUser);
+      if (lastAnswer == null) {
+        final answersEntities =
+            await _answerRepository.getPopularAnswerList(null);
+        for (final answerEntity in answersEntities) {
+          final topic =
+              await _topicRepository.getTopic(id: answerEntity.topicId);
+          final user =
+              await _userRepository.getUser(userId: answerEntity.createdUser);
+          final topicCreatedUser =
+              await _userRepository.getUser(userId: topic.createdUser);
 
-        final answer = Answer(
-          id: answerEntity.id,
-          text: answerEntity.text,
-          createdAt: answerEntity.createdAt,
-          rank: answerEntity.rank,
-          topicId: topic.id,
-          topicText: topic.text,
-          topicImageUrl: topic.imageUrl,
-          topicCreatedAt: topic.createdAt,
-          topicCreatedUserId: topicCreatedUser.id,
-          topicCreatedUserName: topicCreatedUser.name,
-          topicCreatedUserImageUrl: topicCreatedUser.imageUrl,
-          createdUserId: user.id,
-          createdUserName: user.name,
-          createdUserImageUrl: user.imageUrl,
+          final answer = Answer(
+            id: answerEntity.id,
+            text: answerEntity.text,
+            createdAt: answerEntity.createdAt,
+            rank: answerEntity.rank,
+            topicId: topic.id,
+            topicText: topic.text,
+            topicImageUrl: topic.imageUrl,
+            topicCreatedAt: topic.createdAt,
+            topicCreatedUserId: topicCreatedUser.id,
+            topicCreatedUserName: topicCreatedUser.name,
+            topicCreatedUserImageUrl: topicCreatedUser.imageUrl,
+            createdUserId: user.id,
+            createdUserName: user.name,
+            createdUserImageUrl: user.imageUrl,
+          );
+
+          answers.add(answer);
+        }
+        popularAnswerController.sink.add(answers);
+      } else {
+        final lastAnswerEntity = AnswerEntity(
+          id: lastAnswer.id,
+          text: lastAnswer.text,
+          createdAt: lastAnswer.createdAt,
+          rank: lastAnswer.rank,
+          topicId: lastAnswer.topicId,
+          createdUser: lastAnswer.createdUserId,
         );
+        final answersEntities =
+            await _answerRepository.getPopularAnswerList(lastAnswerEntity);
+        for (final answerEntity in answersEntities) {
+          final topic =
+              await _topicRepository.getTopic(id: answerEntity.topicId);
+          final user =
+              await _userRepository.getUser(userId: answerEntity.createdUser);
+          final topicCreatedUser =
+              await _userRepository.getUser(userId: topic.createdUser);
 
-        answers.add(answer);
+          final answer = Answer(
+            id: answerEntity.id,
+            text: answerEntity.text,
+            createdAt: answerEntity.createdAt,
+            rank: answerEntity.rank,
+            topicId: topic.id,
+            topicText: topic.text,
+            topicImageUrl: topic.imageUrl,
+            topicCreatedAt: topic.createdAt,
+            topicCreatedUserId: topicCreatedUser.id,
+            topicCreatedUserName: topicCreatedUser.name,
+            topicCreatedUserImageUrl: topicCreatedUser.imageUrl,
+            createdUserId: user.id,
+            createdUserName: user.name,
+            createdUserImageUrl: user.imageUrl,
+          );
+
+          answers.add(answer);
+        }
+        popularAnswerController.sink.add(answers);
       }
-      popularAnswerController.sink.add(answers);
     } on Exception catch (error) {
       print(error.toString());
       return;
     }
   }
 
-  Future<void> reset() async {
+  Future<void> newAnswerControllerReset() async {
     newAnswerController.sink.add([]);
+    await getNewAnswer(null);
+  }
+
+  Future<void> popularAnswerControllerReset() async {
     popularAnswerController.sink.add([]);
+    await getPopularAnswer(null);
   }
 
   Future<void> dispose() async {

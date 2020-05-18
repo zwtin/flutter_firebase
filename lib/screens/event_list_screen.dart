@@ -114,7 +114,7 @@ class EventListScreen extends StatelessWidget {
           children: <Widget>[
             RefreshIndicator(
               color: const Color(0xFFFFCC00),
-              onRefresh: eventListBloc.start,
+              onRefresh: eventListBloc.newAnswerControllerReset,
               child: Scrollbar(
                 child: StreamBuilder(
                   stream: eventListBloc.newAnswerController.stream,
@@ -245,7 +245,7 @@ class EventListScreen extends StatelessWidget {
             ),
             RefreshIndicator(
               color: const Color(0xFFFFCC00),
-              onRefresh: eventListBloc.start,
+              onRefresh: eventListBloc.popularAnswerControllerReset,
               child: Scrollbar(
                 child: StreamBuilder(
                   stream: eventListBloc.popularAnswerController.stream,
