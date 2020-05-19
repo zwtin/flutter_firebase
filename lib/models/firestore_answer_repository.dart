@@ -52,7 +52,9 @@ class FirestoreAnswerRepository implements AnswerRepository {
     if (answerEntity != null) {
       final list = await _firestore
           .collection('answers')
-          .where('created_at', isLessThan: answerEntity.createdAt)
+          .where('created_at',
+              isLessThan:
+                  answerEntity.createdAt.add(const Duration(milliseconds: -1)))
           .orderBy('created_at', descending: true)
           .limit(20)
           .getDocuments()
