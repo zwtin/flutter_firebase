@@ -13,7 +13,7 @@ class FirestoreLikeRepository implements LikeRepository {
     final liked = await _firestore
         .collection('users')
         .document(userId)
-        .collection('like_items')
+        .collection('like_answers')
         .document(itemId)
         .get()
         .then(
@@ -32,7 +32,7 @@ class FirestoreLikeRepository implements LikeRepository {
     return _firestore
         .collection('users')
         .document(userId)
-        .collection('like_items')
+        .collection('like_answers')
         .document(itemId)
         .snapshots()
         .map(
@@ -47,20 +47,20 @@ class FirestoreLikeRepository implements LikeRepository {
     @required String userId,
     @required String itemId,
   }) async {
-    final itemMap = {'id': itemId};
-    final userMap = {'id': userId};
+    final userMap = {'id': userId, 'liked_at': FieldValue.serverTimestamp()};
+    final itemMap = {'id': itemId, 'like_at': FieldValue.serverTimestamp()};
     final batch = _firestore.batch()
       ..setData(
         _firestore
             .collection('users')
             .document(userId)
-            .collection('like_items')
+            .collection('like_answers')
             .document(itemId),
         itemMap,
       )
       ..setData(
         _firestore
-            .collection('items')
+            .collection('answers')
             .document(itemId)
             .collection('liked_users')
             .document(userId),
@@ -79,12 +79,12 @@ class FirestoreLikeRepository implements LikeRepository {
         _firestore
             .collection('users')
             .document(userId)
-            .collection('like_items')
+            .collection('like_answers')
             .document(itemId),
       )
       ..delete(
         _firestore
-            .collection('items')
+            .collection('answers')
             .document(itemId)
             .collection('liked_users')
             .document(userId),

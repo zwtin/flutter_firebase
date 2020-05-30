@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/entities/answer.dart';
-import 'package:flutter_firebase/entities/item.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_firebase/blocs/event_detail_bloc.dart';
 import 'package:provider/provider.dart';

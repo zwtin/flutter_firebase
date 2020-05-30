@@ -96,7 +96,7 @@ class FirestoreUserRepository implements UserRepository {
     return _firestore
         .collection('users')
         .document(userId)
-        .collection('favorite_items')
+        .collection('favorite_answers')
         .snapshots()
         .map(
       (QuerySnapshot querySnapshot) {
@@ -105,7 +105,7 @@ class FirestoreUserRepository implements UserRepository {
             return FavoriteAnswerEntity(
               id: documentSnapshot.data['id'] as String,
               favoredAt:
-                  documentSnapshot.data['favored_at']?.toDate() as DateTime,
+                  documentSnapshot.data['favor_at']?.toDate() as DateTime,
             );
           },
         ).toList();

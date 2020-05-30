@@ -16,7 +16,6 @@ import 'package:flutter_firebase/models/firestore_topic_repository.dart';
 import 'package:flutter_firebase/models/firestore_user_repository.dart';
 import 'package:flutter_firebase/screens/event_detail_screen.dart';
 import 'package:flutter_firebase/blocs/event_detail_bloc.dart';
-import 'package:flutter_firebase/models/firestore_item_repository.dart';
 import 'package:flutter_firebase/blocs/tab_bloc.dart';
 import 'package:flutter_firebase/screens/new_register_screen.dart';
 import 'package:flutter_firebase/screens/post_category_select_screen.dart';

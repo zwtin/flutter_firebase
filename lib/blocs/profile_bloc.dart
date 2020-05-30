@@ -5,11 +5,9 @@ import 'package:flutter_firebase/entities/answer.dart';
 import 'package:flutter_firebase/entities/create_answer_entity.dart';
 import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:flutter_firebase/entities/favorite_answer_entity.dart';
-import 'package:flutter_firebase/entities/item.dart';
 import 'package:flutter_firebase/entities/user.dart';
 import 'package:flutter_firebase/repositories/answer_repository.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
-import 'package:flutter_firebase/repositories/item_repository.dart';
 import 'package:flutter_firebase/repositories/push_notification_repository.dart';
 import 'package:flutter_firebase/repositories/topic_repository.dart';
 import 'package:flutter_firebase/repositories/user_repository.dart';
@@ -87,6 +85,7 @@ class ProfileBloc {
                   );
                 }
               });
+              createAnswersController.sink.add([]);
               getCreateAnswers(
                 userId: currentUser.id,
                 lastAnswer: null,
@@ -116,7 +115,8 @@ class ProfileBloc {
                   );
                 }
               });
-              getCreateAnswers(
+              favoriteAnswersController.sink.add([]);
+              getFavoriteAnswers(
                 userId: currentUser.id,
                 lastAnswer: null,
               );

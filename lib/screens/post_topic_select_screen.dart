@@ -5,7 +5,6 @@ import 'package:flutter_firebase/blocs/post_event_bloc.dart';
 import 'package:flutter_firebase/common/string_extension.dart';
 import 'package:flutter_firebase/entities/topic.dart';
 import 'package:flutter_firebase/models/firestore_answer_repository.dart';
-import 'package:flutter_firebase/models/firestore_item_repository.dart';
 import 'package:flutter_firebase/screens/post_event_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_firebase/blocs/tab_bloc.dart';
