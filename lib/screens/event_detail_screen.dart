@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase/entities/answer.dart';
 import 'package:flutter_firebase/entities/item.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_firebase/blocs/event_detail_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_firebase/common/string_extension.dart';
 
 class EventDetailScreen extends StatelessWidget {
   @override
@@ -34,226 +36,222 @@ class EventDetailScreen extends StatelessWidget {
           Container(
             color: const Color(0xFFFFCC00),
           ),
-          StreamBuilder(
-            stream: eventDetailBloc.itemController.stream,
-            builder: (BuildContext context, AsyncSnapshot<Item> snapshot) {
-              return SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    Card(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
+          SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                StreamBuilder(
+                  stream: eventDetailBloc.answerController.stream,
+                  builder:
+                      (BuildContext context, AsyncSnapshot<Answer> snapshot) {
+                    if (snapshot.hasData) {
+                      return Column(
                         children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              ClipOval(
-                                child: SizedBox(
-                                  width: 44,
-                                  height: 44,
-                                  child: Image.asset('assets/icon/no_user.jpg'),
-                                ),
-                              ),
-                              Text('〇〇さんからのお題：'),
-                            ],
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(16),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                snapshot.data.title,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 22,
-                                ),
-                              ),
-                            ),
-                          ),
-                          snapshot.data.imageUrl.isNotEmpty
-                              ? Padding(
-                                  padding: EdgeInsets.all(16),
-                                  child: FutureBuilder<dynamic>(
-                                    future: FirebaseStorage.instance
-                                        .ref()
-                                        .child(snapshot.data.imageUrl)
-                                        .getDownloadURL(),
-                                    builder: (context, snap) {
-                                      return CachedNetworkImage(
-                                        placeholder: (context, url) =>
-                                            const Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                        imageUrl: snap.data.toString(),
-                                        errorWidget:
-                                            (context, url, dynamic error) =>
+                          Card(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Container(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      ClipOval(
+                                        child: SizedBox(
+                                          width: 44,
+                                          height: 44,
+                                          child: CachedNetworkImage(
+                                            placeholder: (context, url) =>
+                                                const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                            imageUrl: snapshot
+                                                .data.topicCreatedUserImageUrl,
+                                            errorWidget: (context, url,
+                                                    dynamic error) =>
                                                 Image.asset(
                                                     'assets/icon/no_image.jpg'),
-                                      );
-                                    },
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        width: 10,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                              '${StringExtension.getJPStringFromDateTime(snapshot.data.topicCreatedAt)}'),
+                                          Text(
+                                              '${snapshot.data.topicCreatedUserName} さんからのお題：'),
+                                        ],
+                                      ),
+                                    ],
                                   ),
-                                )
-                              : Container(),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      snapshot.data.topicText,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 22,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                snapshot.data.topicImageUrl.isEmpty
+                                    ? Container()
+                                    : Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            16, 0, 16, 16),
+                                        child: CachedNetworkImage(
+                                          placeholder: (context, url) =>
+                                              const Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                          imageUrl: snapshot.data.topicImageUrl,
+                                          errorWidget: (context, url,
+                                                  dynamic error) =>
+                                              Image.asset(
+                                                  'assets/icon/no_image.jpg'),
+                                        ),
+                                      ),
+                              ],
+                            ),
+                          ),
+                          Card(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Container(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      ClipOval(
+                                        child: SizedBox(
+                                          width: 44,
+                                          height: 44,
+                                          child: CachedNetworkImage(
+                                            placeholder: (context, url) =>
+                                                const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                            imageUrl: snapshot
+                                                .data.createdUserImageUrl,
+                                            errorWidget: (context, url,
+                                                    dynamic error) =>
+                                                Image.asset(
+                                                    'assets/icon/no_image.jpg'),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        width: 10,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                              '${StringExtension.getJPStringFromDateTime(snapshot.data.createdAt)}'),
+                                          Text(
+                                              '${snapshot.data.createdUserName} さんの回答：'),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      snapshot.data.text,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 22,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
-                      ),
+                      );
+                    }
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                ),
+                Row(
+                  children: <Widget>[
+                    StreamBuilder(
+                      stream: eventDetailBloc.likeController.stream,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<bool> likeSnapshot) {
+                        return IconButton(
+                          icon: likeSnapshot.data
+                              ? Icon(
+                                  Icons.favorite,
+                                  color: Colors.pink,
+                                )
+                              : Icon(Icons.favorite_border),
+                          onPressed: eventDetailBloc.likeButtonAction,
+                        );
+                      },
                     ),
-                    Container(
-                      padding: EdgeInsets.all(5),
-                      child: Container(
-                        color: Colors.white,
-                        child: Column(
-                          children: <Widget>[
-                            Row(
-                              children: <Widget>[
-                                ClipOval(
-                                  child: SizedBox(
-                                    width: 44,
-                                    height: 44,
-                                    child:
-                                        Image.asset('assets/icon/no_user.jpg'),
-                                  ),
-                                ),
-                                Text('〇〇さんからの回答：'),
-                              ],
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  snapshot.data.description,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 24,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                StreamBuilder(
-                                  stream: eventDetailBloc.likeController.stream,
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<bool> likeSnapshot) {
-                                    return IconButton(
-                                      icon: likeSnapshot.data
-                                          ? Icon(
-                                              Icons.favorite,
-                                              color: Colors.pink,
-                                            )
-                                          : Icon(Icons.favorite_border),
-                                      onPressed:
-                                          eventDetailBloc.likeButtonAction,
-                                    );
-                                  },
-                                ),
-                                StreamBuilder(
-                                  stream:
-                                      eventDetailBloc.favoriteController.stream,
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<bool> favoriteSnapshot) {
-                                    return IconButton(
-                                      icon: favoriteSnapshot.data
-                                          ? Icon(
-                                              Icons.star,
-                                              color: Colors.yellow,
-                                            )
-                                          : Icon(Icons.star_border),
-                                      onPressed:
-                                          eventDetailBloc.favoriteButtonAction,
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                    StreamBuilder(
+                      stream: eventDetailBloc.likeCountController.stream,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<int> likeCountSnapshot) {
+                        if (likeCountSnapshot.hasData) {
+                          return Text(likeCountSnapshot.data.toString());
+                        } else {
+                          return Container();
+                        }
+                      },
+                    ),
+                    StreamBuilder(
+                      stream: eventDetailBloc.favoriteController.stream,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<bool> favoriteSnapshot) {
+                        return IconButton(
+                          icon: favoriteSnapshot.data
+                              ? Icon(
+                                  Icons.star,
+                                  color: Colors.yellow,
+                                )
+                              : Icon(Icons.star_border),
+                          onPressed: eventDetailBloc.favoriteButtonAction,
+                        );
+                      },
+                    ),
+                    StreamBuilder(
+                      stream: eventDetailBloc.favoriteCountController.stream,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<int> favoriteCountSnapshot) {
+                        if (favoriteCountSnapshot.hasData) {
+                          return Text(favoriteCountSnapshot.data.toString());
+                        } else {
+                          return Container();
+                        }
+                      },
                     ),
                   ],
                 ),
-              );
-            },
+              ],
+            ),
           ),
         ],
       ),
-//      Card(
-//        child: Column(
-//          mainAxisSize: MainAxisSize.max,
-//          children: <Widget>[
-//            StreamBuilder(
-//              stream: eventDetailBloc.itemController.stream,
-//              builder: (BuildContext context, AsyncSnapshot<Item> snapshot) {
-//                  return Column(
-//                    children: <Widget>[
-//                      ListTile(
-//                        title: Text(
-//                          snapshot.data.title,
-//                          style: TextStyle(fontWeight: FontWeight.bold),
-//                        ),
-//                        subtitle: Text(snapshot.data.date.toIso8601String()),
-//                      ),
-//                      Row(
-//                        children: <Widget>[
-//                          SizedBox(
-//                            width: 128,
-//                            height: 128,
-//                            child: FutureBuilder<dynamic>(
-//                              future: FirebaseStorage.instance
-//                                  .ref()
-//                                  .child(snapshot.data.imageUrl)
-//                                  .getDownloadURL(),
-//                              builder: (context, snap) {
-//                                return CachedNetworkImage(
-//                                  placeholder: (context, url) => const Center(
-//                                    child: CircularProgressIndicator(),
-//                                  ),
-//                                  imageUrl: snap.data.toString(),
-//                                  errorWidget: (context, url, dynamic error) =>
-//                                      Image.asset('assets/icon/no_image.jpg'),
-//                                );
-//                              },
-//                            ),
-//                          ),
-//                        ],
-//                      ),
-//                    ],
-//                  );
-//                },
-//              ),
-//              Row(
-//                children: <Widget>[
-//                  StreamBuilder(
-//                    stream: eventDetailBloc.likeController.stream,
-//                    builder: (BuildContext context,
-//                        AsyncSnapshot<bool> likeSnapshot) {
-//                      return IconButton(
-//                        icon: likeSnapshot.data
-//                            ? Icon(Icons.favorite)
-//                            : Icon(Icons.favorite_border),
-//                        onPressed: eventDetailBloc.likeButtonAction,
-//                      );
-//                    },
-//                  ),
-//                  StreamBuilder(
-//                    stream: eventDetailBloc.favoriteController.stream,
-//                    builder: (BuildContext context,
-//                        AsyncSnapshot<bool> favoriteSnapshot) {
-//                      return IconButton(
-//                        icon: favoriteSnapshot.data
-//                            ? Icon(Icons.star)
-//                            : Icon(Icons.star_border),
-//                        onPressed: eventDetailBloc.favoriteButtonAction,
-//                      );
-//                    },
-//                  ),
-//                ],
-//              )
-//            ],
-//          ),
-//        ),
-//      ),
-//    );
     );
   }
 }

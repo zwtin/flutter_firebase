@@ -248,7 +248,10 @@ class FirestoreAnswerRepository implements AnswerRepository {
                   .collection('topic_answered_time')
                   .document(answerEntity.topicId),
               timeMap);
-          final userMap = {'id': ref.documentID};
+          final userMap = {
+            'id': ref.documentID,
+            'created_at': FieldValue.serverTimestamp(),
+          };
           transaction.set(
               _firestore
                   .collection('users')
@@ -284,7 +287,10 @@ class FirestoreAnswerRepository implements AnswerRepository {
                   .collection('topic_answered_time')
                   .document(answerEntity.topicId),
               timeMap);
-          final userMap = {'id': ref.documentID};
+          final userMap = {
+            'id': ref.documentID,
+            'created_at': FieldValue.serverTimestamp(),
+          };
           transaction.set(
               _firestore
                   .collection('users')

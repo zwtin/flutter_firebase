@@ -4,10 +4,13 @@ import 'package:flutter_firebase/blocs/sign_in_bloc.dart';
 import 'package:flutter_firebase/blocs/profile_bloc.dart';
 import 'package:flutter_firebase/blocs/sign_up_bloc.dart';
 import 'package:flutter_firebase/blocs/tab_bloc.dart';
+import 'package:flutter_firebase/entities/answer.dart';
 import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/models/firebase_storage_repository.dart';
+import 'package:flutter_firebase/models/firestore_answer_repository.dart';
 import 'package:flutter_firebase/models/firestore_push_notification_repository.dart';
+import 'package:flutter_firebase/models/firestore_topic_repository.dart';
 import 'package:flutter_firebase/models/firestore_user_repository.dart';
 import 'package:flutter_firebase/screens/edit_profile_screen.dart';
 import 'package:flutter_firebase/entities/user.dart';
@@ -90,10 +93,9 @@ class ProfileScreen extends StatelessWidget {
     );
 
     return StreamBuilder(
-      stream: profileBloc.currentUserController.stream,
-      builder: (BuildContext context,
-          AsyncSnapshot<CurrentUser> currentUserSnapshot) {
-        if (currentUserSnapshot.hasData) {
+      stream: profileBloc.userController.stream,
+      builder: (BuildContext context, AsyncSnapshot<User> userSnapshot) {
+        if (userSnapshot.hasData) {
           return Scaffold(
             appBar: AppBar(
               title: Text(
@@ -170,174 +172,156 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ],
             ),
-            body: StreamBuilder(
-              stream: profileBloc.userController.stream,
-              builder:
-                  (BuildContext context, AsyncSnapshot<User> userSnapshot) {
-                if (userSnapshot.hasData) {
-                  return DefaultTabController(
-                    length: 2,
-                    child: NestedScrollView(
-                      headerSliverBuilder:
-                          (BuildContext context, bool innerBoxIsScrolled) {
-                        return <Widget>[
-                          SliverList(
-                            delegate: SliverChildListDelegate(
-                              [
-                                Container(
-                                  width: 128,
-                                  height: 128,
-                                  child: CachedNetworkImage(
-                                    placeholder: (context, url) => const Center(
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                    imageUrl: userSnapshot.data.imageUrl,
-                                    errorWidget: (context, url,
-                                            dynamic error) =>
-                                        Image.asset('assets/icon/no_user.jpg'),
-                                  ),
-                                ),
-                                Center(
-                                  child:
-                                      Text('ユーザー名：${userSnapshot.data.name}'),
-                                ),
-                                Center(
-                                  child: Text(
-                                      '一言：${userSnapshot.data.introduction}'),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SliverPersistentHeader(
-                            pinned: true,
-                            delegate: SliverTabBarDelegate(
-                              tabBar: const TabBar(
-                                unselectedLabelColor: Colors.grey,
-                                tabs: <Widget>[
-                                  Tab(
-                                    text: '投稿した記事',
-                                  ),
-                                  Tab(
-                                    text: 'お気に入り記事',
-                                  ),
-                                ],
+            body: DefaultTabController(
+              length: 2,
+              child: NestedScrollView(
+                headerSliverBuilder:
+                    (BuildContext context, bool innerBoxIsScrolled) {
+                  return <Widget>[
+                    SliverList(
+                      delegate: SliverChildListDelegate(
+                        [
+                          Container(
+                            width: 128,
+                            height: 128,
+                            child: CachedNetworkImage(
+                              placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator(),
                               ),
+                              imageUrl: userSnapshot.data.imageUrl,
+                              errorWidget: (context, url, dynamic error) =>
+                                  Image.asset('assets/icon/no_user.jpg'),
                             ),
                           ),
-                        ];
-                      },
-                      body: TabBarView(
-                        children: <Widget>[
-                          StreamBuilder(
-                            stream: profileBloc.createItemsController.stream,
-                            builder: (BuildContext context,
-                                AsyncSnapshot<List<Item>> snapshot) {
-                              return ListView.builder(
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Card(
-                                    child: InkWell(
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute<EventDetailScreen>(
-                                            builder: (BuildContext context) {
-                                              return Provider<EventDetailBloc>(
-                                                create: (BuildContext context) {
-                                                  return EventDetailBloc(
-                                                    snapshot.data
-                                                        .elementAt(index)
-                                                        .id,
-                                                    FirestoreItemRepository(),
-                                                    FirestoreLikeRepository(),
-                                                    FirestoreFavoriteRepository(),
-                                                    FirebaseAuthenticationRepository(),
-                                                  );
-                                                },
-                                                dispose: (BuildContext context,
-                                                    EventDetailBloc bloc) {
-                                                  bloc.dispose();
-                                                },
-                                                child: EventDetailScreen(),
-                                              );
-                                            },
-                                          ),
-                                        );
-                                      },
-                                      child: Padding(
-                                        child: Text(
-                                          '${snapshot.data.elementAt(index).id}',
-                                          style: const TextStyle(fontSize: 22),
-                                        ),
-                                        padding: const EdgeInsets.all(20),
-                                      ),
-                                    ),
-                                  );
-                                },
-                                itemCount:
-                                    snapshot.hasData ? snapshot.data.length : 0,
-                              );
-                            },
+                          Center(
+                            child: Text('ユーザー名：${userSnapshot.data.name}'),
                           ),
-                          StreamBuilder(
-                            stream: profileBloc.favoriteItemsController.stream,
-                            builder: (BuildContext context,
-                                AsyncSnapshot<List<Item>> snapshot) {
-                              return ListView.builder(
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Card(
-                                    child: InkWell(
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute<EventDetailScreen>(
-                                            builder: (BuildContext context) {
-                                              return Provider<EventDetailBloc>(
-                                                create: (BuildContext context) {
-                                                  return EventDetailBloc(
-                                                    snapshot.data
-                                                        .elementAt(index)
-                                                        .id,
-                                                    FirestoreItemRepository(),
-                                                    FirestoreLikeRepository(),
-                                                    FirestoreFavoriteRepository(),
-                                                    FirebaseAuthenticationRepository(),
-                                                  );
-                                                },
-                                                dispose: (BuildContext context,
-                                                    EventDetailBloc bloc) {
-                                                  bloc.dispose();
-                                                },
-                                                child: EventDetailScreen(),
-                                              );
-                                            },
-                                          ),
-                                        );
-                                      },
-                                      child: Padding(
-                                        child: Text(
-                                          '${snapshot.data.elementAt(index).id}',
-                                          style: const TextStyle(fontSize: 22),
-                                        ),
-                                        padding: const EdgeInsets.all(20),
-                                      ),
-                                    ),
-                                  );
-                                },
-                                itemCount:
-                                    snapshot.hasData ? snapshot.data.length : 0,
-                              );
-                            },
+                          Center(
+                            child: Text('一言：${userSnapshot.data.introduction}'),
                           ),
                         ],
                       ),
                     ),
-                  );
-                }
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
+                    SliverPersistentHeader(
+                      pinned: true,
+                      delegate: SliverTabBarDelegate(
+                        tabBar: const TabBar(
+                          unselectedLabelColor: Colors.grey,
+                          labelColor: Colors.black,
+                          tabs: <Widget>[
+                            Tab(
+                              text: '投稿した記事',
+                            ),
+                            Tab(
+                              text: 'お気に入り記事',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ];
+                },
+                body: TabBarView(
+                  children: <Widget>[
+                    StreamBuilder(
+                      stream: profileBloc.createAnswersController.stream,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<Answer>> snapshot) {
+                        return ListView.builder(
+                          itemBuilder: (BuildContext context, int index) {
+                            return Card(
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute<EventDetailScreen>(
+                                      builder: (BuildContext context) {
+                                        return Provider<EventDetailBloc>(
+                                          create: (BuildContext context) {
+                                            return EventDetailBloc(
+                                              snapshot.data.elementAt(index),
+                                              FirestoreLikeRepository(),
+                                              FirestoreFavoriteRepository(),
+                                              FirebaseAuthenticationRepository(),
+                                            );
+                                          },
+                                          dispose: (BuildContext context,
+                                              EventDetailBloc bloc) {
+                                            bloc.dispose();
+                                          },
+                                          child: EventDetailScreen(),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                                child: Padding(
+                                  child: Text(
+                                    '${snapshot.data.elementAt(index).id}',
+                                    style: const TextStyle(fontSize: 22),
+                                  ),
+                                  padding: const EdgeInsets.all(20),
+                                ),
+                              ),
+                            );
+                          },
+                          itemCount:
+                              snapshot.hasData ? snapshot.data.length : 0,
+                        );
+                      },
+                    ),
+                    StreamBuilder(
+                      stream: profileBloc.favoriteAnswersController.stream,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<Answer>> snapshot) {
+                        return ListView.builder(
+                          itemBuilder: (BuildContext context, int index) {
+                            return Card(
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute<EventDetailScreen>(
+                                      builder: (BuildContext context) {
+                                        return Provider<EventDetailBloc>(
+                                          create: (BuildContext context) {
+                                            return EventDetailBloc(
+                                              snapshot.data.elementAt(index),
+                                              FirestoreLikeRepository(),
+                                              FirestoreFavoriteRepository(),
+                                              FirebaseAuthenticationRepository(),
+                                            );
+                                          },
+                                          dispose: (BuildContext context,
+                                              EventDetailBloc bloc) {
+                                            bloc.dispose();
+                                          },
+                                          child: EventDetailScreen(),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                                child: Padding(
+                                  child: Text(
+                                    '${snapshot.data.elementAt(index).id}',
+                                    style: const TextStyle(fontSize: 22),
+                                  ),
+                                  padding: const EdgeInsets.all(20),
+                                ),
+                              ),
+                            );
+                          },
+                          itemCount:
+                              snapshot.hasData ? snapshot.data.length : 0,
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ),
           );
         }
+
         return Scaffold(
           appBar: AppBar(
             title: Text(

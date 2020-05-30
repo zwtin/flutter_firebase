@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_firebase/entities/create_answer_entity.dart';
+import 'package:flutter_firebase/entities/favorite_answer_entity.dart';
 import 'package:flutter_firebase/entities/user.dart';
 import 'package:flutter_firebase/repositories/user_repository.dart';
 
@@ -66,17 +68,22 @@ class FirestoreUserRepository implements UserRepository {
   }
 
   @override
-  Stream<List<String>> getCreatedItemIds({@required String userId}) {
+  Stream<List<CreateAnswerEntity>> getCreateAnswersStream(
+      {@required String userId}) {
     return _firestore
         .collection('users')
         .document(userId)
-        .collection('create_items')
+        .collection('create_answers')
         .snapshots()
         .map(
       (QuerySnapshot querySnapshot) {
         return querySnapshot.documents.map(
           (DocumentSnapshot documentSnapshot) {
-            return documentSnapshot.data['id'] as String;
+            return CreateAnswerEntity(
+              id: documentSnapshot.data['id'] as String,
+              createdAt:
+                  documentSnapshot.data['created_at']?.toDate() as DateTime,
+            );
           },
         ).toList();
       },
@@ -84,7 +91,8 @@ class FirestoreUserRepository implements UserRepository {
   }
 
   @override
-  Stream<List<String>> getFavoriteItemIds({@required String userId}) {
+  Stream<List<FavoriteAnswerEntity>> getFavoriteAnswersStream(
+      {@required String userId}) {
     return _firestore
         .collection('users')
         .document(userId)
@@ -94,7 +102,11 @@ class FirestoreUserRepository implements UserRepository {
       (QuerySnapshot querySnapshot) {
         return querySnapshot.documents.map(
           (DocumentSnapshot documentSnapshot) {
-            return documentSnapshot.data['id'] as String;
+            return FavoriteAnswerEntity(
+              id: documentSnapshot.data['id'] as String,
+              favoredAt:
+                  documentSnapshot.data['favored_at']?.toDate() as DateTime,
+            );
           },
         ).toList();
       },

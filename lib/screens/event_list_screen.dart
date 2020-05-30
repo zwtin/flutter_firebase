@@ -8,9 +8,11 @@ import 'package:flutter_firebase/blocs/post_category_select_bloc.dart';
 import 'package:flutter_firebase/common/string_extension.dart';
 import 'package:flutter_firebase/entities/answer.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
+import 'package:flutter_firebase/models/firestore_answer_repository.dart';
 import 'package:flutter_firebase/models/firestore_favorite_repository.dart';
 import 'package:flutter_firebase/models/firestore_like_repository.dart';
 import 'package:flutter_firebase/models/firestore_push_notification_repository.dart';
+import 'package:flutter_firebase/models/firestore_topic_repository.dart';
 import 'package:flutter_firebase/models/firestore_user_repository.dart';
 import 'package:flutter_firebase/screens/event_detail_screen.dart';
 import 'package:flutter_firebase/blocs/event_detail_bloc.dart';
@@ -133,8 +135,7 @@ class EventListScreen extends StatelessWidget {
                                       return Provider<EventDetailBloc>(
                                         create: (BuildContext context) {
                                           return EventDetailBloc(
-                                            snapshot.data.elementAt(index).id,
-                                            FirestoreItemRepository(),
+                                            snapshot.data.elementAt(index),
                                             FirestoreLikeRepository(),
                                             FirestoreFavoriteRepository(),
                                             FirebaseAuthenticationRepository(),
@@ -186,7 +187,7 @@ class EventListScreen extends StatelessWidget {
                                               CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Text(
-                                                '${StringExtension.getJPStringFromDateTime(snapshot.data.elementAt(index).createdAt)}'),
+                                                '${StringExtension.getJPStringFromDateTime(snapshot.data.elementAt(index).topicCreatedAt)}'),
                                             Text(
                                                 '${snapshot.data.elementAt(index).topicCreatedUserName} さんからのお題：'),
                                           ],
@@ -199,7 +200,9 @@ class EventListScreen extends StatelessWidget {
                                     child: Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                        snapshot.data.elementAt(index).text,
+                                        snapshot.data
+                                            .elementAt(index)
+                                            .topicText,
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 22,
@@ -264,8 +267,7 @@ class EventListScreen extends StatelessWidget {
                                       return Provider<EventDetailBloc>(
                                         create: (BuildContext context) {
                                           return EventDetailBloc(
-                                            snapshot.data.elementAt(index).id,
-                                            FirestoreItemRepository(),
+                                            snapshot.data.elementAt(index),
                                             FirestoreLikeRepository(),
                                             FirestoreFavoriteRepository(),
                                             FirebaseAuthenticationRepository(),
@@ -317,7 +319,7 @@ class EventListScreen extends StatelessWidget {
                                               CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Text(
-                                                '${StringExtension.getJPStringFromDateTime(snapshot.data.elementAt(index).createdAt)}'),
+                                                '${StringExtension.getJPStringFromDateTime(snapshot.data.elementAt(index).topicCreatedAt)}'),
                                             Text(
                                                 '${snapshot.data.elementAt(index).topicCreatedUserName} さんからのお題：'),
                                           ],
@@ -330,7 +332,9 @@ class EventListScreen extends StatelessWidget {
                                     child: Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                        snapshot.data.elementAt(index).text,
+                                        snapshot.data
+                                            .elementAt(index)
+                                            .topicText,
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 22,

@@ -58,7 +58,8 @@ class TabBloc {
             create: (BuildContext context) {
               return ProfileBloc(
                 FirestoreUserRepository(),
-                FirestoreItemRepository(),
+                FirestoreAnswerRepository(),
+                FirestoreTopicRepository(),
                 FirestorePushNotificationRepository(),
                 FirebaseAuthenticationRepository(),
               );
