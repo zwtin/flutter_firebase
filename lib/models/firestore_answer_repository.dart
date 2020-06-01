@@ -56,7 +56,7 @@ class FirestoreAnswerRepository implements AnswerRepository {
               isLessThan:
                   answerEntity.createdAt.add(const Duration(milliseconds: -1)))
           .orderBy('created_at', descending: true)
-          .limit(20)
+          .limit(10)
           .getDocuments()
           .then(
         (QuerySnapshot querySnapshot) {
@@ -79,7 +79,7 @@ class FirestoreAnswerRepository implements AnswerRepository {
       final list = await _firestore
           .collection('answers')
           .orderBy('created_at', descending: true)
-          .limit(20)
+          .limit(10)
           .getDocuments()
           .then(
         (QuerySnapshot querySnapshot) {
@@ -109,7 +109,7 @@ class FirestoreAnswerRepository implements AnswerRepository {
           .collection('answers')
           .where('rank', isGreaterThan: answerEntity.rank)
           .orderBy('rank')
-          .limit(20)
+          .limit(10)
           .getDocuments()
           .then(
         (QuerySnapshot querySnapshot) {
@@ -132,7 +132,7 @@ class FirestoreAnswerRepository implements AnswerRepository {
       final list = await _firestore
           .collection('answers')
           .orderBy('rank')
-          .limit(20)
+          .limit(10)
           .getDocuments()
           .then(
         (QuerySnapshot querySnapshot) {

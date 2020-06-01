@@ -26,6 +26,8 @@ class EventListBloc {
   StreamSubscription<int> popTransitionSubscription;
   StreamSubscription<int> newRegisterSubscription;
 
+  bool isLoading = false;
+
   final ScrollController newAnswerScrollController = ScrollController();
   final ScrollController popularAnswerScrollController = ScrollController();
 
@@ -41,7 +43,7 @@ class EventListBloc {
             newAnswerScrollController.position.maxScrollExtent;
         final currentPosition = newAnswerScrollController.position.pixels;
         if (maxScrollExtent > 0 &&
-            (maxScrollExtent - 20.0) <= currentPosition) {
+            (maxScrollExtent - 300.0) <= currentPosition) {
           getNewAnswer(newAnswerController.value.last);
         }
       },
@@ -53,7 +55,7 @@ class EventListBloc {
             popularAnswerScrollController.position.maxScrollExtent;
         final currentPosition = popularAnswerScrollController.position.pixels;
         if (maxScrollExtent > 0 &&
-            (maxScrollExtent - 20.0) <= currentPosition) {
+            (maxScrollExtent - 300.0) <= currentPosition) {
           getPopularAnswer(popularAnswerController.value.last);
         }
       },
@@ -65,6 +67,10 @@ class EventListBloc {
 
   Future<void> getNewAnswer(Answer lastAnswer) async {
     try {
+      if (isLoading) {
+        return;
+      }
+      isLoading = true;
       final answers = newAnswerController.value;
       if (lastAnswer == null) {
         final answersEntities = await _answerRepository.getNewAnswerList(null);
@@ -96,6 +102,7 @@ class EventListBloc {
           answers.add(answer);
         }
         newAnswerController.sink.add(answers);
+        isLoading = false;
       } else {
         final lastAnswerEntity = AnswerEntity(
           id: lastAnswer.id,
@@ -135,15 +142,21 @@ class EventListBloc {
           answers.add(answer);
         }
         newAnswerController.sink.add(answers);
+        isLoading = false;
       }
     } on Exception catch (error) {
       print(error.toString());
+      isLoading = false;
       return;
     }
   }
 
   Future<void> getPopularAnswer(Answer lastAnswer) async {
     try {
+      if (isLoading) {
+        return;
+      }
+      isLoading = true;
       final answers = popularAnswerController.value;
       if (lastAnswer == null) {
         final answersEntities =
@@ -176,6 +189,7 @@ class EventListBloc {
           answers.add(answer);
         }
         popularAnswerController.sink.add(answers);
+        isLoading = false;
       } else {
         final lastAnswerEntity = AnswerEntity(
           id: lastAnswer.id,
@@ -215,9 +229,11 @@ class EventListBloc {
           answers.add(answer);
         }
         popularAnswerController.sink.add(answers);
+        isLoading = false;
       }
     } on Exception catch (error) {
       print(error.toString());
+      isLoading = false;
       return;
     }
   }
