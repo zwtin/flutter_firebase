@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase/blocs/image_detail_bloc.dart';
 import 'package:flutter_firebase/entities/answer.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_firebase/blocs/event_detail_bloc.dart';
+import 'package:flutter_firebase/screens/image_detail_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_firebase/common/string_extension.dart';
 
@@ -131,22 +133,52 @@ class EventDetailScreen extends StatelessWidget {
                                       const EdgeInsets.fromLTRB(16, 16, 16, 0),
                                   child: Row(
                                     children: <Widget>[
-                                      ClipOval(
-                                        child: SizedBox(
-                                          width: 44,
-                                          height: 44,
-                                          child: CachedNetworkImage(
-                                            placeholder: (context, url) =>
-                                                const Center(
-                                              child:
-                                                  CircularProgressIndicator(),
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.of(context,
+                                                  rootNavigator: true)
+                                              .push(
+                                            MaterialPageRoute<
+                                                ImageDetailScreen>(
+                                              builder: (BuildContext context) {
+                                                return Provider<
+                                                    ImageDetailBloc>(
+                                                  create:
+                                                      (BuildContext context) {
+                                                    return ImageDetailBloc(
+                                                      snapshot.data
+                                                          .createdUserImageUrl,
+                                                    );
+                                                  },
+                                                  dispose: (BuildContext
+                                                          context,
+                                                      ImageDetailBloc bloc) {
+                                                    bloc.dispose();
+                                                  },
+                                                  child: ImageDetailScreen(),
+                                                );
+                                              },
+                                              fullscreenDialog: true,
                                             ),
-                                            imageUrl: snapshot
-                                                .data.createdUserImageUrl,
-                                            errorWidget: (context, url,
-                                                    dynamic error) =>
-                                                Image.asset(
-                                                    'assets/icon/no_image.jpg'),
+                                          );
+                                        },
+                                        child: ClipOval(
+                                          child: SizedBox(
+                                            width: 44,
+                                            height: 44,
+                                            child: CachedNetworkImage(
+                                              placeholder: (context, url) =>
+                                                  const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
+                                              imageUrl: snapshot
+                                                  .data.createdUserImageUrl,
+                                              errorWidget: (context, url,
+                                                      dynamic error) =>
+                                                  Image.asset(
+                                                      'assets/icon/no_image.jpg'),
+                                            ),
                                           ),
                                         ),
                                       ),
