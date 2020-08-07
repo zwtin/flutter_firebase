@@ -52,44 +52,53 @@ class EventDetailScreen extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
                                 Container(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                                  child: Row(
-                                    children: <Widget>[
-                                      ClipOval(
-                                        child: SizedBox(
-                                          width: 44,
-                                          height: 44,
-                                          child: CachedNetworkImage(
-                                            placeholder: (context, url) =>
-                                                const Center(
-                                              child:
-                                                  CircularProgressIndicator(),
-                                            ),
-                                            imageUrl: snapshot
-                                                .data.topicCreatedUserImageUrl,
-                                            errorWidget: (context, url,
-                                                    dynamic error) =>
-                                                Image.asset(
-                                                    'assets/icon/no_image.jpg'),
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 10,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                  height: 16,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Container(
+                                      width: 16,
+                                    ),
+                                    InkWell(
+                                      onTap: () {},
+                                      child: Row(
                                         children: <Widget>[
-                                          Text(
-                                              '${StringExtension.getJPStringFromDateTime(snapshot.data.topicCreatedAt)}'),
-                                          Text(
-                                              '${snapshot.data.topicCreatedUserName} さんからのお題：'),
+                                          ClipOval(
+                                            child: SizedBox(
+                                              width: 44,
+                                              height: 44,
+                                              child: CachedNetworkImage(
+                                                placeholder: (context, url) =>
+                                                    const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                ),
+                                                imageUrl: snapshot.data
+                                                    .topicCreatedUserImageUrl,
+                                                errorWidget: (context, url,
+                                                        dynamic error) =>
+                                                    Image.asset(
+                                                        'assets/icon/no_image.jpg'),
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            width: 10,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                  '${StringExtension.getJPStringFromDateTime(snapshot.data.topicCreatedAt)}'),
+                                              Text(
+                                                  '${snapshot.data.topicCreatedUserName} さんからのお題：'),
+                                            ],
+                                          ),
                                         ],
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                                 Container(
                                   padding: const EdgeInsets.all(16),
@@ -129,74 +138,53 @@ class EventDetailScreen extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
                                 Container(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                                  child: Row(
-                                    children: <Widget>[
-                                      InkWell(
-                                        onTap: () {
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .push(
-                                            MaterialPageRoute<
-                                                ImageDetailScreen>(
-                                              builder: (BuildContext context) {
-                                                return Provider<
-                                                    ImageDetailBloc>(
-                                                  create:
-                                                      (BuildContext context) {
-                                                    return ImageDetailBloc(
-                                                      snapshot.data
-                                                          .createdUserImageUrl,
-                                                    );
-                                                  },
-                                                  dispose: (BuildContext
-                                                          context,
-                                                      ImageDetailBloc bloc) {
-                                                    bloc.dispose();
-                                                  },
-                                                  child: ImageDetailScreen(),
-                                                );
-                                              },
-                                              fullscreenDialog: true,
-                                            ),
-                                          );
-                                        },
-                                        child: ClipOval(
-                                          child: SizedBox(
-                                            width: 44,
-                                            height: 44,
-                                            child: CachedNetworkImage(
-                                              placeholder: (context, url) =>
-                                                  const Center(
-                                                child:
-                                                    CircularProgressIndicator(),
+                                  height: 16,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Container(
+                                      width: 16,
+                                    ),
+                                    InkWell(
+                                      onTap: () {},
+                                      child: Row(
+                                        children: <Widget>[
+                                          ClipOval(
+                                            child: SizedBox(
+                                              width: 44,
+                                              height: 44,
+                                              child: CachedNetworkImage(
+                                                placeholder: (context, url) =>
+                                                    const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                ),
+                                                imageUrl: snapshot
+                                                    .data.createdUserImageUrl,
+                                                errorWidget: (context, url,
+                                                        dynamic error) =>
+                                                    Image.asset(
+                                                        'assets/icon/no_image.jpg'),
                                               ),
-                                              imageUrl: snapshot
-                                                  .data.createdUserImageUrl,
-                                              errorWidget: (context, url,
-                                                      dynamic error) =>
-                                                  Image.asset(
-                                                      'assets/icon/no_image.jpg'),
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 10,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text(
-                                              '${StringExtension.getJPStringFromDateTime(snapshot.data.createdAt)}'),
-                                          Text(
-                                              '${snapshot.data.createdUserName} さんの回答：'),
+                                          Container(
+                                            width: 10,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                  '${StringExtension.getJPStringFromDateTime(snapshot.data.createdAt)}'),
+                                              Text(
+                                                  '${snapshot.data.createdUserName} さんの回答：'),
+                                            ],
+                                          ),
                                         ],
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                                 Container(
                                   padding: const EdgeInsets.all(16),

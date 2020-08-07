@@ -154,45 +154,54 @@ class EventListScreen extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
                                   Container(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        16, 16, 16, 0),
-                                    child: Row(
-                                      children: <Widget>[
-                                        ClipOval(
-                                          child: SizedBox(
-                                            width: 44,
-                                            height: 44,
-                                            child: CachedNetworkImage(
-                                              placeholder: (context, url) =>
-                                                  const Center(
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              ),
-                                              imageUrl: snapshot.data
-                                                  .elementAt(index)
-                                                  .topicCreatedUserImageUrl,
-                                              errorWidget: (context, url,
-                                                      dynamic error) =>
-                                                  Image.asset(
-                                                      'assets/icon/no_image.jpg'),
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          width: 10,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                    height: 16,
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Container(
+                                        width: 16,
+                                      ),
+                                      InkWell(
+                                        onTap: () {},
+                                        child: Row(
                                           children: <Widget>[
-                                            Text(
-                                                '${StringExtension.getJPStringFromDateTime(snapshot.data.elementAt(index).topicCreatedAt)}'),
-                                            Text(
-                                                '${snapshot.data.elementAt(index).topicCreatedUserName} さんからのお題：'),
+                                            ClipOval(
+                                              child: SizedBox(
+                                                width: 44,
+                                                height: 44,
+                                                child: CachedNetworkImage(
+                                                  placeholder: (context, url) =>
+                                                      const Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  ),
+                                                  imageUrl: snapshot.data
+                                                      .elementAt(index)
+                                                      .topicCreatedUserImageUrl,
+                                                  errorWidget: (context, url,
+                                                          dynamic error) =>
+                                                      Image.asset(
+                                                          'assets/icon/no_image.jpg'),
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: 10,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text(
+                                                    '${StringExtension.getJPStringFromDateTime(snapshot.data.elementAt(index).topicCreatedAt)}'),
+                                                Text(
+                                                    '${snapshot.data.elementAt(index).topicCreatedUserName} さんからのお題：'),
+                                              ],
+                                            ),
                                           ],
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                   Container(
                                     padding: const EdgeInsets.all(16),
@@ -286,45 +295,54 @@ class EventListScreen extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
                                   Container(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        16, 16, 16, 0),
-                                    child: Row(
-                                      children: <Widget>[
-                                        ClipOval(
-                                          child: SizedBox(
-                                            width: 44,
-                                            height: 44,
-                                            child: CachedNetworkImage(
-                                              placeholder: (context, url) =>
-                                                  const Center(
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              ),
-                                              imageUrl: snapshot.data
-                                                  .elementAt(index)
-                                                  .topicCreatedUserImageUrl,
-                                              errorWidget: (context, url,
-                                                      dynamic error) =>
-                                                  Image.asset(
-                                                      'assets/icon/no_image.jpg'),
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          width: 10,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                    height: 16,
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Container(
+                                        width: 16,
+                                      ),
+                                      InkWell(
+                                        onTap: () {},
+                                        child: Row(
                                           children: <Widget>[
-                                            Text(
-                                                '${StringExtension.getJPStringFromDateTime(snapshot.data.elementAt(index).topicCreatedAt)}'),
-                                            Text(
-                                                '${snapshot.data.elementAt(index).topicCreatedUserName} さんからのお題：'),
+                                            ClipOval(
+                                              child: SizedBox(
+                                                width: 44,
+                                                height: 44,
+                                                child: CachedNetworkImage(
+                                                  placeholder: (context, url) =>
+                                                      const Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  ),
+                                                  imageUrl: snapshot.data
+                                                      .elementAt(index)
+                                                      .topicCreatedUserImageUrl,
+                                                  errorWidget: (context, url,
+                                                          dynamic error) =>
+                                                      Image.asset(
+                                                          'assets/icon/no_image.jpg'),
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: 10,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text(
+                                                    '${StringExtension.getJPStringFromDateTime(snapshot.data.elementAt(index).topicCreatedAt)}'),
+                                                Text(
+                                                    '${snapshot.data.elementAt(index).topicCreatedUserName} さんからのお題：'),
+                                              ],
+                                            ),
                                           ],
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                   Container(
                                     padding: const EdgeInsets.all(16),
