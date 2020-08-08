@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_firebase/blocs/event_list_bloc.dart';
+import 'package:flutter_firebase/blocs/my_profile_bloc.dart';
 import 'package:flutter_firebase/blocs/profile_bloc.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/models/firestore_answer_repository.dart';
 import 'package:flutter_firebase/models/firestore_push_notification_repository.dart';
 import 'package:flutter_firebase/models/firestore_topic_repository.dart';
 import 'package:flutter_firebase/models/firestore_user_repository.dart';
+import 'package:flutter_firebase/screens/my_profile_screen.dart';
 import 'package:flutter_firebase/screens/profile_screen.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:provider/provider.dart';
@@ -53,9 +55,9 @@ class TabBloc {
           Animation<double> animation1,
           Animation<double> animation2,
         ) {
-          return Provider<ProfileBloc>(
+          return Provider<MyProfileBloc>(
             create: (BuildContext context) {
-              return ProfileBloc(
+              return MyProfileBloc(
                 FirestoreUserRepository(),
                 FirestoreAnswerRepository(),
                 FirestoreTopicRepository(),
@@ -63,10 +65,10 @@ class TabBloc {
                 FirebaseAuthenticationRepository(),
               );
             },
-            dispose: (BuildContext context, ProfileBloc bloc) {
+            dispose: (BuildContext context, MyProfileBloc bloc) {
               bloc.dispose();
             },
-            child: ProfileScreen(),
+            child: MyProfileScreen(),
           );
         },
       );

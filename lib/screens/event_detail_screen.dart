@@ -1,10 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/image_detail_bloc.dart';
+import 'package:flutter_firebase/blocs/profile_bloc.dart';
 import 'package:flutter_firebase/entities/answer.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_firebase/blocs/event_detail_bloc.dart';
+import 'package:flutter_firebase/models/firestore_answer_repository.dart';
+import 'package:flutter_firebase/models/firestore_topic_repository.dart';
+import 'package:flutter_firebase/models/firestore_user_repository.dart';
 import 'package:flutter_firebase/screens/image_detail_screen.dart';
+import 'package:flutter_firebase/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_firebase/common/string_extension.dart';
 
@@ -60,7 +65,30 @@ class EventDetailScreen extends StatelessWidget {
                                       width: 16,
                                     ),
                                     InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute<ProfileScreen>(
+                                            builder: (BuildContext context) {
+                                              return Provider<ProfileBloc>(
+                                                create: (BuildContext context) {
+                                                  return ProfileBloc(
+                                                    snapshot.data
+                                                        .topicCreatedUserId,
+                                                    FirestoreUserRepository(),
+                                                    FirestoreAnswerRepository(),
+                                                    FirestoreTopicRepository(),
+                                                  );
+                                                },
+                                                dispose: (BuildContext context,
+                                                    ProfileBloc bloc) {
+                                                  bloc.dispose();
+                                                },
+                                                child: ProfileScreen(),
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
                                       child: Row(
                                         children: <Widget>[
                                           ClipOval(
@@ -146,7 +174,29 @@ class EventDetailScreen extends StatelessWidget {
                                       width: 16,
                                     ),
                                     InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute<ProfileScreen>(
+                                            builder: (BuildContext context) {
+                                              return Provider<ProfileBloc>(
+                                                create: (BuildContext context) {
+                                                  return ProfileBloc(
+                                                    snapshot.data.createdUserId,
+                                                    FirestoreUserRepository(),
+                                                    FirestoreAnswerRepository(),
+                                                    FirestoreTopicRepository(),
+                                                  );
+                                                },
+                                                dispose: (BuildContext context,
+                                                    ProfileBloc bloc) {
+                                                  bloc.dispose();
+                                                },
+                                                child: ProfileScreen(),
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
                                       child: Row(
                                         children: <Widget>[
                                           ClipOval(

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_firebase/blocs/event_list_bloc.dart';
 import 'package:flutter_firebase/blocs/new_register_bloc.dart';
 import 'package:flutter_firebase/blocs/post_category_select_bloc.dart';
+import 'package:flutter_firebase/blocs/profile_bloc.dart';
 import 'package:flutter_firebase/common/string_extension.dart';
 import 'package:flutter_firebase/entities/answer.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
@@ -20,6 +21,7 @@ import 'package:flutter_firebase/blocs/tab_bloc.dart';
 import 'package:flutter_firebase/screens/new_register_screen.dart';
 import 'package:flutter_firebase/screens/post_category_select_screen.dart';
 import 'package:flutter_firebase/screens/post_event_screen.dart';
+import 'package:flutter_firebase/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -162,7 +164,33 @@ class EventListScreen extends StatelessWidget {
                                         width: 16,
                                       ),
                                       InkWell(
-                                        onTap: () {},
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute<ProfileScreen>(
+                                              builder: (BuildContext context) {
+                                                return Provider<ProfileBloc>(
+                                                  create:
+                                                      (BuildContext context) {
+                                                    return ProfileBloc(
+                                                      snapshot.data
+                                                          .elementAt(index)
+                                                          .topicCreatedUserId,
+                                                      FirestoreUserRepository(),
+                                                      FirestoreAnswerRepository(),
+                                                      FirestoreTopicRepository(),
+                                                    );
+                                                  },
+                                                  dispose:
+                                                      (BuildContext context,
+                                                          ProfileBloc bloc) {
+                                                    bloc.dispose();
+                                                  },
+                                                  child: ProfileScreen(),
+                                                );
+                                              },
+                                            ),
+                                          );
+                                        },
                                         child: Row(
                                           children: <Widget>[
                                             ClipOval(
@@ -303,7 +331,33 @@ class EventListScreen extends StatelessWidget {
                                         width: 16,
                                       ),
                                       InkWell(
-                                        onTap: () {},
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute<ProfileScreen>(
+                                              builder: (BuildContext context) {
+                                                return Provider<ProfileBloc>(
+                                                  create:
+                                                      (BuildContext context) {
+                                                    return ProfileBloc(
+                                                      snapshot.data
+                                                          .elementAt(index)
+                                                          .topicCreatedUserId,
+                                                      FirestoreUserRepository(),
+                                                      FirestoreAnswerRepository(),
+                                                      FirestoreTopicRepository(),
+                                                    );
+                                                  },
+                                                  dispose:
+                                                      (BuildContext context,
+                                                          ProfileBloc bloc) {
+                                                    bloc.dispose();
+                                                  },
+                                                  child: ProfileScreen(),
+                                                );
+                                              },
+                                            ),
+                                          );
+                                        },
                                         child: Row(
                                           children: <Widget>[
                                             ClipOval(

@@ -13,23 +13,30 @@ import 'package:flutter_firebase/repositories/topic_repository.dart';
 import 'package:flutter_firebase/repositories/user_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
-class ProfileBloc {
-  ProfileBloc(
-    this._userId,
+class MyProfileBloc {
+  MyProfileBloc(
     this._userRepository,
     this._answerRepository,
     this._topicRepository,
-  )   : assert(_userId != null),
-        assert(_userRepository != null),
+    this._pushNotificationRepository,
+    this._authenticationRepository,
+  )   : assert(_userRepository != null),
         assert(_answerRepository != null),
-        assert(_topicRepository != null) {
+        assert(_topicRepository != null),
+        assert(_pushNotificationRepository != null),
+        assert(_authenticationRepository != null) {
     start();
   }
 
-  final String _userId;
   final UserRepository _userRepository;
   final AnswerRepository _answerRepository;
   final TopicRepository _topicRepository;
+  final PushNotificationRepository _pushNotificationRepository;
+  final AuthenticationRepository _authenticationRepository;
+
+  StreamSubscription<int> rootTransitionSubscription;
+  StreamSubscription<int> popTransitionSubscription;
+  StreamSubscription<int> newRegisterSubscription;
 
   StreamSubscription<List<CreateAnswerEntity>> createAnswerListSubscription;
   List<CreateAnswerEntity> createAnswerEntityList = [];
@@ -39,6 +46,8 @@ class ProfileBloc {
   final ScrollController createAnswerScrollController = ScrollController();
   final ScrollController favoriteAnswerScrollController = ScrollController();
 
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
   final BehaviorSubject<User> userController =
       BehaviorSubject<User>.seeded(null);
   final BehaviorSubject<List<Answer>> createAnswersController =
@@ -47,64 +56,77 @@ class ProfileBloc {
       BehaviorSubject<List<Answer>>.seeded([]);
 
   void start() {
-    createAnswerListSubscription?.cancel();
-    createAnswerListSubscription =
-        _userRepository.getCreateAnswersStream(userId: _userId).listen(
-      (list) {
-        list.sort((a, b) {
-          return b.createdAt.compareTo(a.createdAt);
-        });
-        createAnswerEntityList = list;
-        createAnswerScrollController.addListener(() {
-          final maxScrollExtent =
-              createAnswerScrollController.position.maxScrollExtent;
-          final currentPosition = createAnswerScrollController.position.pixels;
-          if (maxScrollExtent > 0 &&
-              (maxScrollExtent - 20.0) <= currentPosition) {
-            getCreateAnswers(
-              userId: _userId,
-              lastAnswer: createAnswersController.value.last,
-            );
-          }
-        });
-        createAnswersController.sink.add([]);
-        getCreateAnswers(
-          userId: _userId,
-          lastAnswer: null,
-        );
+    _authenticationRepository.getCurrentUserStream().listen(
+      (CurrentUser currentUser) {
+        if (currentUser == null) {
+          createAnswerListSubscription?.cancel();
+          favoriteAnswerListSubscription?.cancel();
+          userController.sink.add(null);
+        } else {
+          createAnswerListSubscription?.cancel();
+          createAnswerListSubscription = _userRepository
+              .getCreateAnswersStream(userId: currentUser.id)
+              .listen(
+            (list) {
+              list.sort((a, b) {
+                return b.createdAt.compareTo(a.createdAt);
+              });
+              createAnswerEntityList = list;
+              createAnswerScrollController.addListener(() {
+                final maxScrollExtent =
+                    createAnswerScrollController.position.maxScrollExtent;
+                final currentPosition =
+                    createAnswerScrollController.position.pixels;
+                if (maxScrollExtent > 0 &&
+                    (maxScrollExtent - 20.0) <= currentPosition) {
+                  getCreateAnswers(
+                    userId: currentUser.id,
+                    lastAnswer: createAnswersController.value.last,
+                  );
+                }
+              });
+              createAnswersController.sink.add([]);
+              getCreateAnswers(
+                userId: currentUser.id,
+                lastAnswer: null,
+              );
+            },
+          );
+
+          favoriteAnswerListSubscription?.cancel();
+          favoriteAnswerListSubscription = _userRepository
+              .getFavoriteAnswersStream(userId: currentUser.id)
+              .listen(
+            (list) {
+              list.sort((a, b) {
+                return b.favoredAt.compareTo(a.favoredAt);
+              });
+              favoriteAnswerEntityList = list;
+              favoriteAnswerScrollController.addListener(() {
+                final maxScrollExtent =
+                    favoriteAnswerScrollController.position.maxScrollExtent;
+                final currentPosition =
+                    favoriteAnswerScrollController.position.pixels;
+                if (maxScrollExtent > 0 &&
+                    (maxScrollExtent - 20.0) <= currentPosition) {
+                  getFavoriteAnswers(
+                    userId: currentUser.id,
+                    lastAnswer: favoriteAnswersController.value.last,
+                  );
+                }
+              });
+              favoriteAnswersController.sink.add([]);
+              getFavoriteAnswers(
+                userId: currentUser.id,
+                lastAnswer: null,
+              );
+            },
+          );
+
+          getUser(id: currentUser.id);
+        }
       },
     );
-
-    favoriteAnswerListSubscription?.cancel();
-    favoriteAnswerListSubscription =
-        _userRepository.getFavoriteAnswersStream(userId: _userId).listen(
-      (list) {
-        list.sort((a, b) {
-          return b.favoredAt.compareTo(a.favoredAt);
-        });
-        favoriteAnswerEntityList = list;
-        favoriteAnswerScrollController.addListener(() {
-          final maxScrollExtent =
-              favoriteAnswerScrollController.position.maxScrollExtent;
-          final currentPosition =
-              favoriteAnswerScrollController.position.pixels;
-          if (maxScrollExtent > 0 &&
-              (maxScrollExtent - 20.0) <= currentPosition) {
-            getFavoriteAnswers(
-              userId: _userId,
-              lastAnswer: favoriteAnswersController.value.last,
-            );
-          }
-        });
-        favoriteAnswersController.sink.add([]);
-        getFavoriteAnswers(
-          userId: _userId,
-          lastAnswer: null,
-        );
-      },
-    );
-
-    getUser(id: _userId);
   }
 
   void getUser({@required String id}) {
@@ -207,7 +229,28 @@ class ProfileBloc {
     favoriteAnswersController.sink.add(answers);
   }
 
+  Future<void> unregisterDeviceToken() async {
+    try {
+      final token = await _firebaseMessaging.getToken();
+      final currentUser = await _authenticationRepository.getCurrentUser();
+      await _pushNotificationRepository.unregisterDeviceToken(
+        userId: currentUser.id,
+        deviceToken: token,
+      );
+    } on Exception catch (error) {
+      return;
+    }
+  }
+
+  Future<void> signOut() async {
+    await unregisterDeviceToken();
+    await _authenticationRepository.signOut();
+  }
+
   Future<void> dispose() async {
+    await rootTransitionSubscription.cancel();
+    await popTransitionSubscription.cancel();
+    await newRegisterSubscription.cancel();
     await userController.close();
     await createAnswersController.close();
     await favoriteAnswersController.close();
