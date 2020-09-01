@@ -59,13 +59,14 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/icon/icon2.png"
-  adaptive_icon_background: "#000000"
-  adaptive_icon_foreground: "assets/icon/icon2.png"
+  image_path: "assets/icon/icon_default.jpg"
+  adaptive_icon_foreground: "assets/icon/icon_adaptive.jpg"
+  adaptive_icon_background: "#FFCC00"
 
 flutter_native_splash:
-  image: assets/icon/icon.png
+  image: assets/icon/icon_splash_screen.png
   color: "FFCC00"
+  fill: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
