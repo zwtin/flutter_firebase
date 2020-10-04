@@ -6,7 +6,6 @@ import 'package:flutter_firebase/blocs/my_profile_bloc.dart';
 import 'package:flutter_firebase/blocs/sign_up_bloc.dart';
 import 'package:flutter_firebase/blocs/tab_bloc.dart';
 import 'package:flutter_firebase/entities/answer.dart';
-import 'package:flutter_firebase/entities/current_user.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/models/firebase_storage_repository.dart';
 import 'package:flutter_firebase/models/firestore_answer_repository.dart';
@@ -16,7 +15,6 @@ import 'package:flutter_firebase/models/firestore_user_repository.dart';
 import 'package:flutter_firebase/screens/edit_profile_screen.dart';
 import 'package:flutter_firebase/entities/user.dart';
 import 'package:flutter_firebase/blocs/edit_profile_bloc.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_firebase/blocs/event_detail_bloc.dart';
 import 'package:flutter_firebase/screens/event_detail_screen.dart';
@@ -34,24 +32,31 @@ import 'package:flutter_firebase/screens/image_detail_screen.dart';
 class MyProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // blocを取得
     final myProfileBloc = Provider.of<MyProfileBloc>(context);
     final tabBloc = Provider.of<TabBloc>(context);
 
+    // blocのstreamを購読
+
+    // ルート画面に戻るイベントを購読
     myProfileBloc.rootTransitionSubscription?.cancel();
     myProfileBloc.rootTransitionSubscription =
         tabBloc.rootTransitionController.stream.listen(
       (int index) {
         if (index == 1) {
+          // 選択タブが1のときしか反応しない
           Navigator.of(context).popUntil((route) => route.isFirst);
         }
       },
     );
 
+    // 戻るイベントを購読
     myProfileBloc.popTransitionSubscription?.cancel();
     myProfileBloc.popTransitionSubscription =
         tabBloc.popTransitionController.stream.listen(
       (int index) {
         if (index == 1) {
+          // 選択タブが1のときしか反応しない
           if (Navigator.of(context).canPop()) {
             Navigator.of(context).pop();
           } else {
@@ -61,16 +66,20 @@ class MyProfileScreen extends StatelessWidget {
       },
     );
 
+    // 新規会員登録イベントを購読
     myProfileBloc.newRegisterSubscription?.cancel();
     myProfileBloc.newRegisterSubscription =
         tabBloc.newRegisterController.stream.listen(
       (int index) {
         if (index == 1) {
+          // 選択タブが1のときしか反応しない
           Navigator.of(context, rootNavigator: true).push(
             MaterialPageRoute<NewRegisterScreen>(
               builder: (BuildContext context) {
+                // 複数Providerを提供
                 return MultiProvider(
                   providers: [
+                    // NewRegisterBlocを提供
                     Provider<NewRegisterBloc>(
                       create: (BuildContext context) {
                         return NewRegisterBloc(
@@ -79,12 +88,18 @@ class MyProfileScreen extends StatelessWidget {
                           FirestorePushNotificationRepository(),
                         );
                       },
+
+                      // 画面破棄時
                       dispose: (BuildContext context, NewRegisterBloc bloc) {
                         bloc.dispose();
                       },
                     ),
+
+                    // 既存のTabBlocを提供
                     Provider<TabBloc>.value(value: tabBloc),
                   ],
+
+                  // 表示画面
                   child: NewRegisterScreen(),
                 );
               },

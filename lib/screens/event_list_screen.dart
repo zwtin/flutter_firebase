@@ -28,24 +28,31 @@ import 'package:cached_network_image/cached_network_image.dart';
 class EventListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // blocを取得
     final eventListBloc = Provider.of<EventListBloc>(context);
     final tabBloc = Provider.of<TabBloc>(context);
 
+    // blocのstreamを購読
+
+    // ルート画面に戻るイベントを購読
     eventListBloc.rootTransitionSubscription?.cancel();
     eventListBloc.rootTransitionSubscription =
         tabBloc.rootTransitionController.stream.listen(
       (int index) {
         if (index == 0) {
+          // 選択タブが0のときしか反応しない
           Navigator.of(context).popUntil((route) => route.isFirst);
         }
       },
     );
 
+    // 戻るイベントを購読
     eventListBloc.popTransitionSubscription?.cancel();
     eventListBloc.popTransitionSubscription =
         tabBloc.popTransitionController.stream.listen(
       (int index) {
         if (index == 0) {
+          // 選択タブが0のときしか反応しない
           if (Navigator.of(context).canPop()) {
             Navigator.of(context).pop();
           } else {
@@ -55,17 +62,21 @@ class EventListScreen extends StatelessWidget {
       },
     );
 
+    // 新規会員登録イベントを購読
     eventListBloc.newRegisterSubscription?.cancel();
     eventListBloc.newRegisterSubscription =
         tabBloc.newRegisterController.stream.listen(
       (int index) {
         if (index == 0) {
+          // 選択タブが0のときしか反応しない
           Navigator.of(context, rootNavigator: true).push(
             MaterialPageRoute<NewRegisterScreen>(
               builder: (BuildContext context) {
+                // 複数Providerを提供
                 return MultiProvider(
                   providers: [
                     Provider<NewRegisterBloc>(
+                      // NewRegisterBlocを提供
                       create: (BuildContext context) {
                         return NewRegisterBloc(
                           FirebaseAuthenticationRepository(),
@@ -73,12 +84,18 @@ class EventListScreen extends StatelessWidget {
                           FirestorePushNotificationRepository(),
                         );
                       },
+
+                      // 画面破棄時
                       dispose: (BuildContext context, NewRegisterBloc bloc) {
                         bloc.dispose();
                       },
                     ),
+
+                    // 既存のTabBlocを提供
                     Provider<TabBloc>.value(value: tabBloc),
                   ],
+
+                  // 表示画面
                   child: NewRegisterScreen(),
                 );
               },
@@ -127,6 +144,20 @@ class EventListScreen extends StatelessWidget {
                       color: const Color(0xFFFFCC00),
                       child: ListView.builder(
                         itemBuilder: (BuildContext context, int index) {
+//                          snapshot.hasData ? snapshot.data.length : 0,
+                          if (snapshot.hasData &&
+                              index == snapshot.data.length) {
+                            return Container(
+                              height: 100,
+                              child: const Center(
+                                child: SizedBox(
+                                  width: 30,
+                                  height: 30,
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                            );
+                          }
                           return Card(
                             child: InkWell(
                               onTap: () {
@@ -274,7 +305,8 @@ class EventListScreen extends StatelessWidget {
                             ),
                           );
                         },
-                        itemCount: snapshot.hasData ? snapshot.data.length : 0,
+                        itemCount:
+                            snapshot.hasData ? snapshot.data.length + 1 : 1,
                         controller: eventListBloc.newAnswerScrollController,
                       ),
                     );
