@@ -6,6 +6,7 @@ import 'package:flutter_firebase/blocs/my_profile_bloc.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/models/firestore_answer_repository.dart';
 import 'package:flutter_firebase/models/firestore_push_notification_repository.dart';
+import 'package:flutter_firebase/models/firestore_sample_repository.dart';
 import 'package:flutter_firebase/models/firestore_topic_repository.dart';
 import 'package:flutter_firebase/models/firestore_user_repository.dart';
 import 'package:flutter_firebase/screens/my_profile_screen.dart';
@@ -38,9 +39,9 @@ class TabBloc {
             // EventListBlocを提供
             create: (BuildContext context) {
               return EventListBloc(
-                FirestoreAnswerRepository(),
                 FirestoreTopicRepository(),
                 FirestoreUserRepository(),
+                FirestoreSampleRepository(),
               );
             },
 

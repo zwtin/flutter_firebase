@@ -24,6 +24,7 @@ import 'package:flutter_firebase/screens/post_event_screen.dart';
 import 'package:flutter_firebase/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:tuple/tuple.dart';
 
 class EventListScreen extends StatelessWidget {
   @override
@@ -155,16 +156,14 @@ class EventListScreen extends StatelessWidget {
 
                   // イベントを検知したときに返す中身
                   builder: (BuildContext context,
-                      AsyncSnapshot<List<Answer>> snapshot) {
+                      AsyncSnapshot<Tuple2<List<Answer>, bool>> snapshot) {
                     return Container(
                       color: const Color(0xFFFFCC00),
 
                       // リスト表示
                       child: ListView.builder(
                         itemBuilder: (BuildContext context, int index) {
-//                          snapshot.hasData ? snapshot.data.length : 0,
-                          if (snapshot.hasData &&
-                              index == snapshot.data.length) {
+                          if (index == snapshot.data.item1.length) {
                             return Container(
                               height: 100,
                               child: const Center(
@@ -185,7 +184,8 @@ class EventListScreen extends StatelessWidget {
                                       return Provider<EventDetailBloc>(
                                         create: (BuildContext context) {
                                           return EventDetailBloc(
-                                            snapshot.data.elementAt(index),
+                                            snapshot.data.item1
+                                                .elementAt(index),
                                             FirestoreLikeRepository(),
                                             FirestoreFavoriteRepository(),
                                             FirebaseAuthenticationRepository(),
@@ -221,7 +221,7 @@ class EventListScreen extends StatelessWidget {
                                                   create:
                                                       (BuildContext context) {
                                                     return ProfileBloc(
-                                                      snapshot.data
+                                                      snapshot.data.item1
                                                           .elementAt(index)
                                                           .topicCreatedUserId,
                                                       FirestoreUserRepository(),
@@ -252,7 +252,7 @@ class EventListScreen extends StatelessWidget {
                                                     child:
                                                         CircularProgressIndicator(),
                                                   ),
-                                                  imageUrl: snapshot.data
+                                                  imageUrl: snapshot.data.item1
                                                       .elementAt(index)
                                                       .topicCreatedUserImageUrl,
                                                   errorWidget: (context, url,
@@ -270,9 +270,9 @@ class EventListScreen extends StatelessWidget {
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 Text(
-                                                    '${StringExtension.getJPStringFromDateTime(snapshot.data.elementAt(index).topicCreatedAt)}'),
+                                                    '${StringExtension.getJPStringFromDateTime(snapshot.data.item1.elementAt(index).topicCreatedAt)}'),
                                                 Text(
-                                                    '${snapshot.data.elementAt(index).topicCreatedUserName} さんからのお題：'),
+                                                    '${snapshot.data.item1.elementAt(index).topicCreatedUserName} さんからのお題：'),
                                               ],
                                             ),
                                           ],
@@ -285,7 +285,7 @@ class EventListScreen extends StatelessWidget {
                                     child: Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                        snapshot.data
+                                        snapshot.data.item1
                                             .elementAt(index)
                                             .topicText,
                                         style: TextStyle(
@@ -295,7 +295,7 @@ class EventListScreen extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  snapshot.data
+                                  snapshot.data.item1
                                           .elementAt(index)
                                           .topicImageUrl
                                           .isEmpty
@@ -309,7 +309,7 @@ class EventListScreen extends StatelessWidget {
                                               child:
                                                   CircularProgressIndicator(),
                                             ),
-                                            imageUrl: snapshot.data
+                                            imageUrl: snapshot.data.item1
                                                 .elementAt(index)
                                                 .topicImageUrl,
                                             errorWidget: (context, url,
@@ -323,8 +323,9 @@ class EventListScreen extends StatelessWidget {
                             ),
                           );
                         },
-                        itemCount:
-                            snapshot.hasData ? snapshot.data.length + 1 : 1,
+                        itemCount: snapshot.data.item2
+                            ? snapshot.data.item1.length + 1
+                            : snapshot.data.item1.length,
                         controller: eventListBloc.newAnswerScrollController,
                       ),
                     );
@@ -349,13 +350,25 @@ class EventListScreen extends StatelessWidget {
 
                   // イベントを検知したときに返す中身
                   builder: (BuildContext context,
-                      AsyncSnapshot<List<Answer>> snapshot) {
+                      AsyncSnapshot<Tuple2<List<Answer>, bool>> snapshot) {
                     return Container(
                       color: const Color(0xFFFFCC00),
 
                       // リスト表示
                       child: ListView.builder(
                         itemBuilder: (BuildContext context, int index) {
+                          if (index == snapshot.data.item1.length) {
+                            return Container(
+                              height: 100,
+                              child: const Center(
+                                child: SizedBox(
+                                  width: 30,
+                                  height: 30,
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                            );
+                          }
                           return Card(
                             child: InkWell(
                               onTap: () {
@@ -365,7 +378,8 @@ class EventListScreen extends StatelessWidget {
                                       return Provider<EventDetailBloc>(
                                         create: (BuildContext context) {
                                           return EventDetailBloc(
-                                            snapshot.data.elementAt(index),
+                                            snapshot.data.item1
+                                                .elementAt(index),
                                             FirestoreLikeRepository(),
                                             FirestoreFavoriteRepository(),
                                             FirebaseAuthenticationRepository(),
@@ -401,7 +415,7 @@ class EventListScreen extends StatelessWidget {
                                                   create:
                                                       (BuildContext context) {
                                                     return ProfileBloc(
-                                                      snapshot.data
+                                                      snapshot.data.item1
                                                           .elementAt(index)
                                                           .topicCreatedUserId,
                                                       FirestoreUserRepository(),
@@ -432,7 +446,7 @@ class EventListScreen extends StatelessWidget {
                                                     child:
                                                         CircularProgressIndicator(),
                                                   ),
-                                                  imageUrl: snapshot.data
+                                                  imageUrl: snapshot.data.item1
                                                       .elementAt(index)
                                                       .topicCreatedUserImageUrl,
                                                   errorWidget: (context, url,
@@ -450,9 +464,9 @@ class EventListScreen extends StatelessWidget {
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 Text(
-                                                    '${StringExtension.getJPStringFromDateTime(snapshot.data.elementAt(index).topicCreatedAt)}'),
+                                                    '${StringExtension.getJPStringFromDateTime(snapshot.data.item1.elementAt(index).topicCreatedAt)}'),
                                                 Text(
-                                                    '${snapshot.data.elementAt(index).topicCreatedUserName} さんからのお題：'),
+                                                    '${snapshot.data.item1.elementAt(index).topicCreatedUserName} さんからのお題：'),
                                               ],
                                             ),
                                           ],
@@ -465,7 +479,7 @@ class EventListScreen extends StatelessWidget {
                                     child: Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                        snapshot.data
+                                        snapshot.data.item1
                                             .elementAt(index)
                                             .topicText,
                                         style: TextStyle(
@@ -475,7 +489,7 @@ class EventListScreen extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  snapshot.data
+                                  snapshot.data.item1
                                           .elementAt(index)
                                           .topicImageUrl
                                           .isEmpty
@@ -489,7 +503,7 @@ class EventListScreen extends StatelessWidget {
                                               child:
                                                   CircularProgressIndicator(),
                                             ),
-                                            imageUrl: snapshot.data
+                                            imageUrl: snapshot.data.item1
                                                 .elementAt(index)
                                                 .topicImageUrl,
                                             errorWidget: (context, url,
@@ -503,7 +517,9 @@ class EventListScreen extends StatelessWidget {
                             ),
                           );
                         },
-                        itemCount: snapshot.hasData ? snapshot.data.length : 0,
+                        itemCount: snapshot.data.item2
+                            ? snapshot.data.item1.length + 1
+                            : snapshot.data.item1.length,
                         controller: eventListBloc.popularAnswerScrollController,
                       ),
                     );

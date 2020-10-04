@@ -1,27 +1,29 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase/repositories/sample_repository.dart';
 import 'package:flutter_firebase/use_cases/answer.dart';
-import 'package:flutter_firebase/use_cases/answer_entity.dart';
-import 'package:flutter_firebase/repositories/answer_repository.dart';
 import 'package:flutter_firebase/repositories/topic_repository.dart';
 import 'package:flutter_firebase/repositories/user_repository.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:tuple/tuple.dart';
+import 'package:flutter_firebase/entities/parameters/get_new_answer_list_parameter.dart';
+import 'package:flutter_firebase/entities/parameters/get_popular_answer_list_parameter.dart';
 
 class EventListBloc {
   // コンストラクタ
   EventListBloc(
-    this._answerRepository,
     this._topicRepository,
     this._userRepository,
-  )   : assert(_answerRepository != null),
-        assert(_topicRepository != null),
-        assert(_userRepository != null) {
+    this._sampleRepository,
+  )   : assert(_topicRepository != null),
+        assert(_userRepository != null),
+        assert(_sampleRepository != null) {
     start();
   }
 
-  final AnswerRepository _answerRepository;
   final TopicRepository _topicRepository;
   final UserRepository _userRepository;
+  final SampleRepository _sampleRepository;
 
   // ルート画面へ戻るイベント購読用
   StreamSubscription<int> rootTransitionSubscription;
@@ -38,10 +40,15 @@ class EventListBloc {
   // 人気順回答のスクロール量検知用
   final ScrollController popularAnswerScrollController = ScrollController();
 
-  final BehaviorSubject<List<Answer>> newAnswerController =
-      BehaviorSubject<List<Answer>>.seeded([]);
-  final BehaviorSubject<List<Answer>> popularAnswerController =
-      BehaviorSubject<List<Answer>>.seeded([]);
+  final BehaviorSubject<Tuple2<List<Answer>, bool>> newAnswerController =
+      BehaviorSubject<Tuple2<List<Answer>, bool>>.seeded(
+    Tuple2<List<Answer>, bool>([], true),
+  );
+
+  final BehaviorSubject<Tuple2<List<Answer>, bool>> popularAnswerController =
+      BehaviorSubject<Tuple2<List<Answer>, bool>>.seeded(
+    Tuple2<List<Answer>, bool>([], true),
+  );
 
   Future<void> start() async {
     // 新着順のスクロールを検知
@@ -56,7 +63,7 @@ class EventListBloc {
         // ある程度のスクロール量で、読み込み開始
         if (maxScrollExtent > 0 &&
             (maxScrollExtent - 300.0) <= currentPosition) {
-          getNewAnswer(newAnswerController.value.last);
+          getNewAnswer(newAnswerController.value.item1.last?.createdAt);
         }
       },
     );
@@ -73,7 +80,7 @@ class EventListBloc {
         // ある程度のスクロール量で、読み込み開始
         if (maxScrollExtent > 0 &&
             (maxScrollExtent - 300.0) <= currentPosition) {
-          getPopularAnswer(popularAnswerController.value.last);
+          getPopularAnswer(popularAnswerController.value.item1.last?.rank);
         }
       },
     );
@@ -85,8 +92,8 @@ class EventListBloc {
     await getPopularAnswer(null);
   }
 
-  // lastAnswerよりも
-  Future<void> getNewAnswer(Answer lastAnswer) async {
+  // dateTimeよりも古い回答を取得
+  Future<void> getNewAnswer(DateTime dateTime) async {
     try {
       // 読込中は何もしない
       if (isNewAnswerLoading) {
@@ -97,172 +104,131 @@ class EventListBloc {
       isNewAnswerLoading = true;
 
       // 取得済みの回答をセット
-      final answers = newAnswerController.value;
+      final answers = newAnswerController.value.item1;
 
-      if (lastAnswer == null) {
-        // lastAnswerがnullの場合
-        final answersEntities = await _answerRepository.getNewAnswerList(null);
+      // 回答取得のためのパラメータを生成
+      final getNewAnswerListParameter = GetNewAnswerListParameter(
+        createdAt: dateTime,
+      );
 
-        for (final answerEntity in answersEntities) {
-          final topic =
-              await _topicRepository.getTopic(id: answerEntity.topicId);
-          final user =
-              await _userRepository.getUser(userId: answerEntity.createdUser);
-          final topicCreatedUser =
-              await _userRepository.getUser(userId: topic.createdUser);
+      // 回答を取得
+      final getNewAnswerListResponse = await _sampleRepository.getNewAnswerList(
+        parameter: getNewAnswerListParameter,
+      );
 
-          final answer = Answer(
-            id: answerEntity.id,
-            text: answerEntity.text,
-            createdAt: answerEntity.createdAt,
-            rank: answerEntity.rank,
-            topicId: topic.id,
-            topicText: topic.text,
-            topicImageUrl: topic.imageUrl,
-            topicCreatedAt: topic.createdAt,
-            topicCreatedUserId: topicCreatedUser.id,
-            topicCreatedUserName: topicCreatedUser.name,
-            topicCreatedUserImageUrl: topicCreatedUser.imageUrl,
-            createdUserId: user.id,
-            createdUserName: user.name,
-            createdUserImageUrl: user.imageUrl,
-          );
+      // 回答のお題や投稿者を取得
+      for (final answerEntity in getNewAnswerListResponse.answers) {
+        final topic = await _topicRepository.getTopic(id: answerEntity.topicId);
+        final user =
+            await _userRepository.getUser(userId: answerEntity.createdUser);
+        final topicCreatedUser =
+            await _userRepository.getUser(userId: topic.createdUser);
 
-          answers.add(answer);
-        }
-        newAnswerController.sink.add(answers);
-        isNewAnswerLoading = false;
-      } else {
-        // lastAnswerがある場合
-        final lastAnswerEntity = AnswerEntity(
-          id: lastAnswer.id,
-          text: lastAnswer.text,
-          createdAt: lastAnswer.createdAt,
-          rank: lastAnswer.rank,
-          topicId: lastAnswer.topicId,
-          createdUser: lastAnswer.createdUserId,
+        final answer = Answer(
+          id: answerEntity.id,
+          text: answerEntity.text,
+          createdAt: answerEntity.createdAt,
+          rank: answerEntity.rank,
+          topicId: topic.id,
+          topicText: topic.text,
+          topicImageUrl: topic.imageUrl,
+          topicCreatedAt: topic.createdAt,
+          topicCreatedUserId: topicCreatedUser.id,
+          topicCreatedUserName: topicCreatedUser.name,
+          topicCreatedUserImageUrl: topicCreatedUser.imageUrl,
+          createdUserId: user.id,
+          createdUserName: user.name,
+          createdUserImageUrl: user.imageUrl,
         );
-        final answersEntities =
-            await _answerRepository.getNewAnswerList(lastAnswerEntity);
 
-        for (final answerEntity in answersEntities) {
-          final topic =
-              await _topicRepository.getTopic(id: answerEntity.topicId);
-          final user =
-              await _userRepository.getUser(userId: answerEntity.createdUser);
-          final topicCreatedUser =
-              await _userRepository.getUser(userId: topic.createdUser);
-
-          final answer = Answer(
-            id: answerEntity.id,
-            text: answerEntity.text,
-            createdAt: answerEntity.createdAt,
-            rank: answerEntity.rank,
-            topicId: topic.id,
-            topicText: topic.text,
-            topicImageUrl: topic.imageUrl,
-            topicCreatedAt: topic.createdAt,
-            topicCreatedUserId: topicCreatedUser.id,
-            topicCreatedUserName: topicCreatedUser.name,
-            topicCreatedUserImageUrl: topicCreatedUser.imageUrl,
-            createdUserId: user.id,
-            createdUserName: user.name,
-            createdUserImageUrl: user.imageUrl,
-          );
-
-          answers.add(answer);
-        }
-        newAnswerController.sink.add(answers);
-        isNewAnswerLoading = false;
+        answers.add(answer);
       }
-    } on Exception catch (error) {
+
+      // Sinkにイベントを流す
+      newAnswerController.sink.add(
+        Tuple2<List<Answer>, bool>(
+          answers,
+          getNewAnswerListResponse.hasNext,
+        ),
+      );
+
+      // 通信終了
+      isNewAnswerLoading = false;
+    }
+    // エラー時
+    on Exception catch (error) {
       print(error.toString());
       isNewAnswerLoading = false;
       return;
     }
   }
 
-  Future<void> getPopularAnswer(Answer lastAnswer) async {
+  // rankよりも低い回答を取得
+  Future<void> getPopularAnswer(int rank) async {
     try {
+      // 読込中は何もしない
       if (isPopularAnswerLoading) {
         return;
       }
+
+      // 読込中に設定
       isPopularAnswerLoading = true;
-      final answers = popularAnswerController.value;
-      if (lastAnswer == null) {
-        final answersEntities =
-            await _answerRepository.getPopularAnswerList(null);
-        for (final answerEntity in answersEntities) {
-          final topic =
-              await _topicRepository.getTopic(id: answerEntity.topicId);
-          final user =
-              await _userRepository.getUser(userId: answerEntity.createdUser);
-          final topicCreatedUser =
-              await _userRepository.getUser(userId: topic.createdUser);
 
-          final answer = Answer(
-            id: answerEntity.id,
-            text: answerEntity.text,
-            createdAt: answerEntity.createdAt,
-            rank: answerEntity.rank,
-            topicId: topic.id,
-            topicText: topic.text,
-            topicImageUrl: topic.imageUrl,
-            topicCreatedAt: topic.createdAt,
-            topicCreatedUserId: topicCreatedUser.id,
-            topicCreatedUserName: topicCreatedUser.name,
-            topicCreatedUserImageUrl: topicCreatedUser.imageUrl,
-            createdUserId: user.id,
-            createdUserName: user.name,
-            createdUserImageUrl: user.imageUrl,
-          );
+      // 取得済みの回答をセット
+      final answers = popularAnswerController.value.item1;
 
-          answers.add(answer);
-        }
-        popularAnswerController.sink.add(answers);
-        isPopularAnswerLoading = false;
-      } else {
-        final lastAnswerEntity = AnswerEntity(
-          id: lastAnswer.id,
-          text: lastAnswer.text,
-          createdAt: lastAnswer.createdAt,
-          rank: lastAnswer.rank,
-          topicId: lastAnswer.topicId,
-          createdUser: lastAnswer.createdUserId,
+      // 回答取得のためのパラメータを生成
+      final getPopularAnswerListParameter = GetPopularAnswerListParameter(
+        rank: rank,
+      );
+
+      // 回答を取得
+      final getPopularAnswerListResponse =
+          await _sampleRepository.getPopularAnswerList(
+        parameter: getPopularAnswerListParameter,
+      );
+
+      // 回答のお題や投稿者を取得
+      for (final answerEntity in getPopularAnswerListResponse.answers) {
+        final topic = await _topicRepository.getTopic(id: answerEntity.topicId);
+        final user =
+            await _userRepository.getUser(userId: answerEntity.createdUser);
+        final topicCreatedUser =
+            await _userRepository.getUser(userId: topic.createdUser);
+
+        final answer = Answer(
+          id: answerEntity.id,
+          text: answerEntity.text,
+          createdAt: answerEntity.createdAt,
+          rank: answerEntity.rank,
+          topicId: topic.id,
+          topicText: topic.text,
+          topicImageUrl: topic.imageUrl,
+          topicCreatedAt: topic.createdAt,
+          topicCreatedUserId: topicCreatedUser.id,
+          topicCreatedUserName: topicCreatedUser.name,
+          topicCreatedUserImageUrl: topicCreatedUser.imageUrl,
+          createdUserId: user.id,
+          createdUserName: user.name,
+          createdUserImageUrl: user.imageUrl,
         );
-        final answersEntities =
-            await _answerRepository.getPopularAnswerList(lastAnswerEntity);
-        for (final answerEntity in answersEntities) {
-          final topic =
-              await _topicRepository.getTopic(id: answerEntity.topicId);
-          final user =
-              await _userRepository.getUser(userId: answerEntity.createdUser);
-          final topicCreatedUser =
-              await _userRepository.getUser(userId: topic.createdUser);
 
-          final answer = Answer(
-            id: answerEntity.id,
-            text: answerEntity.text,
-            createdAt: answerEntity.createdAt,
-            rank: answerEntity.rank,
-            topicId: topic.id,
-            topicText: topic.text,
-            topicImageUrl: topic.imageUrl,
-            topicCreatedAt: topic.createdAt,
-            topicCreatedUserId: topicCreatedUser.id,
-            topicCreatedUserName: topicCreatedUser.name,
-            topicCreatedUserImageUrl: topicCreatedUser.imageUrl,
-            createdUserId: user.id,
-            createdUserName: user.name,
-            createdUserImageUrl: user.imageUrl,
-          );
-
-          answers.add(answer);
-        }
-        popularAnswerController.sink.add(answers);
-        isPopularAnswerLoading = false;
+        answers.add(answer);
       }
-    } on Exception catch (error) {
+
+      // Sinkにイベントを流す
+      popularAnswerController.sink.add(
+        Tuple2<List<Answer>, bool>(
+          answers,
+          getPopularAnswerListResponse.hasNext,
+        ),
+      );
+
+      // 通信終了
+      isPopularAnswerLoading = false;
+    }
+    // エラー時
+    on Exception catch (error) {
       print(error.toString());
       isPopularAnswerLoading = false;
       return;
@@ -270,12 +236,12 @@ class EventListBloc {
   }
 
   Future<void> newAnswerControllerReset() async {
-    newAnswerController.sink.add([]);
+    newAnswerController.sink.add(Tuple2<List<Answer>, bool>([], false));
     await getNewAnswer(null);
   }
 
   Future<void> popularAnswerControllerReset() async {
-    popularAnswerController.sink.add([]);
+    popularAnswerController.sink.add(Tuple2<List<Answer>, bool>([], false));
     await getPopularAnswer(null);
   }
 

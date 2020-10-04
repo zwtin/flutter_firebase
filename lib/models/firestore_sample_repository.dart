@@ -55,24 +55,27 @@ class FirestoreSampleRepository implements SampleRepository {
         .getDocuments()
         .then(
       (QuerySnapshot querySnapshot) {
+        var list = querySnapshot.documents.map(
+          (DocumentSnapshot docs) {
+            return AnswerEntity(
+              id: docs.data['id'] as String,
+              text: docs.data['text'] as String,
+              createdAt: docs.data['created_at']?.toDate() as DateTime,
+              rank: docs.data['rank'] as int,
+              topicId: docs.data['topicId'] as String,
+              createdUser: docs.data['created_user'] as String,
+            );
+          },
+        ).toList();
+
         final hasNext = querySnapshot.documents.length > 10;
+
         if (hasNext) {
           // 11個取得できた時は、最後の要素を削除
-          querySnapshot.documents.removeLast();
+          list.removeLast();
         }
         return GetNewAnswerListResponse(
-          answers: querySnapshot.documents.map(
-            (DocumentSnapshot docs) {
-              return AnswerEntity(
-                id: docs.data['id'] as String,
-                text: docs.data['text'] as String,
-                createdAt: docs.data['created_at']?.toDate() as DateTime,
-                rank: docs.data['rank'] as int,
-                topicId: docs.data['topicId'] as String,
-                createdUser: docs.data['created_user'] as String,
-              );
-            },
-          ).toList(),
+          answers: list,
           hasNext: hasNext,
         );
       },
@@ -88,31 +91,34 @@ class FirestoreSampleRepository implements SampleRepository {
         .collection('answers')
         .where(
           'rank',
-          isLessThan: parameter.rank != null ? parameter.rank : BigInt,
+          isLessThan: parameter.rank != null ? parameter.rank : 1000,
         )
         .orderBy('rank', descending: true)
         .limit(11)
         .getDocuments()
         .then(
       (QuerySnapshot querySnapshot) {
+        var list = querySnapshot.documents.map(
+          (DocumentSnapshot docs) {
+            return AnswerEntity(
+              id: docs.data['id'] as String,
+              text: docs.data['text'] as String,
+              createdAt: docs.data['created_at']?.toDate() as DateTime,
+              rank: docs.data['rank'] as int,
+              topicId: docs.data['topicId'] as String,
+              createdUser: docs.data['created_user'] as String,
+            );
+          },
+        ).toList();
+
         final hasNext = querySnapshot.documents.length > 10;
+
         if (hasNext) {
           // 11個取得できた時は、最後の要素を削除
-          querySnapshot.documents.removeLast();
+          list.removeLast();
         }
         return GetPopularAnswerListResponse(
-          answers: querySnapshot.documents.map(
-            (DocumentSnapshot docs) {
-              return AnswerEntity(
-                id: docs.data['id'] as String,
-                text: docs.data['text'] as String,
-                createdAt: docs.data['created_at']?.toDate() as DateTime,
-                rank: docs.data['rank'] as int,
-                topicId: docs.data['topicId'] as String,
-                createdUser: docs.data['created_user'] as String,
-              );
-            },
-          ).toList(),
+          answers: list,
           hasNext: hasNext,
         );
       },
@@ -139,20 +145,23 @@ class FirestoreSampleRepository implements SampleRepository {
         .getDocuments()
         .then(
       (QuerySnapshot querySnapshot) {
+        var list = querySnapshot.documents.map(
+          (DocumentSnapshot docs) {
+            return AnswerEntity(
+              id: docs.data['id'] as String,
+              createdAt: docs.data['created_at'].toDate() as DateTime,
+            );
+          },
+        ).toList();
+
         final hasNext = querySnapshot.documents.length > 10;
+
         if (hasNext) {
           // 11個取得できた時は、最後の要素を削除
-          querySnapshot.documents.removeLast();
+          list.removeLast();
         }
         return GetUserCreateAnswerListResponse(
-          answers: querySnapshot.documents.map(
-            (DocumentSnapshot docs) {
-              return AnswerEntity(
-                id: docs.data['id'] as String,
-                createdAt: docs.data['created_at'].toDate() as DateTime,
-              );
-            },
-          ).toList(),
+          answers: list,
           hasNext: hasNext,
         );
       },
@@ -179,20 +188,23 @@ class FirestoreSampleRepository implements SampleRepository {
         .getDocuments()
         .then(
       (QuerySnapshot querySnapshot) {
+        var list = querySnapshot.documents.map(
+          (DocumentSnapshot docs) {
+            return AnswerEntity(
+              id: docs.data['id'] as String,
+              createdAt: docs.data['favor_at'].toDate() as DateTime,
+            );
+          },
+        ).toList();
+
         final hasNext = querySnapshot.documents.length > 10;
+
         if (hasNext) {
           // 11個取得できた時は、最後の要素を削除
-          querySnapshot.documents.removeLast();
+          list.removeLast();
         }
         return GetUserFavorAnswerListResponse(
-          answers: querySnapshot.documents.map(
-            (DocumentSnapshot docs) {
-              return AnswerEntity(
-                id: docs.data['id'] as String,
-                createdAt: docs.data['favor_at'].toDate() as DateTime,
-              );
-            },
-          ).toList(),
+          answers: list,
           hasNext: hasNext,
         );
       },
