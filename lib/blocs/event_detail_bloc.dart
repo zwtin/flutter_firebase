@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase/entities/answer.dart';
-import 'package:flutter_firebase/entities/current_user.dart';
+import 'package:flutter_firebase/use_cases/answer.dart';
+import 'package:flutter_firebase/use_cases/current_user.dart';
 import 'package:flutter_firebase/repositories/answer_repository.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
 import 'package:flutter_firebase/repositories/favorite_repository.dart';

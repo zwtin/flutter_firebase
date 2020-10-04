@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_firebase/entities/create_answer_entity.dart';
-import 'package:flutter_firebase/entities/favorite_answer_entity.dart';
-import 'package:flutter_firebase/entities/user.dart';
+import 'package:flutter_firebase/use_cases/create_answer_entity.dart';
+import 'package:flutter_firebase/use_cases/favorite_answer_entity.dart';
+import 'package:flutter_firebase/use_cases/user.dart';
 import 'package:flutter_firebase/repositories/user_repository.dart';
 
 class FirestoreUserRepository implements UserRepository {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase/entities/answer_entity.dart';
+import 'package:flutter_firebase/use_cases/answer_entity.dart';
 
 abstract class AnswerRepository {
   Stream<List<AnswerEntity>> getAnswerListStream();

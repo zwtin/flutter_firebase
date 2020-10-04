@@ -1,5 +1,5 @@
-import 'package:flutter_firebase/entities/topic.dart';
-import 'package:flutter_firebase/entities/topic_entity.dart';
+import 'package:flutter_firebase/use_cases/topic.dart';
+import 'package:flutter_firebase/use_cases/topic_entity.dart';
 import 'package:flutter_firebase/repositories/topic_repository.dart';
 import 'package:flutter_firebase/repositories/user_repository.dart';
 import 'package:rxdart/rxdart.dart';

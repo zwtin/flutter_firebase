@@ -5,7 +5,7 @@ import 'package:flutter_firebase/blocs/sign_in_bloc.dart';
 import 'package:flutter_firebase/blocs/my_profile_bloc.dart';
 import 'package:flutter_firebase/blocs/sign_up_bloc.dart';
 import 'package:flutter_firebase/blocs/tab_bloc.dart';
-import 'package:flutter_firebase/entities/answer.dart';
+import 'package:flutter_firebase/use_cases/answer.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/models/firebase_storage_repository.dart';
 import 'package:flutter_firebase/models/firestore_answer_repository.dart';
@@ -13,7 +13,7 @@ import 'package:flutter_firebase/models/firestore_push_notification_repository.d
 import 'package:flutter_firebase/models/firestore_topic_repository.dart';
 import 'package:flutter_firebase/models/firestore_user_repository.dart';
 import 'package:flutter_firebase/screens/edit_profile_screen.dart';
-import 'package:flutter_firebase/entities/user.dart';
+import 'package:flutter_firebase/use_cases/user.dart';
 import 'package:flutter_firebase/blocs/edit_profile_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_firebase/blocs/event_detail_bloc.dart';
@@ -110,11 +110,17 @@ class MyProfileScreen extends StatelessWidget {
       },
     );
 
+    // Streamを監視するWidget
     return StreamBuilder(
+      // 監視するStream
       stream: myProfileBloc.userController.stream,
+
+      // イベントを検知したときに返す中身
       builder: (BuildContext context, AsyncSnapshot<User> userSnapshot) {
         if (userSnapshot.hasData) {
+          // データがある時
           return Scaffold(
+            // ナビゲーションバー
             appBar: AppBar(
               title: Text(
                 'マイページ',
@@ -124,7 +130,7 @@ class MyProfileScreen extends StatelessWidget {
                 ),
               ),
               backgroundColor: const Color(0xFFFFCC00),
-              elevation: 0,
+              elevation: 0, // 影をなくす
               bottom: PreferredSize(
                 child: Container(
                   color: Colors.white24,
@@ -132,6 +138,8 @@ class MyProfileScreen extends StatelessWidget {
                 ),
                 preferredSize: const Size.fromHeight(1),
               ),
+
+              // ナビゲーションバーの右上のボタン
               actions: <Widget>[
                 IconButton(
                   icon: Icon(
@@ -190,12 +198,19 @@ class MyProfileScreen extends StatelessWidget {
                 ),
               ],
             ),
+
+            // タブ画面
             body: DefaultTabController(
+              // タブ数
               length: 2,
+
+              // タブ画面を内包した、スクロールで隠れる画面
               child: NestedScrollView(
+                // スクロールで隠れる画面
                 headerSliverBuilder:
                     (BuildContext context, bool innerBoxIsScrolled) {
                   return <Widget>[
+                    // Sliverの配列である必要がある
                     SliverList(
                       delegate: SliverChildListDelegate(
                         [
@@ -281,6 +296,8 @@ class MyProfileScreen extends StatelessWidget {
                         ],
                       ),
                     ),
+
+                    // Sliverに準拠した、タブ切り替え部分
                     SliverPersistentHeader(
                       pinned: true,
                       delegate: SliverTabBarDelegate(
@@ -310,14 +327,22 @@ class MyProfileScreen extends StatelessWidget {
                     ),
                   ];
                 },
+
+                // タブ画面
                 body: TabBarView(
                   children: <Widget>[
+                    // Streamを監視するWidget
                     StreamBuilder(
+                      // 監視するStream
                       stream: myProfileBloc.createAnswersController.stream,
+
+                      // イベントを検知したときに返す中身
                       builder: (BuildContext context,
                           AsyncSnapshot<List<Answer>> snapshot) {
                         return Container(
                           color: const Color(0xFFFFCC00),
+
+                          // リスト表示
                           child: ListView.builder(
                             itemBuilder: (BuildContext context, int index) {
                               return Card(
@@ -479,12 +504,19 @@ class MyProfileScreen extends StatelessWidget {
                         );
                       },
                     ),
+
+                    // Streamを監視するWidget
                     StreamBuilder(
+                      // 監視するStream
                       stream: myProfileBloc.favoriteAnswersController.stream,
+
+                      // イベントを検知したときに返す中身
                       builder: (BuildContext context,
                           AsyncSnapshot<List<Answer>> snapshot) {
                         return Container(
                           color: const Color(0xFFFFCC00),
+
+                          // リスト表示
                           child: ListView.builder(
                             itemBuilder: (BuildContext context, int index) {
                               return Card(
@@ -653,7 +685,9 @@ class MyProfileScreen extends StatelessWidget {
           );
         }
 
+        // データが無い時
         return Scaffold(
+          // ナビゲーションバー
           appBar: AppBar(
             title: Text(
               'マイページ',
@@ -663,7 +697,7 @@ class MyProfileScreen extends StatelessWidget {
               ),
             ),
             backgroundColor: const Color(0xFFFFCC00),
-            elevation: 0,
+            elevation: 0, // 影をなくす
             bottom: PreferredSize(
               child: Container(
                 color: Colors.white24,
@@ -672,19 +706,25 @@ class MyProfileScreen extends StatelessWidget {
               preferredSize: const Size.fromHeight(1),
             ),
           ),
+
+          // 本体
           body: Center(
             child: Column(
               children: <Widget>[
+                // ボタン0
                 RaisedButton(
                   child: const Text('ログイン'),
                   color: const Color(0xFFFFCC00),
                   textColor: Colors.white,
                   onPressed: () {
+                    // ボタン押下時
                     Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute<SignInScreen>(
                         builder: (BuildContext context) {
+                          // 複数のProviderを提供
                           return MultiProvider(
                             providers: [
+                              // SignInBlocを提供
                               Provider<SignInBloc>(
                                 create: (BuildContext context) {
                                   return SignInBloc(
@@ -693,31 +733,44 @@ class MyProfileScreen extends StatelessWidget {
                                     FirestorePushNotificationRepository(),
                                   );
                                 },
+
+                                // 画面破棄時
                                 dispose:
                                     (BuildContext context, SignInBloc bloc) {
                                   bloc.dispose();
                                 },
                               ),
+
+                              // 既存のTabBlocを提供
                               Provider<TabBloc>.value(value: tabBloc),
                             ],
+
+                            // 表示画面
                             child: SignInScreen(),
                           );
                         },
+
+                        // 全画面で表示
                         fullscreenDialog: true,
                       ),
                     );
                   },
                 ),
+
+                // ボタン1
                 RaisedButton(
                   child: const Text('新規会員登録'),
                   color: const Color(0xFFFFCC00),
                   textColor: Colors.white,
                   onPressed: () {
+                    // ボタン押下時
                     Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute<SignUpScreen>(
                         builder: (BuildContext context) {
+                          // 複数のProviderを提供
                           return MultiProvider(
                             providers: [
+                              // SignUpBlocを提供
                               Provider<SignUpBloc>(
                                 create: (BuildContext context) {
                                   return SignUpBloc(
@@ -726,16 +779,24 @@ class MyProfileScreen extends StatelessWidget {
                                     FirestorePushNotificationRepository(),
                                   );
                                 },
+
+                                // 画面破棄時
                                 dispose:
                                     (BuildContext context, SignUpBloc bloc) {
                                   bloc.dispose();
                                 },
                               ),
+
+                              // 既存のTabBlocを提供
                               Provider<TabBloc>.value(value: tabBloc),
                             ],
+
+                            // 表示画面
                             child: SignUpScreen(),
                           );
                         },
+
+                        // 全画面で表示
                         fullscreenDialog: true,
                       ),
                     );

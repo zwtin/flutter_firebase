@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase/entities/answer.dart';
-import 'package:flutter_firebase/entities/create_answer_entity.dart';
-import 'package:flutter_firebase/entities/current_user.dart';
-import 'package:flutter_firebase/entities/favorite_answer_entity.dart';
-import 'package:flutter_firebase/entities/user.dart';
+import 'package:flutter_firebase/use_cases/answer.dart';
+import 'package:flutter_firebase/use_cases/create_answer_entity.dart';
+import 'package:flutter_firebase/use_cases/current_user.dart';
+import 'package:flutter_firebase/use_cases/favorite_answer_entity.dart';
+import 'package:flutter_firebase/use_cases/user.dart';
 import 'package:flutter_firebase/repositories/answer_repository.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
 import 'package:flutter_firebase/repositories/push_notification_repository.dart';
@@ -34,8 +34,11 @@ class MyProfileBloc {
   final PushNotificationRepository _pushNotificationRepository;
   final AuthenticationRepository _authenticationRepository;
 
+  // ルート画面へ戻るイベント購読用
   StreamSubscription<int> rootTransitionSubscription;
+  // 戻るイベント購読用
   StreamSubscription<int> popTransitionSubscription;
+  // 新規会員登録イベント購読用
   StreamSubscription<int> newRegisterSubscription;
 
   StreamSubscription<List<CreateAnswerEntity>> createAnswerListSubscription;

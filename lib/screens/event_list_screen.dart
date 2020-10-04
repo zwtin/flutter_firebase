@@ -7,7 +7,7 @@ import 'package:flutter_firebase/blocs/new_register_bloc.dart';
 import 'package:flutter_firebase/blocs/post_category_select_bloc.dart';
 import 'package:flutter_firebase/blocs/profile_bloc.dart';
 import 'package:flutter_firebase/common/string_extension.dart';
-import 'package:flutter_firebase/entities/answer.dart';
+import 'package:flutter_firebase/use_cases/answer.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/models/firestore_answer_repository.dart';
 import 'package:flutter_firebase/models/firestore_favorite_repository.dart';
@@ -106,9 +106,14 @@ class EventListScreen extends StatelessWidget {
       },
     );
 
+    // タブ画面
     return DefaultTabController(
+      // タブ数
       length: 2,
+
+      // 表示画面
       child: Scaffold(
+        // ナビゲーションバー
         appBar: AppBar(
           title: Text(
             'ホーム',
@@ -118,7 +123,7 @@ class EventListScreen extends StatelessWidget {
             ),
           ),
           backgroundColor: const Color(0xFFFFCC00),
-          elevation: 0,
+          elevation: 0, // 影をなくす
           bottom: const TabBar(
             tabs: <Widget>[
               Tab(
@@ -130,18 +135,31 @@ class EventListScreen extends StatelessWidget {
             ],
           ),
         ),
+
+        // タブ画面
         body: TabBarView(
           children: <Widget>[
+            // タブ0: リフレッシュスクロール画面
             RefreshIndicator(
               color: const Color(0xFFFFCC00),
+
+              // 引き下げて更新時
               onRefresh: eventListBloc.newAnswerControllerReset,
+
+              // 表示画面
               child: Scrollbar(
+                // Streamを監視するWidget
                 child: StreamBuilder(
+                  // 監視するStream
                   stream: eventListBloc.newAnswerController.stream,
+
+                  // イベントを検知したときに返す中身
                   builder: (BuildContext context,
                       AsyncSnapshot<List<Answer>> snapshot) {
                     return Container(
                       color: const Color(0xFFFFCC00),
+
+                      // リスト表示
                       child: ListView.builder(
                         itemBuilder: (BuildContext context, int index) {
 //                          snapshot.hasData ? snapshot.data.length : 0,
@@ -314,16 +332,28 @@ class EventListScreen extends StatelessWidget {
                 ),
               ),
             ),
+
+            // タブ1: リフレッシュスクロール画面
             RefreshIndicator(
               color: const Color(0xFFFFCC00),
+
+              // 引き下げて更新時
               onRefresh: eventListBloc.popularAnswerControllerReset,
+
+              // 表示画面
               child: Scrollbar(
+                // Streamを監視するWidget
                 child: StreamBuilder(
+                  // 監視するStream
                   stream: eventListBloc.popularAnswerController.stream,
+
+                  // イベントを検知したときに返す中身
                   builder: (BuildContext context,
                       AsyncSnapshot<List<Answer>> snapshot) {
                     return Container(
                       color: const Color(0xFFFFCC00),
+
+                      // リスト表示
                       child: ListView.builder(
                         itemBuilder: (BuildContext context, int index) {
                           return Card(

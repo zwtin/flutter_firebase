@@ -7,9 +7,9 @@ import 'package:flutter_firebase/blocs/tab_bloc.dart';
 import 'package:flutter_firebase/screens/sent_register_email_screen.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_firebase/entities/alert.dart';
+import 'package:flutter_firebase/use_cases/alert.dart';
 import 'package:sweetalert/sweetalert.dart';
-import 'package:flutter_firebase/entities/current_user.dart';
+import 'package:flutter_firebase/use_cases/current_user.dart';
 
 class SignUpScreen extends StatelessWidget {
   StreamSubscription<int> newRegisterSubscription;

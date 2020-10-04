@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/image_detail_bloc.dart';
 import 'package:flutter_firebase/blocs/profile_bloc.dart';
-import 'package:flutter_firebase/entities/answer.dart';
+import 'package:flutter_firebase/use_cases/answer.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_firebase/blocs/event_detail_bloc.dart';
 import 'package:flutter_firebase/models/firestore_answer_repository.dart';

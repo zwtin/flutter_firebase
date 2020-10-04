@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_firebase/entities/current_user.dart';
+import 'package:flutter_firebase/use_cases/current_user.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:apple_sign_in/apple_sign_in.dart';

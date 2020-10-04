@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase/entities/topic_entity.dart';
+import 'package:flutter_firebase/use_cases/topic_entity.dart';
 
 abstract class TopicRepository {
   Stream<List<TopicEntity>> getTopicListStream();

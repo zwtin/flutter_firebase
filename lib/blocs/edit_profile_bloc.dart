@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_firebase/entities/user.dart';
+import 'package:flutter_firebase/use_cases/user.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
 import 'package:flutter_firebase/repositories/storage_repository.dart';
 import 'package:flutter_firebase/repositories/user_repository.dart';

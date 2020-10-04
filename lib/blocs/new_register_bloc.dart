@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase/entities/current_user.dart';
+import 'package:flutter_firebase/use_cases/current_user.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
 import 'package:flutter_firebase/repositories/push_notification_repository.dart';
 import 'package:flutter_firebase/repositories/user_repository.dart';

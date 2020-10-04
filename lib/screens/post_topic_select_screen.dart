@@ -3,7 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/post_event_bloc.dart';
 import 'package:flutter_firebase/common/string_extension.dart';
-import 'package:flutter_firebase/entities/topic.dart';
+import 'package:flutter_firebase/use_cases/topic.dart';
 import 'package:flutter_firebase/models/firestore_answer_repository.dart';
 import 'package:flutter_firebase/screens/post_event_screen.dart';
 import 'package:provider/provider.dart';

@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase/entities/answer.dart';
-import 'package:flutter_firebase/entities/answer_entity.dart';
+import 'package:flutter_firebase/use_cases/answer.dart';
+import 'package:flutter_firebase/use_cases/answer_entity.dart';
 import 'package:flutter_firebase/repositories/answer_repository.dart';
 import 'package:flutter_firebase/repositories/topic_repository.dart';
 import 'package:flutter_firebase/repositories/user_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
 class EventListBloc {
+  // コンストラクタ
   EventListBloc(
     this._answerRepository,
     this._topicRepository,
@@ -22,13 +23,19 @@ class EventListBloc {
   final TopicRepository _topicRepository;
   final UserRepository _userRepository;
 
+  // ルート画面へ戻るイベント購読用
   StreamSubscription<int> rootTransitionSubscription;
+  // 戻るイベント購読用
   StreamSubscription<int> popTransitionSubscription;
+  // 新規会員登録イベント購読用
   StreamSubscription<int> newRegisterSubscription;
 
-  bool isLoading = false;
+  bool isNewAnswerLoading = false; // 新着順回答読み込み中
+  bool isPopularAnswerLoading = false; // 新着順回答読み込み中
 
+  // 新着順回答のスクロール量検知用
   final ScrollController newAnswerScrollController = ScrollController();
+  // 人気順回答のスクロール量検知用
   final ScrollController popularAnswerScrollController = ScrollController();
 
   final BehaviorSubject<List<Answer>> newAnswerController =
@@ -37,11 +44,16 @@ class EventListBloc {
       BehaviorSubject<List<Answer>>.seeded([]);
 
   Future<void> start() async {
+    // 新着順のスクロールを検知
     newAnswerScrollController.addListener(
       () {
+        // 最大スクロール量
         final maxScrollExtent =
             newAnswerScrollController.position.maxScrollExtent;
+        // 現在のスクロール量
         final currentPosition = newAnswerScrollController.position.pixels;
+
+        // ある程度のスクロール量で、読み込み開始
         if (maxScrollExtent > 0 &&
             (maxScrollExtent - 300.0) <= currentPosition) {
           getNewAnswer(newAnswerController.value.last);
@@ -49,11 +61,16 @@ class EventListBloc {
       },
     );
 
+    // 人気順のスクロールを検知
     popularAnswerScrollController.addListener(
       () {
+        // 最大スクロール量
         final maxScrollExtent =
             popularAnswerScrollController.position.maxScrollExtent;
+        // 現在のスクロール量
         final currentPosition = popularAnswerScrollController.position.pixels;
+
+        // ある程度のスクロール量で、読み込み開始
         if (maxScrollExtent > 0 &&
             (maxScrollExtent - 300.0) <= currentPosition) {
           getPopularAnswer(popularAnswerController.value.last);
@@ -61,19 +78,31 @@ class EventListBloc {
       },
     );
 
+    // 新着順を取得
     await getNewAnswer(null);
+
+    // 人気順を取得
     await getPopularAnswer(null);
   }
 
+  // lastAnswerよりも
   Future<void> getNewAnswer(Answer lastAnswer) async {
     try {
-      if (isLoading) {
+      // 読込中は何もしない
+      if (isNewAnswerLoading) {
         return;
       }
-      isLoading = true;
+
+      // 読込中に設定
+      isNewAnswerLoading = true;
+
+      // 取得済みの回答をセット
       final answers = newAnswerController.value;
+
       if (lastAnswer == null) {
+        // lastAnswerがnullの場合
         final answersEntities = await _answerRepository.getNewAnswerList(null);
+
         for (final answerEntity in answersEntities) {
           final topic =
               await _topicRepository.getTopic(id: answerEntity.topicId);
@@ -102,8 +131,9 @@ class EventListBloc {
           answers.add(answer);
         }
         newAnswerController.sink.add(answers);
-        isLoading = false;
+        isNewAnswerLoading = false;
       } else {
+        // lastAnswerがある場合
         final lastAnswerEntity = AnswerEntity(
           id: lastAnswer.id,
           text: lastAnswer.text,
@@ -114,6 +144,7 @@ class EventListBloc {
         );
         final answersEntities =
             await _answerRepository.getNewAnswerList(lastAnswerEntity);
+
         for (final answerEntity in answersEntities) {
           final topic =
               await _topicRepository.getTopic(id: answerEntity.topicId);
@@ -142,21 +173,21 @@ class EventListBloc {
           answers.add(answer);
         }
         newAnswerController.sink.add(answers);
-        isLoading = false;
+        isNewAnswerLoading = false;
       }
     } on Exception catch (error) {
       print(error.toString());
-      isLoading = false;
+      isNewAnswerLoading = false;
       return;
     }
   }
 
   Future<void> getPopularAnswer(Answer lastAnswer) async {
     try {
-      if (isLoading) {
+      if (isPopularAnswerLoading) {
         return;
       }
-      isLoading = true;
+      isPopularAnswerLoading = true;
       final answers = popularAnswerController.value;
       if (lastAnswer == null) {
         final answersEntities =
@@ -189,7 +220,7 @@ class EventListBloc {
           answers.add(answer);
         }
         popularAnswerController.sink.add(answers);
-        isLoading = false;
+        isPopularAnswerLoading = false;
       } else {
         final lastAnswerEntity = AnswerEntity(
           id: lastAnswer.id,
@@ -229,11 +260,11 @@ class EventListBloc {
           answers.add(answer);
         }
         popularAnswerController.sink.add(answers);
-        isLoading = false;
+        isPopularAnswerLoading = false;
       }
     } on Exception catch (error) {
       print(error.toString());
-      isLoading = false;
+      isPopularAnswerLoading = false;
       return;
     }
   }

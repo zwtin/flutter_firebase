@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase/entities/create_answer_entity.dart';
-import 'package:flutter_firebase/entities/favorite_answer_entity.dart';
-import 'package:flutter_firebase/entities/user.dart';
+import 'package:flutter_firebase/use_cases/create_answer_entity.dart';
+import 'package:flutter_firebase/use_cases/favorite_answer_entity.dart';
+import 'package:flutter_firebase/use_cases/user.dart';
 
 abstract class UserRepository {
   Stream<User> getUserStream({@required String userId});

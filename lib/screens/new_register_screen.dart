@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/new_register_bloc.dart';
 import 'package:flutter_firebase/blocs/tab_bloc.dart';
-import 'package:flutter_firebase/entities/current_user.dart';
+import 'package:flutter_firebase/use_cases/current_user.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
 

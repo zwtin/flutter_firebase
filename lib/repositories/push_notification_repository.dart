@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase/entities/user.dart';
+import 'package:flutter_firebase/use_cases/user.dart';
 
 abstract class PushNotificationRepository {
   Future<void> registerDeviceToken({
