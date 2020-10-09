@@ -12,20 +12,33 @@ class FirestorePushNotificationRepository
     @required String deviceToken,
   }) async {
     await _firestore.runTransaction(
-      (transaction) {
+      (transaction) async {
+        // deviceTokenがすでに登録済みか調査（登録済みの場合は何もしない）
+        final querySnapshot = await _firestore
+            .collection('users')
+            .document(userId)
+            .collection('device_token')
+            .where('token', isEqualTo: deviceToken)
+            .getDocuments();
+        final isRegisterd = querySnapshot.documents.isNotEmpty;
+        if (isRegisterd) {
+          return null;
+        }
+
+        // 登録されていなければ登録
         final ref = _firestore
             .collection('users')
             .document(userId)
             .collection('device_token')
             .document();
-        final itemMap = {
+        final registerData = {
           'id': ref.documentID,
           'token': deviceToken,
-          'register_date': DateTime.now(),
+          'register_date': FieldValue.serverTimestamp(),
         };
-        transaction.set(
+        await transaction.set(
           ref,
-          itemMap,
+          registerData,
         );
         return null;
       },
@@ -45,8 +58,9 @@ class FirestorePushNotificationRepository
             .collection('device_token')
             .where('token', isEqualTo: deviceToken)
             .getDocuments();
-        final doc = querySnapshot.documents.first.reference;
-        await transaction.delete(doc);
+        for (final ref in querySnapshot.documents) {
+          await transaction.delete(ref.reference);
+        }
         return null;
       },
     );

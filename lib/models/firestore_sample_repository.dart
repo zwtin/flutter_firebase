@@ -7,7 +7,7 @@ import 'package:flutter_firebase/entities/responses/get_popular_answer_list_resp
 import 'package:flutter_firebase/entities/responses/get_user_create_answer_list_response.dart';
 import 'package:flutter_firebase/entities/responses/get_user_favor_answer_list_response.dart';
 import 'package:flutter_firebase/entities/parameters/get_user_favor_answer_list_parameter.dart';
-import 'package:flutter_firebase/use_cases/answer_entity.dart';
+import 'package:flutter_firebase/use_cases/answer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/entities/responses/get_answer_response.dart';
 import 'package:flutter_firebase/entities/parameters/get_answer_parameter.dart';
@@ -23,15 +23,15 @@ class FirestoreSampleRepository implements SampleRepository {
     assert(parameter != null);
     return _firestore.collection('answers').document(parameter.id).get().then(
       (DocumentSnapshot snapshot) {
+        var answer = Answer()
+          ..answerId = snapshot.data['id'] as String
+          ..answerText = snapshot.data['text'] as String
+          ..answerCreatedAt = snapshot.data['created_at'].toDate() as DateTime
+          ..answerPoint = snapshot.data['rank'] as int
+          ..topicId = snapshot.data['topicId'] as String
+          ..answerCreatedUserId = snapshot.data['created_user'] as String;
         return GetAnswerResponse(
-          answer: AnswerEntity(
-            id: snapshot.data['id'] as String,
-            text: snapshot.data['text'] as String,
-            createdAt: snapshot.data['created_at'].toDate() as DateTime,
-            rank: snapshot.data['rank'] as int,
-            topicId: snapshot.data['topicId'] as String,
-            createdUser: snapshot.data['created_user'] as String,
-          ),
+          answer: answer,
         );
       },
     );
@@ -57,14 +57,13 @@ class FirestoreSampleRepository implements SampleRepository {
       (QuerySnapshot querySnapshot) {
         var list = querySnapshot.documents.map(
           (DocumentSnapshot docs) {
-            return AnswerEntity(
-              id: docs.data['id'] as String,
-              text: docs.data['text'] as String,
-              createdAt: docs.data['created_at']?.toDate() as DateTime,
-              rank: docs.data['rank'] as int,
-              topicId: docs.data['topicId'] as String,
-              createdUser: docs.data['created_user'] as String,
-            );
+            return Answer()
+              ..answerId = docs.data['id'] as String
+              ..answerText = docs.data['text'] as String
+              ..answerCreatedAt = docs.data['created_at']?.toDate() as DateTime
+              ..answerPoint = docs.data['rank'] as int
+              ..topicId = docs.data['topicId'] as String
+              ..answerCreatedUserId = docs.data['created_user'] as String;
           },
         ).toList();
 
@@ -100,14 +99,13 @@ class FirestoreSampleRepository implements SampleRepository {
       (QuerySnapshot querySnapshot) {
         var list = querySnapshot.documents.map(
           (DocumentSnapshot docs) {
-            return AnswerEntity(
-              id: docs.data['id'] as String,
-              text: docs.data['text'] as String,
-              createdAt: docs.data['created_at']?.toDate() as DateTime,
-              rank: docs.data['rank'] as int,
-              topicId: docs.data['topicId'] as String,
-              createdUser: docs.data['created_user'] as String,
-            );
+            return Answer()
+              ..answerId = docs.data['id'] as String
+              ..answerText = docs.data['text'] as String
+              ..answerCreatedAt = docs.data['created_at']?.toDate() as DateTime
+              ..answerPoint = docs.data['rank'] as int
+              ..topicId = docs.data['topicId'] as String
+              ..answerCreatedUserId = docs.data['created_user'] as String;
           },
         ).toList();
 
@@ -147,10 +145,9 @@ class FirestoreSampleRepository implements SampleRepository {
       (QuerySnapshot querySnapshot) {
         var list = querySnapshot.documents.map(
           (DocumentSnapshot docs) {
-            return AnswerEntity(
-              id: docs.data['id'] as String,
-              createdAt: docs.data['created_at'].toDate() as DateTime,
-            );
+            return Answer()
+              ..answerId = docs.data['id'] as String
+              ..answerCreatedAt = docs.data['created_at'].toDate() as DateTime;
           },
         ).toList();
 
@@ -190,10 +187,9 @@ class FirestoreSampleRepository implements SampleRepository {
       (QuerySnapshot querySnapshot) {
         var list = querySnapshot.documents.map(
           (DocumentSnapshot docs) {
-            return AnswerEntity(
-              id: docs.data['id'] as String,
-              createdAt: docs.data['favor_at'].toDate() as DateTime,
-            );
+            return Answer()
+              ..answerId = docs.data['id'] as String
+              ..answerFavoredAt = docs.data['favor_at'].toDate() as DateTime;
           },
         ).toList();
 

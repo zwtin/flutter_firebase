@@ -49,14 +49,14 @@ class EventDetailBloc {
           favoriteController.sink.add(false);
         } else {
           _likeRepository
-              .getLike(userId: currentUser.id, itemId: _answer.id)
+              .getLike(userId: currentUser.id, itemId: _answer.answerId)
               .listen(
             (bool isLiked) {
               likeController.sink.add(isLiked);
             },
           );
           _favoriteRepository
-              .getFavorite(userId: currentUser.id, itemId: _answer.id)
+              .getFavorite(userId: currentUser.id, itemId: _answer.answerId)
               .listen(
             (bool isFavorite) {
               favoriteController.sink.add(isFavorite);
@@ -74,9 +74,10 @@ class EventDetailBloc {
     }
     if (likeController.value) {
       await _likeRepository.removeLike(
-          userId: currentUser.id, itemId: _answer.id);
+          userId: currentUser.id, itemId: _answer.answerId);
     } else {
-      await _likeRepository.setLike(userId: currentUser.id, itemId: _answer.id);
+      await _likeRepository.setLike(
+          userId: currentUser.id, itemId: _answer.answerId);
     }
   }
 
@@ -87,10 +88,10 @@ class EventDetailBloc {
     }
     if (favoriteController.value) {
       await _favoriteRepository.removeFavorite(
-          userId: currentUser.id, itemId: _answer.id);
+          userId: currentUser.id, itemId: _answer.answerId);
     } else {
       await _favoriteRepository.setFavorite(
-          userId: currentUser.id, itemId: _answer.id);
+          userId: currentUser.id, itemId: _answer.answerId);
     }
   }
 

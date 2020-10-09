@@ -1,6 +1,11 @@
 import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase/entities/parameters/get_answer_parameter.dart';
+import 'package:flutter_firebase/entities/parameters/get_user_create_answer_list_parameter.dart';
+import 'package:flutter_firebase/entities/parameters/get_user_favor_answer_list_parameter.dart';
+import 'package:flutter_firebase/entities/responses/get_user_create_answer_list_response.dart';
+import 'package:flutter_firebase/repositories/sample_repository.dart';
 import 'package:flutter_firebase/use_cases/answer.dart';
 import 'package:flutter_firebase/use_cases/create_answer_entity.dart';
 import 'package:flutter_firebase/use_cases/current_user.dart';
@@ -12,6 +17,7 @@ import 'package:flutter_firebase/repositories/push_notification_repository.dart'
 import 'package:flutter_firebase/repositories/topic_repository.dart';
 import 'package:flutter_firebase/repositories/user_repository.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:tuple/tuple.dart';
 
 class ProfileBloc {
   ProfileBloc(
@@ -19,10 +25,12 @@ class ProfileBloc {
     this._userRepository,
     this._answerRepository,
     this._topicRepository,
+    this._sampleRepository,
   )   : assert(_userId != null),
         assert(_userRepository != null),
         assert(_answerRepository != null),
-        assert(_topicRepository != null) {
+        assert(_topicRepository != null),
+        assert(_sampleRepository != null) {
     start();
   }
 
@@ -30,186 +38,258 @@ class ProfileBloc {
   final UserRepository _userRepository;
   final AnswerRepository _answerRepository;
   final TopicRepository _topicRepository;
+  final SampleRepository _sampleRepository;
 
-  StreamSubscription<List<CreateAnswerEntity>> createAnswerListSubscription;
-  List<CreateAnswerEntity> createAnswerEntityList = [];
-  StreamSubscription<List<FavoriteAnswerEntity>> favoriteAnswerListSubscription;
-  List<FavoriteAnswerEntity> favoriteAnswerEntityList = [];
+  bool isUserCreateAnswerLoading = false; // 投稿した回答読み込み中
+  bool isUserFavorAnswerLoading = false; // お気に入り回答読み込み中
 
-  final ScrollController createAnswerScrollController = ScrollController();
-  final ScrollController favoriteAnswerScrollController = ScrollController();
+  // 投稿した回答のスクロール量検知用
+  final ScrollController userCreateAnswerScrollController = ScrollController();
+  // お気に入り回答のスクロール量検知用
+  final ScrollController userFavorAnswerScrollController = ScrollController();
 
+  // ユーザー情報詳細
   final BehaviorSubject<User> userController =
       BehaviorSubject<User>.seeded(null);
-  final BehaviorSubject<List<Answer>> createAnswersController =
-      BehaviorSubject<List<Answer>>.seeded([]);
-  final BehaviorSubject<List<Answer>> favoriteAnswersController =
-      BehaviorSubject<List<Answer>>.seeded([]);
 
-  void start() {
-    createAnswerListSubscription?.cancel();
-    createAnswerListSubscription =
-        _userRepository.getCreateAnswersStream(userId: _userId).listen(
-      (list) {
-        list.sort((a, b) {
-          return b.createdAt.compareTo(a.createdAt);
-        });
-        createAnswerEntityList = list;
-        createAnswerScrollController.addListener(() {
-          final maxScrollExtent =
-              createAnswerScrollController.position.maxScrollExtent;
-          final currentPosition = createAnswerScrollController.position.pixels;
-          if (maxScrollExtent > 0 &&
-              (maxScrollExtent - 20.0) <= currentPosition) {
-            getCreateAnswers(
-              userId: _userId,
-              lastAnswer: createAnswersController.value.last,
-            );
-          }
-        });
-        createAnswersController.sink.add([]);
-        getCreateAnswers(
-          userId: _userId,
-          lastAnswer: null,
-        );
-      },
-    );
+  // 投稿した回答
+  final BehaviorSubject<Tuple2<List<Answer>, bool>>
+      userCreateAnswersController =
+      BehaviorSubject<Tuple2<List<Answer>, bool>>.seeded(
+    Tuple2<List<Answer>, bool>([], true),
+  );
 
-    favoriteAnswerListSubscription?.cancel();
-    favoriteAnswerListSubscription =
-        _userRepository.getFavoriteAnswersStream(userId: _userId).listen(
-      (list) {
-        list.sort((a, b) {
-          return b.favoredAt.compareTo(a.favoredAt);
-        });
-        favoriteAnswerEntityList = list;
-        favoriteAnswerScrollController.addListener(() {
-          final maxScrollExtent =
-              favoriteAnswerScrollController.position.maxScrollExtent;
-          final currentPosition =
-              favoriteAnswerScrollController.position.pixels;
-          if (maxScrollExtent > 0 &&
-              (maxScrollExtent - 20.0) <= currentPosition) {
-            getFavoriteAnswers(
-              userId: _userId,
-              lastAnswer: favoriteAnswersController.value.last,
-            );
-          }
-        });
-        favoriteAnswersController.sink.add([]);
-        getFavoriteAnswers(
-          userId: _userId,
-          lastAnswer: null,
-        );
-      },
-    );
+  // お気に入り回答
+  final BehaviorSubject<Tuple2<List<Answer>, bool>> userFavorAnswersController =
+      BehaviorSubject<Tuple2<List<Answer>, bool>>.seeded(
+    Tuple2<List<Answer>, bool>([], true),
+  );
 
-    getUser(id: _userId);
-  }
+  Future<void> start() async {
+    userController.stream.listen((User user) {
+      getUserCreateAnswer();
+      getUserFavorAnswer();
+    });
 
-  void getUser({@required String id}) {
-    _userRepository.getUserStream(userId: id).listen(
-      (User user) {
-        userController.sink.add(user);
-      },
-    );
-  }
+    userCreateAnswerScrollController.addListener(
+      () {
+        // 最大スクロール量
+        final maxScrollExtent =
+            userCreateAnswerScrollController.position.maxScrollExtent;
+        // 現在のスクロール量
+        final currentPosition =
+            userCreateAnswerScrollController.position.pixels;
 
-  Future<void> getCreateAnswers(
-      {@required String userId, Answer lastAnswer}) async {
-    var answers = createAnswersController.value;
-    var startIndex = 0;
-    if (lastAnswer != null) {
-      for (var i = 0; i < createAnswerEntityList.length; i++) {
-        if (createAnswerEntityList.elementAt(i).id == lastAnswer.id) {
-          startIndex = i + 1;
+        // ある程度のスクロール量で、読み込み開始
+        if (maxScrollExtent > 0 &&
+            (maxScrollExtent - 300.0) <= currentPosition) {
+          getUserCreateAnswer();
         }
-      }
-    }
-    for (var i = startIndex; i < startIndex + 20; i++) {
-      if (i >= createAnswerEntityList.length) {
-        continue;
-      }
-      final answerEntity = await _answerRepository.getAnswer(
-        id: createAnswerEntityList.elementAt(i).id,
-      );
-      final topic = await _topicRepository.getTopic(id: answerEntity.topicId);
-      final user =
-          await _userRepository.getUser(userId: answerEntity.createdUser);
-      final topicCreatedUser =
-          await _userRepository.getUser(userId: topic.createdUser);
+      },
+    );
 
-      final answer = Answer(
-        id: answerEntity.id,
-        text: answerEntity.text,
-        createdAt: answerEntity.createdAt,
-        rank: answerEntity.rank,
-        topicId: topic.id,
-        topicText: topic.text,
-        topicImageUrl: topic.imageUrl,
-        topicCreatedAt: topic.createdAt,
-        topicCreatedUserId: topicCreatedUser.id,
-        topicCreatedUserName: topicCreatedUser.name,
-        topicCreatedUserImageUrl: topicCreatedUser.imageUrl,
-        createdUserId: user.id,
-        createdUserName: user.name,
-        createdUserImageUrl: user.imageUrl,
-      );
+    // 人気順のスクロールを検知
+    userFavorAnswerScrollController.addListener(
+      () {
+        // 最大スクロール量
+        final maxScrollExtent =
+            userFavorAnswerScrollController.position.maxScrollExtent;
+        // 現在のスクロール量
+        final currentPosition = userFavorAnswerScrollController.position.pixels;
 
-      answers.add(answer);
-    }
-    createAnswersController.sink.add(answers);
+        // ある程度のスクロール量で、読み込み開始
+        if (maxScrollExtent > 0 &&
+            (maxScrollExtent - 300.0) <= currentPosition) {
+          getUserFavorAnswer();
+        }
+      },
+    );
+
+    await _userRepository.getUser(userId: _userId).then((User user) {
+      userController.sink.add(user);
+    });
   }
 
-  Future<void> getFavoriteAnswers(
-      {@required String userId, Answer lastAnswer}) async {
-    var answers = favoriteAnswersController.value;
-    var startIndex = 0;
-    if (lastAnswer != null) {
-      for (var i = 0; i < favoriteAnswerEntityList.length; i++) {
-        if (favoriteAnswerEntityList.elementAt(i).id == lastAnswer.id) {
-          startIndex = i + 1;
-        }
+  // dateTimeよりも古い回答を取得
+  Future<void> getUserCreateAnswer() async {
+    try {
+      // 読込中は何もしない
+      if (isUserCreateAnswerLoading) {
+        return;
       }
-    }
-    for (var i = startIndex; i < startIndex + 20; i++) {
-      if (i >= favoriteAnswerEntityList.length) {
-        continue;
-      }
-      final answerEntity = await _answerRepository.getAnswer(
-        id: favoriteAnswerEntityList.elementAt(i).id,
-      );
-      final topic = await _topicRepository.getTopic(id: answerEntity.topicId);
-      final user =
-          await _userRepository.getUser(userId: answerEntity.createdUser);
-      final topicCreatedUser =
-          await _userRepository.getUser(userId: topic.createdUser);
 
-      final answer = Answer(
-        id: answerEntity.id,
-        text: answerEntity.text,
-        createdAt: answerEntity.createdAt,
-        rank: answerEntity.rank,
-        topicId: topic.id,
-        topicText: topic.text,
-        topicImageUrl: topic.imageUrl,
-        topicCreatedAt: topic.createdAt,
-        topicCreatedUserId: topicCreatedUser.id,
-        topicCreatedUserName: topicCreatedUser.name,
-        topicCreatedUserImageUrl: topicCreatedUser.imageUrl,
-        createdUserId: user.id,
-        createdUserName: user.name,
-        createdUserImageUrl: user.imageUrl,
+      if (userController.value == null) {
+        return;
+      }
+
+      // 読込中に設定
+      isUserCreateAnswerLoading = true;
+
+      // 取得済みの回答をセット
+      final answers = userCreateAnswersController.value.item1;
+
+      // 回答取得のためのパラメータを生成
+      final getUserCreateAnswerListParameter = GetUserCreateAnswerListParameter(
+        userId: userController.value.id,
+        createdAt: answers.isNotEmpty ? answers.last.answerCreatedAt : null,
       );
 
-      answers.add(answer);
+      // 回答を取得
+      final getUserCreateAnswerListResponse =
+          await _sampleRepository.getUserCreateAnswerList(
+        parameter: getUserCreateAnswerListParameter,
+      );
+
+      // 回答のお題や投稿者を取得
+      for (var answer in getUserCreateAnswerListResponse.answers) {
+        final getAnswerParameter = GetAnswerParameter(
+          id: answer.answerId,
+        );
+        final answerDetail =
+            await _sampleRepository.getAnswer(parameter: getAnswerParameter);
+        final topic =
+            await _topicRepository.getTopic(id: answerDetail.answer.topicId);
+        final user = await _userRepository.getUser(
+            userId: answerDetail.answer.answerCreatedUserId);
+        final topicCreatedUser =
+            await _userRepository.getUser(userId: topic.createdUser);
+
+        answer
+          ..answerId = answerDetail.answer.answerId
+          ..answerText = answerDetail.answer.answerText
+          ..answerCreatedAt = answerDetail.answer.answerCreatedAt
+          ..answerPoint = answerDetail.answer.answerPoint
+          ..topicId = answerDetail.answer.topicId
+          ..answerCreatedUserId = answerDetail.answer.answerCreatedUserId
+          ..topicText = topic.text
+          ..topicImageUrl = topic.imageUrl
+          ..topicCreatedAt = topic.createdAt
+          ..topicCreatedUserId = topic.createdUser
+          ..answerCreatedUserName = user.name
+          ..answerCreatedUserImageUrl = user.imageUrl
+          ..topicCreatedUserName = topicCreatedUser.name
+          ..topicCreatedUserImageUrl = topicCreatedUser.imageUrl;
+
+        answers.add(answer);
+      }
+
+      // Sinkにイベントを流す
+      userCreateAnswersController.sink.add(
+        Tuple2<List<Answer>, bool>(
+          answers,
+          getUserCreateAnswerListResponse.hasNext,
+        ),
+      );
+
+      // 通信終了
+      isUserCreateAnswerLoading = false;
     }
-    favoriteAnswersController.sink.add(answers);
+    // エラー時
+    on Exception catch (error) {
+      print(error.toString());
+      isUserCreateAnswerLoading = false;
+      return;
+    }
+  }
+
+  // userIdがお気に入りした、dateTimeよりも古い回答を取得
+  Future<void> getUserFavorAnswer() async {
+    try {
+      // 読込中は何もしない
+      if (isUserFavorAnswerLoading) {
+        return;
+      }
+
+      if (userController.value == null) {
+        return;
+      }
+
+      // 読込中に設定
+      isUserFavorAnswerLoading = true;
+
+      // 取得済みの回答をセット
+      final answers = userFavorAnswersController.value.item1;
+
+      // 回答取得のためのパラメータを生成
+      final getUserFavorAnswerListParameter = GetUserFavorAnswerListParameter(
+        userId: userController.value.id,
+        favorAt: answers.isNotEmpty ? answers.last.answerFavoredAt : null,
+      );
+
+      // 回答を取得
+      final getUserFavorAnswerListResponse =
+          await _sampleRepository.getUserFavorAnswerList(
+        parameter: getUserFavorAnswerListParameter,
+      );
+
+      // 回答のお題や投稿者を取得
+      for (var answer in getUserFavorAnswerListResponse.answers) {
+        final getAnswerParameter = GetAnswerParameter(
+          id: answer.answerId,
+        );
+        final answerDetail =
+            await _sampleRepository.getAnswer(parameter: getAnswerParameter);
+        final topic =
+            await _topicRepository.getTopic(id: answerDetail.answer.topicId);
+        final user = await _userRepository.getUser(
+            userId: answerDetail.answer.answerCreatedUserId);
+        final topicCreatedUser =
+            await _userRepository.getUser(userId: topic.createdUser);
+
+        answer
+          ..answerId = answerDetail.answer.answerId
+          ..answerText = answerDetail.answer.answerText
+          ..answerCreatedAt = answerDetail.answer.answerCreatedAt
+          ..answerFavoredAt = answer.answerFavoredAt
+          ..answerPoint = answerDetail.answer.answerPoint
+          ..topicId = answerDetail.answer.topicId
+          ..answerCreatedUserId = answerDetail.answer.answerCreatedUserId
+          ..topicText = topic.text
+          ..topicImageUrl = topic.imageUrl
+          ..topicCreatedAt = topic.createdAt
+          ..topicCreatedUserId = topic.createdUser
+          ..answerCreatedUserName = user.name
+          ..answerCreatedUserImageUrl = user.imageUrl
+          ..topicCreatedUserName = topicCreatedUser.name
+          ..topicCreatedUserImageUrl = topicCreatedUser.imageUrl;
+
+        answers.add(answer);
+      }
+
+      // Sinkにイベントを流す
+      userFavorAnswersController.sink.add(
+        Tuple2<List<Answer>, bool>(
+          answers,
+          getUserFavorAnswerListResponse.hasNext,
+        ),
+      );
+
+      // 通信終了
+      isUserFavorAnswerLoading = false;
+    }
+    // エラー時
+    on Exception catch (error) {
+      print(error.toString());
+      isUserFavorAnswerLoading = false;
+      return;
+    }
+  }
+
+  // 投稿した回答再読み込み
+  Future<void> userCreateAnswerControllerReset() async {
+    userCreateAnswersController.sink.add(Tuple2<List<Answer>, bool>([], false));
+    await getUserCreateAnswer();
+  }
+
+  // お気に入り回答再読み込み
+  Future<void> userFavorAnswerControllerReset() async {
+    userFavorAnswersController.sink.add(Tuple2<List<Answer>, bool>([], false));
+    await getUserFavorAnswer();
   }
 
   Future<void> dispose() async {
     await userController.close();
-    await createAnswersController.close();
-    await favoriteAnswersController.close();
+    await userCreateAnswersController.close();
+    await userFavorAnswersController.close();
   }
 }

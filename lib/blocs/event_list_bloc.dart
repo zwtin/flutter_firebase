@@ -63,7 +63,7 @@ class EventListBloc {
         // ある程度のスクロール量で、読み込み開始
         if (maxScrollExtent > 0 &&
             (maxScrollExtent - 300.0) <= currentPosition) {
-          getNewAnswer(newAnswerController.value.item1.last?.createdAt);
+          getNewAnswer();
         }
       },
     );
@@ -80,20 +80,20 @@ class EventListBloc {
         // ある程度のスクロール量で、読み込み開始
         if (maxScrollExtent > 0 &&
             (maxScrollExtent - 300.0) <= currentPosition) {
-          getPopularAnswer(popularAnswerController.value.item1.last?.rank);
+          getPopularAnswer();
         }
       },
     );
 
     // 新着順を取得
-    await getNewAnswer(null);
+    await getNewAnswer();
 
     // 人気順を取得
-    await getPopularAnswer(null);
+    await getPopularAnswer();
   }
 
-  // dateTimeよりも古い回答を取得
-  Future<void> getNewAnswer(DateTime dateTime) async {
+  // 一番古い回答よりも古い回答を取得
+  Future<void> getNewAnswer() async {
     try {
       // 読込中は何もしない
       if (isNewAnswerLoading) {
@@ -108,7 +108,7 @@ class EventListBloc {
 
       // 回答取得のためのパラメータを生成
       final getNewAnswerListParameter = GetNewAnswerListParameter(
-        createdAt: dateTime,
+        createdAt: answers.isNotEmpty ? answers.last.answerCreatedAt : null,
       );
 
       // 回答を取得
@@ -117,29 +117,28 @@ class EventListBloc {
       );
 
       // 回答のお題や投稿者を取得
-      for (final answerEntity in getNewAnswerListResponse.answers) {
-        final topic = await _topicRepository.getTopic(id: answerEntity.topicId);
-        final user =
-            await _userRepository.getUser(userId: answerEntity.createdUser);
+      for (var answer in getNewAnswerListResponse.answers) {
+        final topic = await _topicRepository.getTopic(id: answer.topicId);
+        final createUser =
+            await _userRepository.getUser(userId: answer.answerCreatedUserId);
         final topicCreatedUser =
             await _userRepository.getUser(userId: topic.createdUser);
 
-        final answer = Answer(
-          id: answerEntity.id,
-          text: answerEntity.text,
-          createdAt: answerEntity.createdAt,
-          rank: answerEntity.rank,
-          topicId: topic.id,
-          topicText: topic.text,
-          topicImageUrl: topic.imageUrl,
-          topicCreatedAt: topic.createdAt,
-          topicCreatedUserId: topicCreatedUser.id,
-          topicCreatedUserName: topicCreatedUser.name,
-          topicCreatedUserImageUrl: topicCreatedUser.imageUrl,
-          createdUserId: user.id,
-          createdUserName: user.name,
-          createdUserImageUrl: user.imageUrl,
-        );
+        answer
+          ..answerId = answer.answerId
+          ..answerText = answer.answerText
+          ..answerCreatedAt = answer.answerCreatedAt
+          ..answerPoint = answer.answerPoint
+          ..topicId = answer.topicId
+          ..answerCreatedUserId = answer.answerCreatedUserId
+          ..topicText = topic.text
+          ..topicImageUrl = topic.imageUrl
+          ..topicCreatedAt = topic.createdAt
+          ..topicCreatedUserId = topic.createdUser
+          ..answerCreatedUserName = createUser.name
+          ..answerCreatedUserImageUrl = createUser.imageUrl
+          ..topicCreatedUserName = topicCreatedUser.name
+          ..topicCreatedUserImageUrl = topicCreatedUser.imageUrl;
 
         answers.add(answer);
       }
@@ -163,8 +162,8 @@ class EventListBloc {
     }
   }
 
-  // rankよりも低い回答を取得
-  Future<void> getPopularAnswer(int rank) async {
+  // 一番低いrankよりも低い回答を取得
+  Future<void> getPopularAnswer() async {
     try {
       // 読込中は何もしない
       if (isPopularAnswerLoading) {
@@ -179,7 +178,7 @@ class EventListBloc {
 
       // 回答取得のためのパラメータを生成
       final getPopularAnswerListParameter = GetPopularAnswerListParameter(
-        rank: rank,
+        rank: answers.isNotEmpty ? answers.last.answerPoint : null,
       );
 
       // 回答を取得
@@ -189,29 +188,28 @@ class EventListBloc {
       );
 
       // 回答のお題や投稿者を取得
-      for (final answerEntity in getPopularAnswerListResponse.answers) {
-        final topic = await _topicRepository.getTopic(id: answerEntity.topicId);
+      for (var answer in getPopularAnswerListResponse.answers) {
+        final topic = await _topicRepository.getTopic(id: answer.topicId);
         final user =
-            await _userRepository.getUser(userId: answerEntity.createdUser);
+            await _userRepository.getUser(userId: answer.answerCreatedUserId);
         final topicCreatedUser =
             await _userRepository.getUser(userId: topic.createdUser);
 
-        final answer = Answer(
-          id: answerEntity.id,
-          text: answerEntity.text,
-          createdAt: answerEntity.createdAt,
-          rank: answerEntity.rank,
-          topicId: topic.id,
-          topicText: topic.text,
-          topicImageUrl: topic.imageUrl,
-          topicCreatedAt: topic.createdAt,
-          topicCreatedUserId: topicCreatedUser.id,
-          topicCreatedUserName: topicCreatedUser.name,
-          topicCreatedUserImageUrl: topicCreatedUser.imageUrl,
-          createdUserId: user.id,
-          createdUserName: user.name,
-          createdUserImageUrl: user.imageUrl,
-        );
+        answer
+          ..answerId = answer.answerId
+          ..answerText = answer.answerText
+          ..answerCreatedAt = answer.answerCreatedAt
+          ..answerPoint = answer.answerPoint
+          ..topicId = answer.topicId
+          ..answerCreatedUserId = answer.answerCreatedUserId
+          ..topicText = topic.text
+          ..topicImageUrl = topic.imageUrl
+          ..topicCreatedAt = topic.createdAt
+          ..topicCreatedUserId = topic.createdUser
+          ..answerCreatedUserName = user.name
+          ..answerCreatedUserImageUrl = user.imageUrl
+          ..topicCreatedUserName = topicCreatedUser.name
+          ..topicCreatedUserImageUrl = topicCreatedUser.imageUrl;
 
         answers.add(answer);
       }
@@ -237,12 +235,12 @@ class EventListBloc {
 
   Future<void> newAnswerControllerReset() async {
     newAnswerController.sink.add(Tuple2<List<Answer>, bool>([], false));
-    await getNewAnswer(null);
+    await getNewAnswer();
   }
 
   Future<void> popularAnswerControllerReset() async {
     popularAnswerController.sink.add(Tuple2<List<Answer>, bool>([], false));
-    await getPopularAnswer(null);
+    await getPopularAnswer();
   }
 
   Future<void> dispose() async {

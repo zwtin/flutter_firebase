@@ -78,6 +78,7 @@ class TabBloc {
                 FirestoreTopicRepository(),
                 FirestorePushNotificationRepository(),
                 FirebaseAuthenticationRepository(),
+                FirestoreSampleRepository(),
               );
             },
 

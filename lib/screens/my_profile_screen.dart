@@ -5,6 +5,7 @@ import 'package:flutter_firebase/blocs/sign_in_bloc.dart';
 import 'package:flutter_firebase/blocs/my_profile_bloc.dart';
 import 'package:flutter_firebase/blocs/sign_up_bloc.dart';
 import 'package:flutter_firebase/blocs/tab_bloc.dart';
+import 'package:flutter_firebase/models/firestore_sample_repository.dart';
 import 'package:flutter_firebase/use_cases/answer.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/models/firebase_storage_repository.dart';
@@ -28,6 +29,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_firebase/common/string_extension.dart';
 import 'package:flutter_firebase/blocs/image_detail_bloc.dart';
 import 'package:flutter_firebase/screens/image_detail_screen.dart';
+import 'package:tuple/tuple.dart';
 
 class MyProfileScreen extends StatelessWidget {
   @override
@@ -331,352 +333,432 @@ class MyProfileScreen extends StatelessWidget {
                 // タブ画面
                 body: TabBarView(
                   children: <Widget>[
-                    // Streamを監視するWidget
-                    StreamBuilder(
-                      // 監視するStream
-                      stream: myProfileBloc.createAnswersController.stream,
+                    // タブ0: リフレッシュスクロール画面
+                    RefreshIndicator(
+                      color: const Color(0xFFFFCC00),
 
-                      // イベントを検知したときに返す中身
-                      builder: (BuildContext context,
-                          AsyncSnapshot<List<Answer>> snapshot) {
-                        return Container(
-                          color: const Color(0xFFFFCC00),
+                      // 引き下げて更新時
+                      onRefresh: myProfileBloc.userCreateAnswerControllerReset,
 
-                          // リスト表示
-                          child: ListView.builder(
-                            itemBuilder: (BuildContext context, int index) {
-                              return Card(
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute<EventDetailScreen>(
-                                        builder: (BuildContext context) {
-                                          return Provider<EventDetailBloc>(
-                                            create: (BuildContext context) {
-                                              return EventDetailBloc(
-                                                snapshot.data.elementAt(index),
-                                                FirestoreLikeRepository(),
-                                                FirestoreFavoriteRepository(),
-                                                FirebaseAuthenticationRepository(),
-                                              );
-                                            },
-                                            dispose: (BuildContext context,
-                                                EventDetailBloc bloc) {
-                                              bloc.dispose();
-                                            },
-                                            child: EventDetailScreen(),
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Container(
-                                        height: 16,
-                                      ),
-                                      Row(
-                                        children: <Widget>[
-                                          Container(
-                                            width: 16,
-                                          ),
-                                          InkWell(
-                                            onTap: () {
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute<
-                                                    ProfileScreen>(
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return Provider<
-                                                        ProfileBloc>(
-                                                      create: (BuildContext
-                                                          context) {
-                                                        return ProfileBloc(
-                                                          snapshot.data
-                                                              .elementAt(index)
-                                                              .topicCreatedUserId,
-                                                          FirestoreUserRepository(),
-                                                          FirestoreAnswerRepository(),
-                                                          FirestoreTopicRepository(),
-                                                        );
-                                                      },
-                                                      dispose: (BuildContext
-                                                              context,
-                                                          ProfileBloc bloc) {
-                                                        bloc.dispose();
-                                                      },
-                                                      child: ProfileScreen(),
-                                                    );
-                                                  },
-                                                ),
-                                              );
-                                            },
-                                            child: Row(
-                                              children: <Widget>[
-                                                ClipOval(
-                                                  child: SizedBox(
-                                                    width: 44,
-                                                    height: 44,
-                                                    child: CachedNetworkImage(
-                                                      placeholder:
-                                                          (context, url) =>
-                                                              const Center(
-                                                        child:
-                                                            CircularProgressIndicator(),
-                                                      ),
-                                                      imageUrl: snapshot.data
-                                                          .elementAt(index)
-                                                          .topicCreatedUserImageUrl,
-                                                      errorWidget: (context,
-                                                              url,
-                                                              dynamic error) =>
-                                                          Image.asset(
-                                                              'assets/icon/no_image.jpg'),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Container(
-                                                  width: 10,
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    Text(
-                                                        '${StringExtension.getJPStringFromDateTime(snapshot.data.elementAt(index).topicCreatedAt)}'),
-                                                    Text(
-                                                        '${snapshot.data.elementAt(index).topicCreatedUserName} さんからのお題：'),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.all(16),
-                                        child: Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            snapshot.data
-                                                .elementAt(index)
-                                                .topicText,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 22,
-                                            ),
-                                          ),
+                      // 表示画面
+                      child: Scrollbar(
+                        // Streamを監視するWidget
+                        child: StreamBuilder(
+                          // 監視するStream
+                          stream:
+                              myProfileBloc.userCreateAnswersController.stream,
+
+                          // イベントを検知したときに返す中身
+                          builder: (BuildContext context,
+                              AsyncSnapshot<Tuple2<List<Answer>, bool>>
+                                  snapshot) {
+                            return Container(
+                              color: const Color(0xFFFFCC00),
+
+                              // リスト表示
+                              child: ListView.builder(
+                                itemBuilder: (BuildContext context, int index) {
+                                  if (index == snapshot.data.item1.length) {
+                                    return Container(
+                                      height: 100,
+                                      child: const Center(
+                                        child: SizedBox(
+                                          width: 30,
+                                          height: 30,
+                                          child: CircularProgressIndicator(),
                                         ),
                                       ),
-                                      snapshot.data
-                                              .elementAt(index)
-                                              .topicImageUrl
-                                              .isEmpty
-                                          ? Container()
-                                          : Padding(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      16, 0, 16, 16),
-                                              child: CachedNetworkImage(
-                                                placeholder: (context, url) =>
-                                                    const Center(
-                                                  child:
-                                                      CircularProgressIndicator(),
+                                    );
+                                  }
+                                  return Card(
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute<EventDetailScreen>(
+                                            builder: (BuildContext context) {
+                                              return Provider<EventDetailBloc>(
+                                                create: (BuildContext context) {
+                                                  return EventDetailBloc(
+                                                    snapshot.data.item1
+                                                        .elementAt(index),
+                                                    FirestoreLikeRepository(),
+                                                    FirestoreFavoriteRepository(),
+                                                    FirebaseAuthenticationRepository(),
+                                                  );
+                                                },
+                                                dispose: (BuildContext context,
+                                                    EventDetailBloc bloc) {
+                                                  bloc.dispose();
+                                                },
+                                                child: EventDetailScreen(),
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Container(
+                                            height: 16,
+                                          ),
+                                          Row(
+                                            children: <Widget>[
+                                              Container(
+                                                width: 16,
+                                              ),
+                                              InkWell(
+                                                onTap: () {
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute<
+                                                        ProfileScreen>(
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return Provider<
+                                                            ProfileBloc>(
+                                                          create: (BuildContext
+                                                              context) {
+                                                            return ProfileBloc(
+                                                              snapshot
+                                                                  .data.item1
+                                                                  .elementAt(
+                                                                      index)
+                                                                  .topicCreatedUserId,
+                                                              FirestoreUserRepository(),
+                                                              FirestoreAnswerRepository(),
+                                                              FirestoreTopicRepository(),
+                                                              FirestoreSampleRepository(),
+                                                            );
+                                                          },
+                                                          dispose: (BuildContext
+                                                                  context,
+                                                              ProfileBloc
+                                                                  bloc) {
+                                                            bloc.dispose();
+                                                          },
+                                                          child:
+                                                              ProfileScreen(),
+                                                        );
+                                                      },
+                                                    ),
+                                                  );
+                                                },
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    ClipOval(
+                                                      child: SizedBox(
+                                                        width: 44,
+                                                        height: 44,
+                                                        child:
+                                                            CachedNetworkImage(
+                                                          placeholder:
+                                                              (context, url) =>
+                                                                  const Center(
+                                                            child:
+                                                                CircularProgressIndicator(),
+                                                          ),
+                                                          imageUrl: snapshot
+                                                              .data.item1
+                                                              .elementAt(index)
+                                                              .topicCreatedUserImageUrl,
+                                                          errorWidget: (context,
+                                                                  url,
+                                                                  dynamic
+                                                                      error) =>
+                                                              Image.asset(
+                                                                  'assets/icon/no_image.jpg'),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      width: 10,
+                                                    ),
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: <Widget>[
+                                                        Text(
+                                                            '${StringExtension.getJPStringFromDateTime(snapshot.data.item1.elementAt(index).topicCreatedAt)}'),
+                                                        Text(
+                                                            '${snapshot.data.item1.elementAt(index).topicCreatedUserName} さんからのお題：'),
+                                                      ],
+                                                    ),
+                                                  ],
                                                 ),
-                                                imageUrl: snapshot.data
+                                              ),
+                                            ],
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.all(16),
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                snapshot.data.item1
                                                     .elementAt(index)
-                                                    .topicImageUrl,
-                                                errorWidget: (context, url,
-                                                        dynamic error) =>
-                                                    Image.asset(
-                                                        'assets/icon/no_image.jpg'),
+                                                    .topicText,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 22,
+                                                ),
                                               ),
                                             ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                            itemCount:
-                                snapshot.hasData ? snapshot.data.length : 0,
-                          ),
-                        );
-                      },
+                                          ),
+                                          snapshot.data.item1
+                                                  .elementAt(index)
+                                                  .topicImageUrl
+                                                  .isEmpty
+                                              ? Container()
+                                              : Padding(
+                                                  padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                          16, 0, 16, 16),
+                                                  child: CachedNetworkImage(
+                                                    placeholder:
+                                                        (context, url) =>
+                                                            const Center(
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    ),
+                                                    imageUrl: snapshot
+                                                        .data.item1
+                                                        .elementAt(index)
+                                                        .topicImageUrl,
+                                                    errorWidget: (context, url,
+                                                            dynamic error) =>
+                                                        Image.asset(
+                                                            'assets/icon/no_image.jpg'),
+                                                  ),
+                                                ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                itemCount: snapshot.data.item2
+                                    ? snapshot.data.item1.length + 1
+                                    : snapshot.data.item1.length,
+                                controller: myProfileBloc
+                                    .userCreateAnswerScrollController,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ),
 
-                    // Streamを監視するWidget
-                    StreamBuilder(
-                      // 監視するStream
-                      stream: myProfileBloc.favoriteAnswersController.stream,
+                    // タブ1: リフレッシュスクロール画面
+                    RefreshIndicator(
+                      color: const Color(0xFFFFCC00),
 
-                      // イベントを検知したときに返す中身
-                      builder: (BuildContext context,
-                          AsyncSnapshot<List<Answer>> snapshot) {
-                        return Container(
-                          color: const Color(0xFFFFCC00),
+                      // 引き下げて更新時
+                      onRefresh: myProfileBloc.userFavorAnswerControllerReset,
 
-                          // リスト表示
-                          child: ListView.builder(
-                            itemBuilder: (BuildContext context, int index) {
-                              return Card(
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute<EventDetailScreen>(
-                                        builder: (BuildContext context) {
-                                          return Provider<EventDetailBloc>(
-                                            create: (BuildContext context) {
-                                              return EventDetailBloc(
-                                                snapshot.data.elementAt(index),
-                                                FirestoreLikeRepository(),
-                                                FirestoreFavoriteRepository(),
-                                                FirebaseAuthenticationRepository(),
-                                              );
-                                            },
-                                            dispose: (BuildContext context,
-                                                EventDetailBloc bloc) {
-                                              bloc.dispose();
-                                            },
-                                            child: EventDetailScreen(),
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Container(
-                                        height: 16,
-                                      ),
-                                      Row(
-                                        children: <Widget>[
-                                          Container(
-                                            width: 16,
-                                          ),
-                                          InkWell(
-                                            onTap: () {
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute<
-                                                    ProfileScreen>(
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return Provider<
-                                                        ProfileBloc>(
-                                                      create: (BuildContext
-                                                          context) {
-                                                        return ProfileBloc(
-                                                          snapshot.data
-                                                              .elementAt(index)
-                                                              .topicCreatedUserId,
-                                                          FirestoreUserRepository(),
-                                                          FirestoreAnswerRepository(),
-                                                          FirestoreTopicRepository(),
-                                                        );
-                                                      },
-                                                      dispose: (BuildContext
-                                                              context,
-                                                          ProfileBloc bloc) {
-                                                        bloc.dispose();
-                                                      },
-                                                      child: ProfileScreen(),
-                                                    );
-                                                  },
-                                                ),
-                                              );
-                                            },
-                                            child: Row(
-                                              children: <Widget>[
-                                                ClipOval(
-                                                  child: SizedBox(
-                                                    width: 44,
-                                                    height: 44,
-                                                    child: CachedNetworkImage(
-                                                      placeholder:
-                                                          (context, url) =>
-                                                              const Center(
-                                                        child:
-                                                            CircularProgressIndicator(),
-                                                      ),
-                                                      imageUrl: snapshot.data
-                                                          .elementAt(index)
-                                                          .topicCreatedUserImageUrl,
-                                                      errorWidget: (context,
-                                                              url,
-                                                              dynamic error) =>
-                                                          Image.asset(
-                                                              'assets/icon/no_image.jpg'),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Container(
-                                                  width: 10,
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    Text(
-                                                        '${StringExtension.getJPStringFromDateTime(snapshot.data.elementAt(index).topicCreatedAt)}'),
-                                                    Text(
-                                                        '${snapshot.data.elementAt(index).topicCreatedUserName} さんからのお題：'),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.all(16),
-                                        child: Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            snapshot.data
-                                                .elementAt(index)
-                                                .topicText,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 22,
-                                            ),
-                                          ),
+                      // 表示画面
+                      child: Scrollbar(
+                        // Streamを監視するWidget
+                        child: StreamBuilder(
+                          // 監視するStream
+                          stream:
+                              myProfileBloc.userFavorAnswersController.stream,
+
+                          // イベントを検知したときに返す中身
+                          builder: (BuildContext context,
+                              AsyncSnapshot<Tuple2<List<Answer>, bool>>
+                                  snapshot) {
+                            return Container(
+                              color: const Color(0xFFFFCC00),
+
+                              // リスト表示
+                              child: ListView.builder(
+                                itemBuilder: (BuildContext context, int index) {
+                                  if (index == snapshot.data.item1.length) {
+                                    return Container(
+                                      height: 100,
+                                      child: const Center(
+                                        child: SizedBox(
+                                          width: 30,
+                                          height: 30,
+                                          child: CircularProgressIndicator(),
                                         ),
                                       ),
-                                      snapshot.data
-                                              .elementAt(index)
-                                              .topicImageUrl
-                                              .isEmpty
-                                          ? Container()
-                                          : Padding(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      16, 0, 16, 16),
-                                              child: CachedNetworkImage(
-                                                placeholder: (context, url) =>
-                                                    const Center(
-                                                  child:
-                                                      CircularProgressIndicator(),
+                                    );
+                                  }
+                                  return Card(
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute<EventDetailScreen>(
+                                            builder: (BuildContext context) {
+                                              return Provider<EventDetailBloc>(
+                                                create: (BuildContext context) {
+                                                  return EventDetailBloc(
+                                                    snapshot.data.item1
+                                                        .elementAt(index),
+                                                    FirestoreLikeRepository(),
+                                                    FirestoreFavoriteRepository(),
+                                                    FirebaseAuthenticationRepository(),
+                                                  );
+                                                },
+                                                dispose: (BuildContext context,
+                                                    EventDetailBloc bloc) {
+                                                  bloc.dispose();
+                                                },
+                                                child: EventDetailScreen(),
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Container(
+                                            height: 16,
+                                          ),
+                                          Row(
+                                            children: <Widget>[
+                                              Container(
+                                                width: 16,
+                                              ),
+                                              InkWell(
+                                                onTap: () {
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute<
+                                                        ProfileScreen>(
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return Provider<
+                                                            ProfileBloc>(
+                                                          create: (BuildContext
+                                                              context) {
+                                                            return ProfileBloc(
+                                                              snapshot
+                                                                  .data.item1
+                                                                  .elementAt(
+                                                                      index)
+                                                                  .topicCreatedUserId,
+                                                              FirestoreUserRepository(),
+                                                              FirestoreAnswerRepository(),
+                                                              FirestoreTopicRepository(),
+                                                              FirestoreSampleRepository(),
+                                                            );
+                                                          },
+                                                          dispose: (BuildContext
+                                                                  context,
+                                                              ProfileBloc
+                                                                  bloc) {
+                                                            bloc.dispose();
+                                                          },
+                                                          child:
+                                                              ProfileScreen(),
+                                                        );
+                                                      },
+                                                    ),
+                                                  );
+                                                },
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    ClipOval(
+                                                      child: SizedBox(
+                                                        width: 44,
+                                                        height: 44,
+                                                        child:
+                                                            CachedNetworkImage(
+                                                          placeholder:
+                                                              (context, url) =>
+                                                                  const Center(
+                                                            child:
+                                                                CircularProgressIndicator(),
+                                                          ),
+                                                          imageUrl: snapshot
+                                                              .data.item1
+                                                              .elementAt(index)
+                                                              .topicCreatedUserImageUrl,
+                                                          errorWidget: (context,
+                                                                  url,
+                                                                  dynamic
+                                                                      error) =>
+                                                              Image.asset(
+                                                                  'assets/icon/no_image.jpg'),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      width: 10,
+                                                    ),
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: <Widget>[
+                                                        Text(
+                                                            '${StringExtension.getJPStringFromDateTime(snapshot.data.item1.elementAt(index).topicCreatedAt)}'),
+                                                        Text(
+                                                            '${snapshot.data.item1.elementAt(index).topicCreatedUserName} さんからのお題：'),
+                                                      ],
+                                                    ),
+                                                  ],
                                                 ),
-                                                imageUrl: snapshot.data
+                                              ),
+                                            ],
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.all(16),
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                snapshot.data.item1
                                                     .elementAt(index)
-                                                    .topicImageUrl,
-                                                errorWidget: (context, url,
-                                                        dynamic error) =>
-                                                    Image.asset(
-                                                        'assets/icon/no_image.jpg'),
+                                                    .topicText,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 22,
+                                                ),
                                               ),
                                             ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                            itemCount:
-                                snapshot.hasData ? snapshot.data.length : 0,
-                          ),
-                        );
-                      },
+                                          ),
+                                          snapshot.data.item1
+                                                  .elementAt(index)
+                                                  .topicImageUrl
+                                                  .isEmpty
+                                              ? Container()
+                                              : Padding(
+                                                  padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                          16, 0, 16, 16),
+                                                  child: CachedNetworkImage(
+                                                    placeholder:
+                                                        (context, url) =>
+                                                            const Center(
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    ),
+                                                    imageUrl: snapshot
+                                                        .data.item1
+                                                        .elementAt(index)
+                                                        .topicImageUrl,
+                                                    errorWidget: (context, url,
+                                                            dynamic error) =>
+                                                        Image.asset(
+                                                            'assets/icon/no_image.jpg'),
+                                                  ),
+                                                ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                itemCount: snapshot.data.item2
+                                    ? snapshot.data.item1.length + 1
+                                    : snapshot.data.item1.length,
+                                controller: myProfileBloc
+                                    .userFavorAnswerScrollController,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ),
                   ],
                 ),

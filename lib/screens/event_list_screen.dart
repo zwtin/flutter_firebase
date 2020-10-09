@@ -7,6 +7,7 @@ import 'package:flutter_firebase/blocs/new_register_bloc.dart';
 import 'package:flutter_firebase/blocs/post_category_select_bloc.dart';
 import 'package:flutter_firebase/blocs/profile_bloc.dart';
 import 'package:flutter_firebase/common/string_extension.dart';
+import 'package:flutter_firebase/models/firestore_sample_repository.dart';
 import 'package:flutter_firebase/use_cases/answer.dart';
 import 'package:flutter_firebase/models/firebase_authentication_repository.dart';
 import 'package:flutter_firebase/models/firestore_answer_repository.dart';
@@ -227,6 +228,7 @@ class EventListScreen extends StatelessWidget {
                                                       FirestoreUserRepository(),
                                                       FirestoreAnswerRepository(),
                                                       FirestoreTopicRepository(),
+                                                      FirestoreSampleRepository(),
                                                     );
                                                   },
                                                   dispose:
@@ -421,6 +423,7 @@ class EventListScreen extends StatelessWidget {
                                                       FirestoreUserRepository(),
                                                       FirestoreAnswerRepository(),
                                                       FirestoreTopicRepository(),
+                                                      FirestoreSampleRepository(),
                                                     );
                                                   },
                                                   dispose:

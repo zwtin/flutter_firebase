@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/image_detail_bloc.dart';
 import 'package:flutter_firebase/blocs/profile_bloc.dart';
+import 'package:flutter_firebase/models/firestore_sample_repository.dart';
 import 'package:flutter_firebase/use_cases/answer.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_firebase/blocs/event_detail_bloc.dart';
@@ -77,6 +78,7 @@ class EventDetailScreen extends StatelessWidget {
                                                     FirestoreUserRepository(),
                                                     FirestoreAnswerRepository(),
                                                     FirestoreTopicRepository(),
+                                                    FirestoreSampleRepository(),
                                                   );
                                                 },
                                                 dispose: (BuildContext context,
@@ -181,10 +183,12 @@ class EventDetailScreen extends StatelessWidget {
                                               return Provider<ProfileBloc>(
                                                 create: (BuildContext context) {
                                                   return ProfileBloc(
-                                                    snapshot.data.createdUserId,
+                                                    snapshot.data
+                                                        .answerCreatedUserId,
                                                     FirestoreUserRepository(),
                                                     FirestoreAnswerRepository(),
                                                     FirestoreTopicRepository(),
+                                                    FirestoreSampleRepository(),
                                                   );
                                                 },
                                                 dispose: (BuildContext context,
@@ -209,8 +213,8 @@ class EventDetailScreen extends StatelessWidget {
                                                   child:
                                                       CircularProgressIndicator(),
                                                 ),
-                                                imageUrl: snapshot
-                                                    .data.createdUserImageUrl,
+                                                imageUrl: snapshot.data
+                                                    .answerCreatedUserImageUrl,
                                                 errorWidget: (context, url,
                                                         dynamic error) =>
                                                     Image.asset(
@@ -226,9 +230,9 @@ class EventDetailScreen extends StatelessWidget {
                                                 CrossAxisAlignment.start,
                                             children: <Widget>[
                                               Text(
-                                                  '${StringExtension.getJPStringFromDateTime(snapshot.data.createdAt)}'),
+                                                  '${StringExtension.getJPStringFromDateTime(snapshot.data.answerCreatedAt)}'),
                                               Text(
-                                                  '${snapshot.data.createdUserName} さんの回答：'),
+                                                  '${snapshot.data.answerCreatedUserName} さんの回答：'),
                                             ],
                                           ),
                                         ],
@@ -241,7 +245,7 @@ class EventDetailScreen extends StatelessWidget {
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      snapshot.data.text,
+                                      snapshot.data.answerText,
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 22,
