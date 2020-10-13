@@ -61,7 +61,6 @@ class SignInBloc {
         password: passwordController.text,
       );
       final currentUser = await _authenticationRepository.getCurrentUser();
-      await registerDeviceToken();
       popController.sink.add(null);
     } on Exception catch (error) {
       loadingController.sink.add(false);
@@ -84,7 +83,6 @@ class SignInBloc {
       final isExistUser =
           await _userRepository.isExistUser(userId: currentUser.id);
       if (isExistUser) {
-        await registerDeviceToken();
         popController.sink.add(null);
         return;
       } else {
@@ -121,7 +119,6 @@ class SignInBloc {
       final isExistUser =
           await _userRepository.isExistUser(userId: currentUser.id);
       if (isExistUser) {
-        await registerDeviceToken();
         popController.sink.add(null);
         return;
       } else {
@@ -147,20 +144,6 @@ class SignInBloc {
         onPress: null,
       );
       alertController.sink.add(errorAlert);
-    }
-  }
-
-  Future<void> registerDeviceToken() async {
-    try {
-      _firebaseMessaging.requestNotificationPermissions();
-      final token = await _firebaseMessaging.getToken();
-      final currentUser = await _authenticationRepository.getCurrentUser();
-      await _pushNotificationRepository.registerDeviceToken(
-        userId: currentUser.id,
-        deviceToken: token,
-      );
-    } on Exception catch (error) {
-      return;
     }
   }
 

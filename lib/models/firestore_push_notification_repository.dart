@@ -20,9 +20,19 @@ class FirestorePushNotificationRepository
             .collection('device_token')
             .where('token', isEqualTo: deviceToken)
             .getDocuments();
-        final isRegisterd = querySnapshot.documents.isNotEmpty;
-        if (isRegisterd) {
-          return null;
+
+        try {
+          for (final ref in querySnapshot.documents) {
+            final data = await transaction.get(ref.reference);
+            if (data.exists) {
+              return;
+            }
+          }
+        }
+        // エラー時
+        on Exception catch (error) {
+          print(error.toString());
+          return;
         }
 
         // 登録されていなければ登録
@@ -40,7 +50,7 @@ class FirestorePushNotificationRepository
           ref,
           registerData,
         );
-        return null;
+        return;
       },
     );
   }
@@ -50,19 +60,25 @@ class FirestorePushNotificationRepository
     @required String userId,
     @required String deviceToken,
   }) async {
-    await _firestore.runTransaction(
-      (transaction) async {
-        final querySnapshot = await _firestore
-            .collection('users')
-            .document(userId)
-            .collection('device_token')
-            .where('token', isEqualTo: deviceToken)
-            .getDocuments();
-        for (final ref in querySnapshot.documents) {
-          await transaction.delete(ref.reference);
-        }
-        return null;
-      },
-    );
+    final batch = _firestore.batch();
+
+    final querySnapshot = await _firestore
+        .collection('users')
+        .document(userId)
+        .collection('device_token')
+        .where('token', isEqualTo: deviceToken)
+        .getDocuments();
+    for (final ref in querySnapshot.documents) {
+      batch.delete(ref.reference);
+    }
+
+    try {
+      await batch.commit();
+    }
+    // エラー時
+    on Exception catch (error) {
+      print(error.toString());
+      return;
+    }
   }
 }

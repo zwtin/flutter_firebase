@@ -219,6 +219,11 @@ class ProfileScreen extends StatelessWidget {
                           builder: (BuildContext context,
                               AsyncSnapshot<Tuple2<List<Answer>, bool>>
                                   snapshot) {
+                            if (!snapshot.hasData) {
+                              return Container(
+                                color: const Color(0xFFFFCC00),
+                              );
+                            }
                             return Container(
                               color: const Color(0xFFFFCC00),
 
@@ -432,6 +437,11 @@ class ProfileScreen extends StatelessWidget {
                           builder: (BuildContext context,
                               AsyncSnapshot<Tuple2<List<Answer>, bool>>
                                   snapshot) {
+                            if (!snapshot.hasData) {
+                              return Container(
+                                color: const Color(0xFFFFCC00),
+                              );
+                            }
                             return Container(
                               color: const Color(0xFFFFCC00),
 

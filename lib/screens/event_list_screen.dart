@@ -158,6 +158,11 @@ class EventListScreen extends StatelessWidget {
                   // イベントを検知したときに返す中身
                   builder: (BuildContext context,
                       AsyncSnapshot<Tuple2<List<Answer>, bool>> snapshot) {
+                    if (!snapshot.hasData) {
+                      return Container(
+                        color: const Color(0xFFFFCC00),
+                      );
+                    }
                     return Container(
                       color: const Color(0xFFFFCC00),
 
@@ -353,6 +358,11 @@ class EventListScreen extends StatelessWidget {
                   // イベントを検知したときに返す中身
                   builder: (BuildContext context,
                       AsyncSnapshot<Tuple2<List<Answer>, bool>> snapshot) {
+                    if (!snapshot.hasData) {
+                      return Container(
+                        color: const Color(0xFFFFCC00),
+                      );
+                    }
                     return Container(
                       color: const Color(0xFFFFCC00),
 
