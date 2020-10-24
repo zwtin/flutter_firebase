@@ -14,7 +14,7 @@ description: A new Flutter application.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -52,6 +52,8 @@ dependencies:
   provider: ^4.0.5
   sweetalert: ^0.0.1
   tuple: ^1.0.3
+  eva_icons_flutter: ^2.0.1
+  flutter_image_compress: ^0.7.0
 
 dev_dependencies:
   flutter_test:

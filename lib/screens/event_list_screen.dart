@@ -117,7 +117,7 @@ class EventListScreen extends StatelessWidget {
       child: Scaffold(
         // ナビゲーションバー
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'ホーム',
             style: TextStyle(
               color: Colors.white,
@@ -567,7 +567,7 @@ class EventListScreen extends StatelessWidget {
               ),
             );
           },
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
           backgroundColor: const Color(0xFFFFCC00),
           foregroundColor: Colors.white,
         ),

@@ -124,7 +124,7 @@ class MyProfileScreen extends StatelessWidget {
           return Scaffold(
             // ナビゲーションバー
             appBar: AppBar(
-              title: Text(
+              title: const Text(
                 'マイページ',
                 style: TextStyle(
                   color: Colors.white,
@@ -144,7 +144,7 @@ class MyProfileScreen extends StatelessWidget {
               // ナビゲーションバーの右上のボタン
               actions: <Widget>[
                 IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.menu,
                     color: Colors.white,
                   ),
@@ -274,7 +274,7 @@ class MyProfileScreen extends StatelessWidget {
                                         children: <Widget>[
                                           Text(
                                             userSnapshot.data.name,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
                                               fontSize: 18,
@@ -282,7 +282,7 @@ class MyProfileScreen extends StatelessWidget {
                                           ),
                                           Text(
                                             userSnapshot.data.introduction,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -502,7 +502,7 @@ class MyProfileScreen extends StatelessWidget {
                                                 snapshot.data.item1
                                                     .elementAt(index)
                                                     .topicText,
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 22,
                                                 ),

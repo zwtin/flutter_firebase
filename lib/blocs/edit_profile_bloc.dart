@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -10,6 +11,8 @@ import 'package:flutter_firebase/repositories/user_repository.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:flutter_firebase/use_cases/alert.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 class EditProfileBloc {
   EditProfileBloc(
@@ -32,10 +35,17 @@ class EditProfileBloc {
   final BehaviorSubject<bool> loadingController =
       BehaviorSubject<bool>.seeded(false);
 
-  final BehaviorSubject<File> imageFileController =
-      BehaviorSubject<File>.seeded(null);
+  // 画像URL（すでに設定されている画像を表示する用）
   final BehaviorSubject<String> imageController =
       BehaviorSubject<String>.seeded('');
+  // 画像ファイル（フォトギャラリーから選択された画像を表示する用）
+  final BehaviorSubject<File> imageFileController =
+      BehaviorSubject<File>.seeded(null);
+
+  // アラート表示用
+  final PublishSubject<Alert> alertController = PublishSubject<Alert>();
+  // 前画面へ戻る
+  final PublishSubject<void> popController = PublishSubject<void>();
 
   Future<void> start() async {
     try {
@@ -43,11 +53,7 @@ class EditProfileBloc {
       final user = await _userRepository.getUser(userId: currentUser.id);
       nameController.text = user.name;
       introductionController.text = user.introduction;
-      final imageUrl = await FirebaseStorage.instance
-          .ref()
-          .child(user.imageUrl)
-          .getDownloadURL() as String;
-      imageController.sink.add(imageUrl);
+      imageController.sink.add(user.imageUrl);
     } on Exception catch (error) {
       return;
     }
@@ -82,16 +88,33 @@ class EditProfileBloc {
       );
     }
     loadingController.sink.add(false);
+    var alert = Alert(
+      title: '投稿完了',
+      subtitle: 'プロフィールを更新しました',
+      style: SweetAlertStyle.success,
+      showCancelButton: false,
+      onPress: (bool isConfirm) {
+        popController.sink.add(null);
+        return true;
+      },
+    );
+    alertController.sink.add(alert);
   }
 
   Future<void> getImage() async {
     final imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+    if (imageFile == null) {
+      return;
+    }
     imageFileController.sink.add(imageFile);
+    imageController.sink.add(null);
   }
 
   Future<void> dispose() async {
     await loadingController.close();
     await imageController.close();
     await imageFileController.close();
+    await alertController.close();
+    await popController.close();
   }
 }
