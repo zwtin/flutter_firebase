@@ -60,45 +60,82 @@ class EditProfileBloc {
   }
 
   Future<void> updateProfile() async {
-    loadingController.sink.add(true);
-    final currentUser = await _authenticationRepository.getCurrentUser();
-    final user = await _userRepository.getUser(userId: currentUser.id);
-
-    if (imageFileController.value == null) {
-      await _userRepository.updateUser(
-        userId: currentUser.id,
-        newUser: User(
-          id: user.id,
-          name: nameController.text,
-          introduction: introductionController.text,
-          imageUrl: user.imageUrl,
-        ),
+    if (nameController.text.isEmpty) {
+      // ユーザー名入力チェック
+      const alert = Alert(
+        title: 'エラー',
+        subtitle: 'ユーザー名が未入力です',
+        style: SweetAlertStyle.error,
+        showCancelButton: false,
+        onPress: null,
       );
-    } else {
-      final imageUrl =
-          await _storageRepository.upload(imageFileController.value);
-      await _userRepository.updateUser(
-        userId: currentUser.id,
-        newUser: User(
-          id: user.id,
-          name: nameController.text,
-          introduction: introductionController.text,
-          imageUrl: imageUrl,
-        ),
-      );
+      alertController.sink.add(alert);
+      return;
     }
-    loadingController.sink.add(false);
-    var alert = Alert(
-      title: '投稿完了',
-      subtitle: 'プロフィールを更新しました',
-      style: SweetAlertStyle.success,
-      showCancelButton: false,
-      onPress: (bool isConfirm) {
-        popController.sink.add(null);
-        return true;
-      },
-    );
-    alertController.sink.add(alert);
+    if (introductionController.text.isEmpty) {
+      // 自己紹介入力チェック
+      const alert = Alert(
+        title: 'エラー',
+        subtitle: '自己紹介が未入力です',
+        style: SweetAlertStyle.error,
+        showCancelButton: false,
+        onPress: null,
+      );
+      alertController.sink.add(alert);
+      return;
+    }
+
+    // インジケーターを表示
+    loadingController.sink.add(true);
+
+    try {
+      final currentUser = await _authenticationRepository.getCurrentUser();
+      final user = await _userRepository.getUser(userId: currentUser.id);
+
+      // 画像がある場合は投稿して投稿先URLを保存
+      var imageUrl = '';
+      if (imageFileController.value != null) {
+        imageUrl = await _storageRepository.upload(imageFileController.value);
+      }
+
+      // ユーザー情報の更新があれば投稿
+      await _userRepository.updateUser(
+        userId: currentUser.id,
+        newUser: User()
+          ..name = user.name == nameController.text ? null : nameController.text
+          ..introduction = user.introduction == introductionController.text
+              ? null
+              : introductionController.text
+          ..imageUrl = imageFileController.value == null ? null : imageUrl,
+      );
+
+      // インジケーターを非表示
+      loadingController.sink.add(false);
+
+      // 投稿完了アラートを表示
+      var alert = Alert(
+        title: '投稿完了',
+        subtitle: 'プロフィールを更新しました',
+        style: SweetAlertStyle.success,
+        showCancelButton: false,
+        onPress: (bool isConfirm) {
+          popController.sink.add(null);
+          return true;
+        },
+      );
+      alertController.sink.add(alert);
+    } on Exception catch (error) {
+      // 投稿エラーアラートを表示
+      const alert = Alert(
+        title: 'エラー',
+        subtitle: '通信エラーが発生しました',
+        style: SweetAlertStyle.error,
+        showCancelButton: false,
+        onPress: null,
+      );
+      alertController.sink.add(alert);
+      return;
+    }
   }
 
   Future<void> getImage() async {

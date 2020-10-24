@@ -154,7 +154,7 @@ class EditProfileScreen extends StatelessWidget {
                           controller: editProfileBloc.nameController,
                         ),
                       ),
-                      const Text('一言'),
+                      const Text('自己紹介'),
                       Padding(
                         padding: const EdgeInsets.all(16),
                         child: TextField(

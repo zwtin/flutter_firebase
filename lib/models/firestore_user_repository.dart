@@ -12,12 +12,11 @@ class FirestoreUserRepository implements UserRepository {
   Stream<User> getUserStream({@required String userId}) {
     return _firestore.collection('users').document(userId).snapshots().map(
       (DocumentSnapshot snapshot) {
-        return User(
-          id: snapshot.data['id'] as String,
-          name: snapshot.data['name'] as String,
-          imageUrl: snapshot.data['image_url'] as String,
-          introduction: snapshot.data['introduction'] as String,
-        );
+        return User()
+          ..id = snapshot.data['id'] as String
+          ..name = snapshot.data['name'] as String
+          ..imageUrl = snapshot.data['image_url'] as String
+          ..introduction = snapshot.data['introduction'] as String;
       },
     );
   }
@@ -27,12 +26,11 @@ class FirestoreUserRepository implements UserRepository {
     final user =
         await _firestore.collection('users').document(userId).get().then(
       (DocumentSnapshot snapshot) {
-        return User(
-          id: snapshot.data['id'] as String,
-          name: snapshot.data['name'] as String,
-          imageUrl: snapshot.data['image_url'] as String,
-          introduction: snapshot.data['introduction'] as String,
-        );
+        return User()
+          ..id = snapshot.data['id'] as String
+          ..name = snapshot.data['name'] as String
+          ..imageUrl = snapshot.data['image_url'] as String
+          ..introduction = snapshot.data['introduction'] as String;
       },
     );
     return user;
@@ -50,6 +48,7 @@ class FirestoreUserRepository implements UserRepository {
       <String, dynamic>{
         'id': userId,
         'introduction': 'よろしくお願いします。',
+        'image_url': '',
         'name': '名無し',
       },
     );
@@ -58,13 +57,17 @@ class FirestoreUserRepository implements UserRepository {
   @override
   Future<void> updateUser(
       {@required String userId, @required User newUser}) async {
-    await _firestore.collection('users').document(userId).updateData(
-      <String, dynamic>{
-        'name': newUser.name,
-        'image_url': newUser.imageUrl,
-        'introduction': newUser.introduction
-      },
-    );
+    final data = <String, dynamic>{};
+    if (newUser.name != null) {
+      data['name'] = newUser.name;
+    }
+    if (newUser.name != null) {
+      data['introduction'] = newUser.introduction;
+    }
+    if (newUser.name != null) {
+      data['image_url'] = newUser.imageUrl;
+    }
+    await _firestore.collection('users').document(userId).updateData(data);
   }
 
   @override
