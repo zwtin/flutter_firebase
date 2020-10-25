@@ -781,7 +781,7 @@ class MyProfileScreen extends StatelessWidget {
         return Scaffold(
           // ナビゲーションバー
           appBar: AppBar(
-            title: Text(
+            title: const Text(
               'マイページ',
               style: TextStyle(
                 color: Colors.white,
@@ -800,102 +800,146 @@ class MyProfileScreen extends StatelessWidget {
           ),
 
           // 本体
-          body: Center(
-            child: Column(
-              children: <Widget>[
-                // ボタン0
-                RaisedButton(
-                  child: const Text('ログイン'),
-                  color: const Color(0xFFFFCC00),
-                  textColor: Colors.white,
-                  onPressed: () {
-                    // ボタン押下時
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute<SignInScreen>(
-                        builder: (BuildContext context) {
-                          // 複数のProviderを提供
-                          return MultiProvider(
-                            providers: [
-                              // SignInBlocを提供
-                              Provider<SignInBloc>(
-                                create: (BuildContext context) {
-                                  return SignInBloc(
-                                    FirebaseAuthenticationRepository(),
-                                    FirestoreUserRepository(),
-                                    FirestorePushNotificationRepository(),
-                                  );
-                                },
-
-                                // 画面破棄時
-                                dispose:
-                                    (BuildContext context, SignInBloc bloc) {
-                                  bloc.dispose();
-                                },
+          body: Stack(
+            children: [
+              Container(
+                color: const Color(0xFFFFCC00),
+              ),
+              Column(
+                children: [
+                  const Spacer(),
+                  Row(
+                    children: [
+                      // ボタン0
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
+                          child: RaisedButton(
+                            child: const SizedBox(
+                              child: Center(
+                                child: Text(
+                                  'ログイン',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
                               ),
+                              height: 50,
+                            ),
+                            color: const Color(0xFFFFCC00),
+                            textColor: Colors.white,
+                            onPressed: () {
+                              // ボタン押下時
+                              Navigator.of(context, rootNavigator: true).push(
+                                MaterialPageRoute<SignInScreen>(
+                                  builder: (BuildContext context) {
+                                    // 複数のProviderを提供
+                                    return MultiProvider(
+                                      providers: [
+                                        // SignInBlocを提供
+                                        Provider<SignInBloc>(
+                                          create: (BuildContext context) {
+                                            return SignInBloc(
+                                              FirebaseAuthenticationRepository(),
+                                              FirestoreUserRepository(),
+                                              FirestorePushNotificationRepository(),
+                                            );
+                                          },
 
-                              // 既存のTabBlocを提供
-                              Provider<TabBloc>.value(value: tabBloc),
-                            ],
+                                          // 画面破棄時
+                                          dispose: (BuildContext context,
+                                              SignInBloc bloc) {
+                                            bloc.dispose();
+                                          },
+                                        ),
 
-                            // 表示画面
-                            child: SignInScreen(),
-                          );
-                        },
+                                        // 既存のTabBlocを提供
+                                        Provider<TabBloc>.value(value: tabBloc),
+                                      ],
 
-                        // 全画面で表示
-                        fullscreenDialog: true,
+                                      // 表示画面
+                                      child: SignInScreen(),
+                                    );
+                                  },
+
+                                  // 全画面で表示
+                                  fullscreenDialog: true,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                       ),
-                    );
-                  },
-                ),
 
-                // ボタン1
-                RaisedButton(
-                  child: const Text('新規会員登録'),
-                  color: const Color(0xFFFFCC00),
-                  textColor: Colors.white,
-                  onPressed: () {
-                    // ボタン押下時
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute<SignUpScreen>(
-                        builder: (BuildContext context) {
-                          // 複数のProviderを提供
-                          return MultiProvider(
-                            providers: [
-                              // SignUpBlocを提供
-                              Provider<SignUpBloc>(
-                                create: (BuildContext context) {
-                                  return SignUpBloc(
-                                    FirebaseAuthenticationRepository(),
-                                    FirestoreUserRepository(),
-                                    FirestorePushNotificationRepository(),
-                                  );
-                                },
-
-                                // 画面破棄時
-                                dispose:
-                                    (BuildContext context, SignUpBloc bloc) {
-                                  bloc.dispose();
-                                },
+                      // ボタン1
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
+                          child: RaisedButton(
+                            child: const SizedBox(
+                              child: Center(
+                                child: Text(
+                                  '新規会員登録',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
                               ),
+                              height: 50,
+                            ),
+                            color: const Color(0xFFFFCC00),
+                            textColor: Colors.white,
+                            onPressed: () {
+                              // ボタン押下時
+                              Navigator.of(context, rootNavigator: true).push(
+                                MaterialPageRoute<SignUpScreen>(
+                                  builder: (BuildContext context) {
+                                    // 複数のProviderを提供
+                                    return MultiProvider(
+                                      providers: [
+                                        // SignUpBlocを提供
+                                        Provider<SignUpBloc>(
+                                          create: (BuildContext context) {
+                                            return SignUpBloc(
+                                              FirebaseAuthenticationRepository(),
+                                              FirestoreUserRepository(),
+                                              FirestorePushNotificationRepository(),
+                                            );
+                                          },
 
-                              // 既存のTabBlocを提供
-                              Provider<TabBloc>.value(value: tabBloc),
-                            ],
+                                          // 画面破棄時
+                                          dispose: (BuildContext context,
+                                              SignUpBloc bloc) {
+                                            bloc.dispose();
+                                          },
+                                        ),
 
-                            // 表示画面
-                            child: SignUpScreen(),
-                          );
-                        },
+                                        // 既存のTabBlocを提供
+                                        Provider<TabBloc>.value(value: tabBloc),
+                                      ],
 
-                        // 全画面で表示
-                        fullscreenDialog: true,
+                                      // 表示画面
+                                      child: SignUpScreen(),
+                                    );
+                                  },
+
+                                  // 全画面で表示
+                                  fullscreenDialog: true,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                       ),
-                    );
-                  },
-                ),
-              ],
-            ),
+                    ],
+                  )
+                ],
+              ),
+            ],
           ),
         );
       },

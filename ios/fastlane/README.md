@@ -16,9 +16,9 @@ or alternatively using `brew cask install fastlane`
 
 # Available Actions
 ## iOS
-### ios distribution
+### ios archive
 ```
-fastlane ios distribution
+fastlane ios archive
 ```
 Description of what the lane does
 

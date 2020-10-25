@@ -8,7 +8,7 @@ abstract class UserRepository {
   Future<User> getUser({@required String userId});
   Future<bool> isExistUser({@required String userId});
   Future<void> createUser({@required String userId});
-  Future<void> updateUser({@required String userId, @required User newUser});
+  Future<void> updateUser({@required String userId, @required User user});
   Stream<List<CreateAnswerEntity>> getCreateAnswersStream(
       {@required String userId});
   Stream<List<FavoriteAnswerEntity>> getFavoriteAnswersStream(

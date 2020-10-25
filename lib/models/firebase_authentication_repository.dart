@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_firebase/use_cases/current_user.dart';
 import 'package:flutter_firebase/repositories/authentication_repository.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:apple_sign_in/apple_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class FirebaseAuthenticationRepository implements AuthenticationRepository {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -94,28 +94,29 @@ class FirebaseAuthenticationRepository implements AuthenticationRepository {
 
   @override
   Future<void> signInWithApple() async {
-    final result = await AppleSignIn.performRequests([
-      AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
-    ]);
-    switch (result.status) {
-      case AuthorizationStatus.authorized:
-        final appleIdCredential = result.credential;
-        const oAuthProvider = OAuthProvider(providerId: 'apple.com');
-        final credential = oAuthProvider.getCredential(
-          idToken: String.fromCharCodes(appleIdCredential.identityToken),
-          accessToken:
-              String.fromCharCodes(appleIdCredential.authorizationCode),
-        );
-        await _firebaseAuth.signInWithCredential(credential);
-        break;
-
-      case AuthorizationStatus.error:
-        throw Exception();
-        break;
-
-      case AuthorizationStatus.cancelled:
-        throw Exception();
-        break;
-    }
+//    final result = await AppleSignIn.performRequests([
+//      AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
+//    ]);
+//
+//    switch (result.status) {
+//      case AuthorizationStatus.authorized:
+//        final appleIdCredential = result.credential;
+//        const oAuthProvider = OAuthProvider(providerId: 'apple.com');
+//        final credential = oAuthProvider.getCredential(
+//          idToken: String.fromCharCodes(appleIdCredential.identityToken),
+//          accessToken:
+//              String.fromCharCodes(appleIdCredential.authorizationCode),
+//        );
+//        await _firebaseAuth.signInWithCredential(credential);
+//        break;
+//
+//      case AuthorizationStatus.error:
+//        throw Exception();
+//        break;
+//
+//      case AuthorizationStatus.cancelled:
+//        throw Exception();
+//        break;
+//    }
   }
 }

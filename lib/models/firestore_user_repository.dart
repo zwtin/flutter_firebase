@@ -56,16 +56,16 @@ class FirestoreUserRepository implements UserRepository {
 
   @override
   Future<void> updateUser(
-      {@required String userId, @required User newUser}) async {
+      {@required String userId, @required User user}) async {
     final data = <String, dynamic>{};
-    if (newUser.name != null) {
-      data['name'] = newUser.name;
+    if (user.name != null) {
+      data['name'] = user.name;
     }
-    if (newUser.name != null) {
-      data['introduction'] = newUser.introduction;
+    if (user.introduction != null) {
+      data['introduction'] = user.introduction;
     }
-    if (newUser.name != null) {
-      data['image_url'] = newUser.imageUrl;
+    if (user.imageUrl != null) {
+      data['image_url'] = user.imageUrl;
     }
     await _firestore.collection('users').document(userId).updateData(data);
   }

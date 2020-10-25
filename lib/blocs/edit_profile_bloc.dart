@@ -101,7 +101,7 @@ class EditProfileBloc {
       // ユーザー情報の更新があれば投稿
       await _userRepository.updateUser(
         userId: currentUser.id,
-        newUser: User()
+        user: User()
           ..name = user.name == nameController.text ? null : nameController.text
           ..introduction = user.introduction == introductionController.text
               ? null
