@@ -1,13 +1,7 @@
 import 'dart:async';
-import 'dart:io';
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:flutter/foundation.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/blocs/sign_in_bloc.dart';
 import 'package:flutter_firebase/blocs/tab_bloc.dart';
-import 'package:flutter_firebase/use_cases/current_user.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_firebase/use_cases/alert.dart';
@@ -50,10 +44,9 @@ class SignInScreen extends StatelessWidget {
 
     // 画面
     return StreamBuilder(
+      stream: signInBloc.loadingController.stream,
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
         return LoadingOverlay(
-          isLoading: snapshot.data ?? false,
-          color: Colors.grey,
           child: Scaffold(
             // ナビゲーションバー
             appBar: AppBar(
@@ -87,14 +80,18 @@ class SignInScreen extends StatelessWidget {
                       Container(
                         height: 32,
                       ),
-                      Center(
+                      const Center(
                         child: Text(
                           ' ー メールアドレスでログイン ー ',
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(16),
+                      Container(
+                        height: 16,
+                      ),
+                      SizedBox(
+                        width: 300,
+                        height: 44,
                         child: Container(
                           decoration: const BoxDecoration(
                             color: Colors.white,
@@ -127,8 +124,12 @@ class SignInScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(16),
+                      Container(
+                        height: 16,
+                      ),
+                      SizedBox(
+                        width: 300,
+                        height: 44,
                         child: Container(
                           decoration: const BoxDecoration(
                             color: Colors.white,
@@ -138,6 +139,7 @@ class SignInScreen extends StatelessWidget {
                           ),
                           child: TextField(
                             controller: signInBloc.passwordController,
+                            obscureText: true,
                             decoration: InputDecoration(
                               //Focusしていないとき
                               enabledBorder: OutlineInputBorder(
@@ -165,7 +167,7 @@ class SignInScreen extends StatelessWidget {
                         height: 16,
                       ),
                       Container(
-                        width: 300,
+                        width: 250,
                         height: 44,
                         child: SignInButton(
                           Buttons.Email,
@@ -176,7 +178,7 @@ class SignInScreen extends StatelessWidget {
                       Container(
                         height: 32,
                       ),
-                      Center(
+                      const Center(
                         child: Text(
                           ' ー SNSアカウントでログイン ー ',
                           style: TextStyle(color: Colors.white, fontSize: 20),
@@ -186,7 +188,7 @@ class SignInScreen extends StatelessWidget {
                         height: 16,
                       ),
                       Container(
-                        width: 300,
+                        width: 250,
                         height: 44,
                         child: SignInButton(
                           Buttons.Google,
@@ -198,7 +200,7 @@ class SignInScreen extends StatelessWidget {
                         height: 16,
                       ),
                       Container(
-                        width: 300,
+                        width: 250,
                         height: 44,
                         child: SignInButton(
                           Buttons.AppleDark,
@@ -210,7 +212,7 @@ class SignInScreen extends StatelessWidget {
                         height: 16,
                       ),
                       Container(
-                        width: 300,
+                        width: 250,
                         height: 44,
                         child: SignInButton(
                           Buttons.Twitter,
@@ -222,7 +224,7 @@ class SignInScreen extends StatelessWidget {
                         height: 16,
                       ),
                       Container(
-                        width: 300,
+                        width: 250,
                         height: 44,
                         child: SignInButton(
                           Buttons.Facebook,
@@ -239,6 +241,8 @@ class SignInScreen extends StatelessWidget {
               ],
             ),
           ),
+          isLoading: snapshot.data ?? false,
+          color: Colors.grey,
         );
       },
     );
