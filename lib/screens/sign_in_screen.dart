@@ -176,6 +176,29 @@ class SignInScreen extends StatelessWidget {
                         ),
                       ),
                       Container(
+                        height: 16,
+                      ),
+                      Row(
+                        children: [
+                          const Spacer(),
+                          const Text(
+                            'パスワードを忘れた方は',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          InkWell(
+                            child: const Text(
+                              'こちら',
+                              style: TextStyle(
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                            onTap: () {},
+                          ),
+                          const Spacer(),
+                        ],
+                      ),
+                      Container(
                         height: 32,
                       ),
                       const Center(

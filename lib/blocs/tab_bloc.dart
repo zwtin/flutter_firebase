@@ -122,14 +122,13 @@ class TabBloc {
           final apiKey = query['apiKey'];
           final mode = query['mode'];
           final oobCode = query['oobCode'];
+          final continueUrl = query['continueUrl'];
+          final lang = query['lang'];
 
-//          final prefs = await SharedPreferences.getInstance();
-//          final inputEmail = prefs.getString('email');
-//          if (inputEmail != null) {
-//            openNewRegister();
-//          }
-          newRegisterController.sink.add(indexController.value);
-          rootTransitionController.sink.add(indexController.value);
+          if (mode == 'signIn') {
+            newRegisterController.sink.add(indexController.value);
+            rootTransitionController.sink.add(indexController.value);
+          }
         }
       },
       onError: (OnLinkErrorException e) async {

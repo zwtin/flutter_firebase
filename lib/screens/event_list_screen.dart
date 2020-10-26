@@ -83,7 +83,6 @@ class EventListScreen extends StatelessWidget {
                         return NewRegisterBloc(
                           FirebaseAuthenticationRepository(),
                           FirestoreUserRepository(),
-                          FirestorePushNotificationRepository(),
                         );
                       },
 

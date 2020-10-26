@@ -87,7 +87,6 @@ class MyProfileScreen extends StatelessWidget {
                         return NewRegisterBloc(
                           FirebaseAuthenticationRepository(),
                           FirestoreUserRepository(),
-                          FirestorePushNotificationRepository(),
                         );
                       },
 
