@@ -75,7 +75,7 @@ class SignUpScreen extends StatelessWidget {
             // ナビゲーションバー
             appBar: AppBar(
               title: const Text(
-                '新規会員登録',
+                '新規登録',
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -106,7 +106,7 @@ class SignUpScreen extends StatelessWidget {
                       ),
                       const Center(
                         child: Text(
-                          ' ー メールアドレスで新規会員登録 ー ',
+                          ' ー メールアドレスで新規登録 ー ',
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
                       ),
@@ -189,7 +189,7 @@ class SignUpScreen extends StatelessWidget {
                       ),
                       const Center(
                         child: Text(
-                          ' ー SNSアカウントで新規会員登録 ー ',
+                          ' ー SNSアカウントで新規登録 ー ',
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
                       ),

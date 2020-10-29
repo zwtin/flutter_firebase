@@ -255,18 +255,23 @@ class MyProfileScreen extends StatelessWidget {
                                             child: CircularProgressIndicator(),
                                           ),
                                           imageUrl: userSnapshot.data.imageUrl,
-                                          errorWidget: (context, url,
-                                                  dynamic error) =>
-                                              Image.asset(
-                                                  'assets/icon/no_user.jpg'),
+                                          errorWidget:
+                                              (context, url, dynamic error) =>
+                                                  Image.asset(
+                                            'assets/icon/no_user.jpg',
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                   Expanded(
                                     child: Container(
-                                      padding:
-                                          EdgeInsets.fromLTRB(16, 0, 16, 0),
+                                      padding: const EdgeInsets.fromLTRB(
+                                        16,
+                                        0,
+                                        16,
+                                        0,
+                                      ),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -880,7 +885,7 @@ class MyProfileScreen extends StatelessWidget {
                             child: const SizedBox(
                               child: Center(
                                 child: Text(
-                                  '新規会員登録',
+                                  '新規登録',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
