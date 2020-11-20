@@ -94,20 +94,20 @@ class FirebaseAuthenticationRepository implements AuthenticationRepository {
 
   @override
   Future<void> signInWithApple() async {
-//    final result = await AppleSignIn.performRequests([
-//      AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
-//    ]);
-//
-//    switch (result.status) {
+    final result = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+    );
+//    switch (result.state) {
 //      case AuthorizationStatus.authorized:
-//        final appleIdCredential = result.credential;
-//        const oAuthProvider = OAuthProvider(providerId: 'apple.com');
-//        final credential = oAuthProvider.getCredential(
-//          idToken: String.fromCharCodes(appleIdCredential.identityToken),
-//          accessToken:
-//              String.fromCharCodes(appleIdCredential.authorizationCode),
-//        );
-//        await _firebaseAuth.signInWithCredential(credential);
+    const oAuthProvider = OAuthProvider(providerId: 'apple.com');
+    final credential = oAuthProvider.getCredential(
+      idToken: result.identityToken,
+      accessToken: result.authorizationCode,
+    );
+    await _firebaseAuth.signInWithCredential(credential);
 //        break;
 //
 //      case AuthorizationStatus.error:

@@ -7,6 +7,7 @@ import 'package:flutter_firebase/repositories/user_repository.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_firebase/use_cases/alert.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class SignInBloc {
   SignInBloc(
